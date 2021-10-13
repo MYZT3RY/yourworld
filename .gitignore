@@ -1,0 +1,5 @@
+*.exe
+*.txt
+*.amx
+pawno/*
+!pawno/include/
