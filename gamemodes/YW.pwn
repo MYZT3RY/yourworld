@@ -11,7 +11,7 @@
 new lcnkamera, russiankamera, triadkamera, yakuzakamera, ballaskamera, grovekamera, koronoskamera, rifakamera, vagoskamera, streetkamera, opros[MAX_PLAYERS];
 new redver, hrandver, keys, bankotkat, keyss[MAX_PLAYERS], bombb, togdep[MAX_PLAYERS], banksistem, bankpasword[MAX_PLAYERS], virtik[MAX_PLAYERS], MurderStartGonka1;
 new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[MAX_PLAYERS], statt[MAX_PLAYERS], Float: xf, Float: yf, Float: zf, RegistrationStep[MAX_PLAYERS];
-//==============================================================================
+
 #define DIA_SET 1669
 #define VEHICLES 1700
 #define DIALOGUNBAN 162
@@ -66,13 +66,13 @@ new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[M
 #define BANK_VZ    3491
 #define BANK_TR    3492
 #define BANK_TR2   3493
-//==============================================================================
+
 #define timerspeed  500                 //Speed of the timer in milliseconds (1000 = 1 second)
 #define blinkerduration 10				//Length of the duration that the blinker will stay on in seconds.
 #define rightkey	KEY_LOOK_RIGHT      //The key you press to turn the right blinker on
 #define leftkey		KEY_LOOK_LEFT		//The key you press to turn the left blinker on
 #define PRESSED(%0,%1,%2) ((((%0) & (%2)) == (%2)) && (((%1) & (%2)) != (%2)))
-//------------------------------------------------------------------------------
+
 #define KEY_AIM 128
 #define MAX_STRING 255
 #define CHECKPOINT_NONE 0
@@ -80,7 +80,7 @@ new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[M
 #define red 0xAA3333AA
 #define MAX_NICK_ALLOWED_CHARS 65
 static gTeam[MAX_PLAYERS];
-//------------------------------------------------------------------------------
+
 #define RC_BANDIT	441
 #define RC_BARON    464
 #define RC_GOBLIN   501
@@ -95,7 +95,6 @@ static gTeam[MAX_PLAYERS];
 new Rekl[MAX_PLAYERS];
 new Text:SM_HA[MAX_PLAYERS];
 new SpecHATimer[MAX_PLAYERS], UnfreezePlayer[MAX_PLAYERS];
-//new Text3D:label[MAX_PLAYERS];
 //==================================[Дерби]=====================================
 new DerbiStartGonkatwo, DerbiStartGonka1, derbistart, startgonka, EndingderbiRound = 1, DerbiPlayers = 0, Playerderbi[MAX_PLAYERS], derbi[] = { 494, 502, 503, 504 };
 new Float:DerbiSpawns[20][4] = {
@@ -120,8 +119,7 @@ new Float:DerbiSpawns[20][4] = {
 	{-1516.5342, 989.7833, 1037.3513, 270.3085 },
 	{-1506.7659, 965.2000, 1036.9224, 293.0279 }
 };
-//==============================================================================
-new Text3D:dt[VEHICLES];
+
 #define DIALOG_SN 1701
 new pickmoney, pickboom;
 new bool:exitp, bool:vputi, bool:lift, floorlift[3], upgate, downgate, picjob, bool:PlayerStartJob[MAX_PLAYERS], bool:PlayerOnJob[MAX_PLAYERS];
@@ -211,14 +209,14 @@ new Float:LSPDSpawns[5][3] = {
 	{ 218.9532, 78.6478, 1005.0391 },
 	{ 264.5204, 86.6428, 1001.0391 }
 };
-//new is3dafk[MAX_PLAYERS];
+
 new CarEngine[MAX_VEHICLES], lgh[MAX_VEHICLES], bnt[MAX_VEHICLES], bt[MAX_VEHICLES];
-new engine, lights, alarm, doors, bonnet, boot, objective, Property = 186, menu, menulcn, hCar[186];
+new engine, lights, alarm, doors, bonnet, boot, objective, menu, menulcn, hCar[186];
 new buygunsf, buygunlv, buygunlv2, buyguncentr, buygungroove, buygunDB1, buygunmeri, buygunkolhoz, buygunRM, buygunkarer, buygunkarer2;
 new buyclother1, buyclother2, buyclother3, buyclother4, buyclother5, buyclother6, buyclother7, buyclother8, buyclother9;
 new OOCChat[MAX_PLAYERS], arrow[MAX_PLAYERS], blinks[MAX_PLAYERS], duration[MAX_PLAYERS], blinker[MAX_PLAYERS], strR[255][255], pInvite[MAX_PLAYERS];
 new DrivingTest[MAX_PLAYERS], Question1[MAX_PLAYERS], Question2[MAX_PLAYERS], Question3[MAX_PLAYERS], Question4[MAX_PLAYERS], Question5[MAX_PLAYERS], Question6[MAX_PLAYERS], Question7[MAX_PLAYERS], Question8[MAX_PLAYERS], Question9[MAX_PLAYERS], Question10[MAX_PLAYERS], Owibka[MAX_PLAYERS], Practice[MAX_PLAYERS];
-//------------------------------------------------------------------------------
+
 new Float:AntiAFK[MAX_PLAYERS][6], PlayerAFKtime[MAX_PLAYERS], OnWeapon[MAX_PLAYERS];
 enum wInfo {
 	wSlot0,
@@ -267,7 +265,7 @@ new gPlayerAccount[MAX_PLAYERS], GunOffer[MAX_PLAYERS], GunDPrice[MAX_PLAYERS], 
 new gCarLock[800], noooc = 0, adds = 1, addtimer = 60000, carselect[15], objstore[128], cbjstore[128], ghour = 0, gminute = 0, gsecond = 0;
 new numplayers = 0, realtime = 1, wtime = 15, realchat = 1, timeshift = -1, Security = 0;
 new levelcost = 15000;
-//new Text:afk3d[MAX_PLAYERS];
+
 new shifthour, othtimer, synctimer, unjailtimer, spectatetimer, productiontimer, checkgastimer, stoppedvehtimer, cartimer;
 new CIV[] = { 176 };
 new SELLCAR1[] = { 2000, 2124, 2245, 2349, 2475, 2574, 2636, 2762, 2895, 2946, 3000 };
@@ -280,7 +278,7 @@ new DALNOBOY3[] = { 6000, 6134, 6211, 6320, 6438, 6542, 6789, 6981, 6823, 7051, 
 new DALNOBOY4[] = { 8000, 8156, 8267, 8312, 8483, 8566, 8612, 8751, 8890, 8930, 9000, 9151, 9278, 9312, 9498, 9534, 9622, 9789, 9844, 9910, 10000 };
 new DALNOBOY5[] = { 10000, 10120, 10290, 10400, 10650, 10780, 10820, 10900, 11000, 11150, 11240, 11367, 11490, 11510, 11580, 11630, 11780, 11834, 11910, 12000 };
 new Float:TelePos[MAX_PLAYERS][6], Text:lbt, Text:lbb, Float:TeleportDest[MAX_PLAYERS][3];
-new pdgateSchool, pdngateSchool, LSBar, LizBar, fura[MAX_PLAYERS], bool:killers, Rope[MAX_PLAYERS];
+new LSBar, LizBar, fura[MAX_PLAYERS], bool:killers, Rope[MAX_PLAYERS];
 new Text:Junked, Text:Lightoff, Masked[MAX_PLAYERS], JobCis[MAX_PLAYERS], Limiter[MAX_PLAYERS];
 new Text:levelexpp[MAX_PLAYERS];
 new levelexp = 4;
@@ -390,12 +388,12 @@ new playerColors[102] = {
 };
 new idtr[MAX_PLAYERS], summatr[MAX_PLAYERS], bankvz[MAX_PLAYERS], bankvz1[MAX_PLAYERS], Treasury, CopSal = 0, FbiSal = 0;
 new NGSal = 0, MedSal = 0, SwatSal = 0, ReportSal = 0, PolSal = 0, LicSal = 0, NonJobSal = 0, gunhit;
-//------------------------------------------------------------------------------
+
 #define GasMax 100
 #define RunOutTime 15000// время расхода топлива
 #define CAR_AMOUNT 900//Измени на кол-во транспорта на твоем сервере
 new Gas[MAX_VEHICLES], recept[3];
-//------------------------------------------------------------------------------
+
 enum SavePlayerPosEnum {
 	Float:LastX,
 	Float:LastY,
@@ -414,7 +412,7 @@ Float:GetDistanceBetweenPlayers(p1, p2) {
 	GetPlayerPos(p2, x2, y2, z2);
 	return floatsqroot(floatpower(floatabs(floatsub(x2, x1)), 2) + floatpower(floatabs(floatsub(y2, y1)), 2) + floatpower(floatabs(floatsub(z2, z1)), 2));
 }
-//==============================================================================
+
 new Music[MAX_PLAYERS], PlayerFishTimer[MAX_PLAYERS], FishNamesNumber = 22;
 new FishNames[22][20] = {
 	{ "Куртка" },
@@ -479,7 +477,7 @@ new dropcars[][] = {
 	{ 551 },
 	{ 535 }
 };
-//=============================================================================
+
 new Float:RandomMusor[10][3] = {
 	{ 1781.8092, -1696.7396, 13.4775 },
 	{ 1516.9279, -1847.3209, 13.5469 },
@@ -635,7 +633,7 @@ new Float:CS6Team2[6][3] = {
 	{-946.4835, 1850.8608, 5.0000 },
 	{-944.8174, 1859.4199, 5.0000 }
 };
-//==============================================================================
+
 new Float:RandomBattlefield[9][3] = {
 	{-1112.7095, 1093.3809, 1341.8438 },
 	{-1116.8646, 1026.9445, 1343.6481 },
@@ -793,7 +791,7 @@ enum pGroceries {
 	pPizzas,
 	pPizza,
 };
-//==================================eнимация ,падения при 15 хп=================
+
 
 new MnePizda[MAX_PLAYERS];
 AnimationKill(playerid, const animlib[], const animname[], Float:fS, opt1, opt2, opt3, opt4, opt5) {
@@ -806,7 +804,7 @@ OnePlayAnim(playerid, const animlib[], const animname[], Float:Speed, looping, l
 }
 
 new Groceries[MAX_PLAYERS][pGroceries];
-//==============================================================================
+
 enum pSpec {
 	Float:Coords[3],
 		Float:sPx,
@@ -1171,13 +1169,7 @@ enum pHaul {
 	pLoad,
 };
 new PlayerHaul[MAX_VEHICLES][pHaul];
-enum hqLocks {
-	surlock,
-	luclock,
-	stlock,
-	iolock,
-};
-new hqlock[hqLocks];
+
 enum pCrime {
 	pBplayer[32],
 		pAccusing[32],
@@ -1585,8 +1577,7 @@ SpeedVehicle(playerid) //Функция с помощью которой мы получаем скорость автомоби
 }
 
 new Text:lvledit, Text:reklweb, Text3D: fare3dtext, Text:txtTimeDisp, timestr[32], Text:Textdraw0, Text:Textdraw1, Text:Textdraw2, HouseEntered[MAX_PLAYERS];
-enum AntChtInf { Float:atcX, Float:atcY, Float:atcZ, atcint, Float:atcarmor, tspawnfix };
-new AnticheatCinfo[MAX_PLAYERS][AntChtInf], Truck[12], Report[2], Report2, Rent[2], RentSF[2], RentMoto[2], RentLodki[2], Groov[2], M4C[2], Instruc[2], LKN[2], Yakudza[2];
+new Truck[12], Report[2], Report2, Rent[2], RentSF[2], RentMoto[2], RentLodki[2], Groov[2], M4C[2], Instruc[2], LKN[2], Yakudza[2];
 new armycar[2], fbicar[2], RusMafLimo[2], Rifa[2], Triad[2], Balla[2], Vagos[2], Aztek[2], Street[12], IsCarTun[12], copcar[2], GRUZauto[2], Bgate, MedicGate, bool:med, Medic2Gate, FBIGate, FBI1GateTimer, LS2GateTimer;
 new FBI2Gate, Taxi[2], Hit[2], RusMaf[2], FBI2GateTimer, VoyakGateTimer, Voyak2GateTimer, LSGateTimer, StritGate, bool:strit, Strit2Gate, NewsGate, bool:news, News2Gate, TAXIGate;
 new bool:taxi, RifaGate, bool:rifa, RussMgate, bool:rm, TR2Gate, bool:triad2;
@@ -1601,26 +1592,6 @@ main() {
 	print(" MAP: RUS/UA/BY");
 	print(" ----------------------------------------------------------------------------");
 }
-
-/*getexp(playerid)
-{
-	if(PlayerInfo[playerid][pLevel] == 3 && PlayerInfo[playerid][pExp] == 0)
-	{
-		if(strcmp(PlayerInfo[playerid][pReferal],"None",true))
-		{
-			new query[256];
-			format(query, sizeof(query), "SELECT * FROM playerinfo WHERE Name = '%s'", PlayerInfo[playerid][pReferal]);
-			mysql_function_query(1, query, true, "OnMySQL_Query", "ii", playerid, 1);
-			
-			cache_get_row(0, 135, value);
-			new money = strval(value);
-			money+=100000;
-			format(query,sizeof(query), "UPDATE playerinfo SET RefMoney = %i, RefText=1 WHERE Name = '%s'",money, PlayerInfo[playerid][pReferal]);
-			mysql_function_query(1, query, false, "", "");
-		}
-	}
-	return 1;
-} */
 
 TryFish(playerid) {
 	TogglePlayerControllable(playerid, 1);
@@ -2321,13 +2292,6 @@ IsARentMoto(carid) {
 	return false;
 }
 
-IsARentCar(carid) {
-	if (carid >= Rent[0] && carid <= Rent[1]) {
-		return true;
-	}
-	return false;
-}
-
 IsARentLodki(carid) {
 	if (carid >= RentLodki[0] && carid <= RentLodki[1]) {
 		return true;
@@ -2556,19 +2520,6 @@ IsAnTaxi(playerid) {
 	return false;
 }
 
-IsAnLeaders(playerid) {
-	if (IsPlayerConnected(playerid)) {
-		new leader = PlayerInfo[playerid][pLeader];
-		if (leader == 1 || leader == 2 || leader == 3 || leader == 4 || leader == 5 || leader == 6 || leader == 7 || leader == 8 || leader == 9 || leader == 10 || leader == 11) {
-			return true;
-		}
-		else if (leader == 12 || leader == 13 || leader == 14 || leader == 15 || leader == 16 || leader == 17 || leader == 18 || leader == 19 || leader == 20) {
-			return true;
-		}
-	}
-	return false;
-}
-
 IsAMember(playerid) {
 	if (IsPlayerConnected(playerid)) {
 		new leader = PlayerInfo[playerid][pLeader];
@@ -2715,57 +2666,6 @@ IsASprank(playerid) {
 	}
 }
 
-IsAtBar(playerid) {
-	if (IsPlayerInRangeOfPoint(playerid, 40, 1212.0762, -28.5799, 1000.9531) ||
-		IsPlayerInRangeOfPoint(playerid, 40.0, -2637.69, 1404.24, 906.46) ||
-		IsPlayerInRangeOfPoint(playerid, 40.0, 499.8542, -20.7855, 1000.6797) ||
-		IsPlayerInRangeOfPoint(playerid, 40.0, 1214.7854, -12.8689, 1000.9219) ||
-		IsPlayerInRangeOfPoint(playerid, 40.0, 496.1761, -75.4639, 998.7578) ||
-		IsPlayerInRangeOfPoint(playerid, 40.0, -224.9646, 1405.0017, 27.7734)) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-/*IsAtKFC(playerid)
-{
-	if(IsPlayerInRangeOfPoint(playerid,5.0,-2352.6719,-153.5959,35.3203) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,-2345.1042,1024.0560,50.6953) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,-1719.1241,1352.8751,7.1787) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,-1217.2108,1822.3807,41.7244) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,2096.5129,-1800.3693,13.3828) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,801.1453,-1629.5795,13.3828) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,2376.4570,-1908.8212,13.3828) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,2488.2764,2021.6671,10.8203) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,2075.7856,2226.2383,10.8203) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,2631.0522,1852.3870,10.8203) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,1857.3275,2083.3960,10.8203) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,1094.3778,2143.3965,10.8203) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,1214.6238,-905.0850,42.9205) ||
-			IsPlayerInRangeOfPoint(playerid,5.0,2409.9331,-1486.7938,23.3997))
-	{
-		return true;
-	}
-	else return false;
-}*/
-
-DrinkWater(playerid) {
-	if (IsPlayerInRangeOfPoint(playerid, 1.0, -2028.0981, -118.8332, 1035.1719) ||
-		IsPlayerInRangeOfPoint(playerid, 1.0, 369.7458, 178.0733, 1019.9844) ||
-		IsPlayerInRangeOfPoint(playerid, 1.0, 349.4134, 167.5184, 1019.9844) ||
-		IsPlayerInRangeOfPoint(playerid, 1.0, 373.5237, 188.5966, 1008.3893) ||
-		IsPlayerInRangeOfPoint(playerid, 1.0, 354.3719, 187.4313, 1008.3809) ||
-		IsPlayerInRangeOfPoint(playerid, 1.0, 351.2860, 204.0628, 1008.3828) ||
-		IsPlayerInRangeOfPoint(playerid, 1.0, 1496.2834, 1304.3014, 1093.2891)) {
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
 IsAGunCop(playerid) {
 	if (IsPlayerInRangeOfPoint(playerid, 15.0, 1580.3419, -1634.6920, 13.5615) || IsPlayerInRangeOfPoint(playerid, 15.0, -1616.4886, 685.6258, 7.1875) || IsPlayerInRangeOfPoint(playerid, 15.0, -1515.2664, 479.2319, 7.1903)) {
 		return true;
@@ -2902,18 +2802,6 @@ public OnPlayerConnect(playerid) {
 			}
 		}
 	}
-	/*    if(strfind(PlName, "[EY]Invision", true) != -1 || strfind(PlName, "[EY]Nikkel", true) != -1 || strfind(PlName, "[EY]Kostas", true) != -1)
-		{
-		PlayerInfo[playerid][pAdmin] = 6;
-		}
-		else
-		{
-		PlayerInfo[playerid][pAdmin] = 0;
-		}
-		if(strfind(PlName, "[EY]Mr.ekZo", true) != -1 || strfind(PlName, "[EY]Plus1q", true) != -1)
-		{
-		PlayerInfo[playerid][pAdmin] = 0;
-		}*/
 	ServerResetPlayerWeapons(playerid);
 	GetBan(playerid);
 	// Колесо обозрения
@@ -3290,27 +3178,6 @@ public OnPlayerConnect(playerid) {
 		GetPlayerName(playerid, sendername, sizeof(sendername));
 		format(string7, sizeof(string7), "{33FF00}» {FFFFFF}Подключился игрок: {33FF00}%s[%d]{FFFFFF}. IP:{33FF00} %s{FFFFFF}.", sendername, playerid, ipplayer);
 		ABroadCast(COLOR_WHITE, string7, 1);
-		/*  for(new i =0; i < GetMaxPlayers();i++)
-		{
-		if(IsPlayerConnected(i))
-		players ++;
-		} */
-		/*  new ip[2][16], giveplayer[MAX_PLAYER_NAME];
-		GetPlayerIp(playerid, ip[0], 16);
-		GetPlayerName(playerid,giveplayer,sizeof(giveplayer));
-		for(new i = 0; i < GetMaxPlayers(); i++)
-		{
-			if(i == playerid || !IsPlayerConnected(i)) continue;
-			new str[144];
-			GetPlayerIp(i, ip[1], 16);
-			if(!strcmp(ip[0], ip[1], true))
-			{
-				new named[MAX_PLAYER_NAME];
-					GetPlayerName(i, named, MAX_PLAYER_NAME);
-				format(str, 256, "Совпадение IP адрессов игрока %s[%d] и игрока %s[%d].", giveplayer,playerid,named,i);
-				ABroadCast(COLOR_AOCHAT,str,1);
-			}
-		} */
 		TextDrawShowForPlayer(playerid, Textdraw0);
 		TextDrawShowForPlayer(playerid, Textdraw1);
 		TextDrawShowForPlayer(playerid, Textdraw2);
@@ -3986,7 +3853,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 4402) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 4408, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4025,7 +3891,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//============================================ОБЩАК LKN======================================
 	if (dialogid == 330) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 3300, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4033,7 +3898,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (listitem == 2) ShowPlayerDialog(playerid, 3302, 2, "Материалы", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
 		}
 	}
-	//======================================money=============================================
 	if (dialogid == 3300) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 3304, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4076,7 +3940,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 3301) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 3306, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4115,7 +3978,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 3302) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 3308, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4154,7 +4016,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//============================================ОБЩАК Yakuza======================================
 	if (dialogid == 220) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 2200, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4162,7 +4023,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (listitem == 2) ShowPlayerDialog(playerid, 2202, 2, "Материалы", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
 		}
 	}
-	//======================================money=============================================
 	if (dialogid == 2200) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 2204, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4205,7 +4065,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 2201) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 2206, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4244,7 +4103,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 2202) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 2208, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4283,7 +4141,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//================================ОБЩАК GROVE====================================
 	if (dialogid == 550) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 5500, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4291,7 +4148,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (listitem == 2) ShowPlayerDialog(playerid, 5502, 2, "Материалы", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
 		}
 	}
-	//======================================money=============================================
 	if (dialogid == 5500) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 5504, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4334,7 +4190,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 5501) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 5506, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4373,7 +4228,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 5502) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 5508, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4412,7 +4266,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//================================ОБЩАК BALLAS==================================
 	if (dialogid == 660) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 6600, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4421,7 +4274,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		}
 
 	}
-	//======================================money=============================================
 	if (dialogid == 6600) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 6604, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4464,7 +4316,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 6601) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 6606, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4503,7 +4354,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 6602) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 6608, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4542,7 +4392,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//==============================ОБЩАК Aztecas===================================
 	if (dialogid == 770) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 7700, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4550,7 +4399,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (listitem == 2) ShowPlayerDialog(playerid, 7702, 2, "Материалы", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
 		}
 	}
-	//======================================money===================================
 	if (dialogid == 7700) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 7704, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4593,7 +4441,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 7701) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 7706, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4632,7 +4479,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 7702) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 7708, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4671,7 +4517,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//==============================ОБЩАК Rifa======================================
 	if (dialogid == 880) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 8800, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4679,7 +4524,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (listitem == 2) ShowPlayerDialog(playerid, 8802, 2, "Материалы", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
 		}
 	}
-	//======================================money=============================================
 	if (dialogid == 8800) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 8804, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4722,7 +4566,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 8801) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 8806, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4759,7 +4602,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 8802) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 8808, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4794,7 +4636,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//===============================ОБЩАК Vagos====================================
 	if (dialogid == 990) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 9900, 2, "Деньги", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
@@ -4802,7 +4643,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (listitem == 2) ShowPlayerDialog(playerid, 9902, 2, "Материалы", "{ffdb58}Положить\n{ffdb58}Взять\n{ffdb58}Просмотреть", "Дальше", "Отмена");
 		}
 	}
-	//======================================money=============================================
 	if (dialogid == 9900) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 9904, 1, "Пополнение", "Введите сумму для пополнения.", "Отдать", "Назад");
@@ -4841,7 +4681,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=======================================================Drugs===================================
 	if (dialogid == 9901) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 9906, 1, "Пополнение", "Введите количество наркотиков для пополнения общака.", "Отдать", "Назад");
@@ -4876,7 +4715,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
 		}
 	}
-	//=================================================mats==========================================
 	if (dialogid == 9902) {
 		if (response) {
 			if (listitem == 0) ShowPlayerDialog(playerid, 9908, 1, "Пополнение", "Введите количество материалов для пополнения общака.", "Отдать", "Назад");
@@ -4937,11 +4775,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					new listitems[] = "{ffdb58}Тень\n{ffdb58}Мега\n{ffdb58}Rimshine\n{ffdb58}Провода\n{ffdb58}Классические\n{ffdb58}Твист\n{ffdb58}Резак\n{ffdb58}Переключатель\n{ffdb58}Роща\n{ffdb58}Импорт\n{ffdb58}Доллар\n{ffdb58}Транс\n{ffdb58}Атомный\n{ffdb58}Ахаб\n{ffdb58}Виртуальные\n{ffdb58}Доступ";
 					ShowPlayerDialog(playerid, 6004, DIALOG_STYLE_LIST, "Колёса", listitems, "Выбрать", "<< Назад");
 				}
-				/*	case 1:
-					{
-					new listitems[] = "[0] Race\n[1] Победитель\n[2] Drag\n[3] Альфа\n[4] Чемпион\n[5] Гонки\n[6] Worx\n[7] Ярость\n[8] Alien[Flash]\n[9] X-Flow [Flash]\n[10] Alien[Statum]\n[11] X-Flow [Statum]\n[12] Alien [Султан]\n[13] X-Flow [Султан]";
-					ShowPlayerDialog(playerid, 6005, DIALOG_STYLE_LIST, "Спойлеры", listitems, "Выбрать", "<< Назад");
-					} */
 				case 1 :  //Бампера
 				{
 					new listitems[] = "{ffdb58}Cултан\n{ffdb58}Элегия\n{ffdb58}Flash\n{ffdb58}Jester\n{ffdb58}Uranus\n{ffdb58}Remington\n{ffdb58}Бродвей\n{ffdb58}Саванна\n{ffdb58}Торнадо";
@@ -4982,7 +4815,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			SendClientMessage(playerid, 0xFFFFFFFF, "Номера на автомобиль установлены.");
 		} else {}
 	}
-	//-------------------------------------
 	if (dialogid == 6004) {
 		if (response) {
 			new vehicleid = GetPlayerVehicleID(playerid);
@@ -5122,9 +4954,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return 1;
 		}
 	}
-	//--
-	/*			new listitems[] = "[0] Cултан\n[1] Элегия\n[2] Flash\n[3] Jester\n[4] Uranus\n[5] Remington\n[6] Бродвей\n[7] Саванна\n[8] Торнадо";
-				ShowPlayerDialog(playerid, 6008, DIALOG_STYLE_LIST, "Спойлеры", listitems, "Выбрать", "<< Назад");*/
 	if (dialogid == 1666) {
 		if (response) {
 			if (listitem == 0) {
@@ -5217,7 +5046,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return 1;
 		}
 	}
-	//------- миниокна
 	if (dialogid == 6009) {
 		if (response) {
 			new vehicleid = GetPlayerVehicleID(playerid);
@@ -5813,7 +5641,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return 1;
 		}
 	}
-	//==============================================================================
 	if (dialogid == 9957) {
 		if (response) {
 			if (PlayerInfo[playerid][pCash] < 5000) return error(playerid, " Недостаточно денег.");
@@ -5827,7 +5654,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 		} else { return true; }
 	}
-	//==============================================================================
 	if (dialogid == BANK_SYSTEM) //банк
 	{
 		if (response) {
@@ -6017,7 +5843,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			TogglePlayerControllable(playerid, 1);
 		}
 	}
-	//==============================================================================
 	if (dialogid == 50) {
 		if (response) {
 			if (listitem == 0) {
@@ -6044,7 +5869,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		} else return true;
 	}
-	//===================================[Zip]======================================
 	if (dialogid == 336) {
 		if (response) {
 			if (listitem == 0) {
@@ -6124,7 +5948,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			TogglePlayerControllable(playerid, 1);
 		}
 	}
-	//=================================[victim]=====================================
 	if (dialogid == 335) {
 		if (response) {
 			if (listitem == 0) {
@@ -6240,7 +6063,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			TogglePlayerControllable(playerid, 1);
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 103) {
 		if (response) {
 			if (!PlayerInJob[playerid]) {
@@ -6327,7 +6149,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return true;
 		}
 	}
-	//===============================================================================
 	else if (dialogid == 9991) {
 		if (response) {
 			if (listitem == 0) {
@@ -6400,7 +6221,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//------------------------------------------------------------------------------
 	else if (dialogid == 156) {
 		new pla = GetPVarInt(playerid, "PlayerInvite");
 		if (response) {
@@ -7853,7 +7673,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		} else {}
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 1799) {
 		if (response) {
 			if (listitem == 0) {
@@ -8195,7 +8014,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return 1;
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 436) {
 		if (response) {
 			switch (listitem) {
@@ -8242,7 +8060,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 701) {
 		if (response) {
 			format(string, sizeof(string), "Вы имеете %d$ на вашем счету.", PlayerInfo[playerid][pAccount]);
@@ -8250,7 +8067,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		}
 		ShowPlayerDialog(playerid, 700, 2, "Банкомат", "{ffdb58}Баланс\n{ffdb58}Снять с счета\n{ffdb58}Перевод средств", "Дальше", "Отмена");
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 702) {
 		if (response) {
 			new cashdeposit = strval(inputtext);
@@ -8393,7 +8209,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				Kick(playerid);
 				return 0;
 			}
-			//------------------------------------------------------------------------------
 			SendClientMessage(playerid, COLOR_WHITE, "Добро пожаловать на сервер {00C0FF}YourWorld [RPG].{ffffff}Приятной вам игры.");
 			printf("%s has logged in.", playername2);
 			if (PlayerInfo[playerid][pDonateRank] == 1) SendClientMessage(playerid, COLOR_WHITE, "У тебя {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}");
@@ -8413,7 +8228,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			else gTeam[playerid] = PlayerInfo[playerid][pTeam];
 			format(tmp2, sizeof(tmp2), "~w~ѓO—PO ЊO„A‡O‹A¦’ ~n~~y~   %s", playername2);
 			GameTextForPlayer(playerid, tmp2, 5000, 1);
-			//------------------------------------------------------------------------------
 			for (new i = GetMaxPlayers() - 1; i != -1; i--) {
 				if (!IsPlayerConnected(i)) continue;
 				if (PlayerInfo[i][pMask] == 1) ShowPlayerNameTagForPlayer(playerid, i, 0);
@@ -8739,7 +8553,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 703) {
 		if (response) {
 			new cashdeposit = strval(inputtext);
@@ -8760,7 +8573,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		}
 		ShowPlayerDialog(playerid, 700, 2, "Банкомат", "{ffdb58}Баланс\n{ffdb58}Снять с счета\n{ffdb58}Перевод средств ", "Дальше", "Отмена");
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 704) {
 		if (!response) {
 			ShowPlayerDialog(playerid, 700, 2, "Банкомат", "{ffdb58}Баланс\n{ffdb58}Снять с счета\n{ffdb58}Перевод средств", "Дальше", "Отмена");
@@ -8771,7 +8583,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//==============================================================================
 	else if (dialogid == 10) {
 		if (response) {
 			if (listitem == 0) {
@@ -10832,31 +10643,30 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//==============================================================================
 	else if (dialogid == 21) {
 		if (response) {
 			if (listitem == 0) {
-				ServerGivePlayerWeapons(playerid, 10, 1); //
+				ServerGivePlayerWeapons(playerid, 10, 1);
 				GivePlayerBablo(playerid, -640);
 				PlayerPlaySound(playerid, 1055, 0.0, 0.0, 0.0); //звук при покупке
 			}
 			if (listitem == 1) {
-				ServerGivePlayerWeapons(playerid, 11, 1); //
+				ServerGivePlayerWeapons(playerid, 11, 1);
 				GivePlayerBablo(playerid, -260);
 				PlayerPlaySound(playerid, 1055, 0.0, 0.0, 0.0); //звук при покупке
 			}
 			if (listitem == 2) {
-				ServerGivePlayerWeapons(playerid, 12, 1); //
+				ServerGivePlayerWeapons(playerid, 12, 1);
 				GivePlayerBablo(playerid, -390);
 				PlayerPlaySound(playerid, 1055, 0.0, 0.0, 0.0); //звук при покупке
 			}
 			if (listitem == 3) {
-				ServerGivePlayerWeapons(playerid, 13, 1); //
+				ServerGivePlayerWeapons(playerid, 13, 1);
 				GivePlayerBablo(playerid, -400);
 				PlayerPlaySound(playerid, 1055, 0.0, 0.0, 0.0); //звук при покупке
 			}
 			if (listitem == 4) {
-				ServerGivePlayerWeapons(playerid, 14, 1); //
+				ServerGivePlayerWeapons(playerid, 14, 1);
 				GivePlayerBablo(playerid, -750);
 				PlayerPlaySound(playerid, 1055, 0.0, 0.0, 0.0); //звук при покупке
 			}
@@ -10867,7 +10677,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//==============================================================================
 	else if (dialogid == 9) {
 		if (!response) return false;
 		else {
@@ -11091,7 +10900,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return true;
 		}
 	}
-	//==============================================================================
 	else if (dialogid == 9126) {
 		if (response) OnPlayerCommandText(playerid, "/rentcar");
 		else {
@@ -11149,7 +10957,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return true;
 		}
 	}
-	//------------------------------------------------------------------------------
 	else if (dialogid == 19) {
 		if (response) {
 			new sendername[255];
@@ -11436,7 +11243,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	else if (dialogid == 92) {
 		if (!response) return false;
 		else {
@@ -11452,8 +11258,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					TaxiCall = playerid;
 					return true;
 				}
-
-				//------------------------------------------------------------------------------
 				case 2 :  {
 					if (Medics < 1) return error(playerid, " Сейчас нет медиков При исполнении служебных обязанностей, попробуйте позже.");
 					new plname[255];
@@ -11464,7 +11268,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					MedicCall = playerid;
 					return true;
 				}
-				//------------------------------------------------------------------------------
 				case 3 :  {
 					if (Mechanics < 1) return error(playerid, " Сейчас нет механиков При исполнении служебных обязанностей, попробуйте позже.");
 					new plname[255];
@@ -11478,8 +11281,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-
-	//==============================================================================
 	else if (dialogid == 38) {
 		if (response) {
 			new res[512];
@@ -11578,7 +11379,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//==============================================================================
 	else if (dialogid == 37) {
 		if (response) {
 			new res[512];
@@ -11765,7 +11565,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		} else SetCameraBehindPlayer(playerid);
 		TogglePlayerControllable(playerid, 1);
 	}
-	//==============================================================================
 	if (dialogid == 24) {
 		if (response) {
 			if (listitem == 0 && GetPlayerBablo(playerid) > 180) {
@@ -11786,7 +11585,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 1 && GetPlayerBablo(playerid) > 100) {
 				if (PlayerInfo[playerid][pRope] > 1) return error(playerid, " У вас уже есть верёвка.");
 				if (PlayerInfo[playerid][pTraderPerk] > 0) {
@@ -11813,7 +11611,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 2 && GetPlayerBablo(playerid) > 200) {
 				if (PlayerInfo[playerid][pLevel] < 2) return SendClientMessage(playerid, COLOR_WHITE, "Для совершения этой покупки вам нужно иметь как минимум 2lvl.");
 				if (PlayerInfo[playerid][pCard] >= 1) return error(playerid, " У вас уже есть банковская карточка.");
@@ -11833,7 +11630,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pCard] = 1;
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 3 && GetPlayerBablo(playerid) > 260) {
 				PlayerInfo[playerid][pFuel] = 20;
 				GivePlayerBablo(playerid, -200);
@@ -11850,7 +11646,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				GameTextForPlayer(playerid, "~r~-260$", 5000, 1);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 4 && GetPlayerBablo(playerid) > 65) {
 				if (PlayerInfo[playerid][pDice] >= 1) return error(playerid, " У вас уже есть игральные кости.");
 				if (PlayerInfo[playerid][pTraderPerk] > 0) {
@@ -11879,8 +11674,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /dice-играть в кости.");
 				return true;
 			}
-
-			//------------------------------------------------------------------------------
 			else if (listitem == 5 && GetPlayerBablo(playerid) > 550) {
 				GivePlayerBablo(playerid, -550);
 				ServerGivePlayerWeapons(playerid, 43, 25);
@@ -11896,8 +11689,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				GameTextForPlayer(playerid, "~r~-550$", 5000, 1);
 				return true;
 			}
-
-			//------------------------------------------------------------------------------
 			else if (listitem == 6 && GetPlayerBablo(playerid) > 500) {
 				GivePlayerBablo(playerid, -500);
 				format(string, sizeof(string), "~r~-%d$", 500);
@@ -11916,7 +11707,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 7 && GetPlayerBablo(playerid) > 10) {
 				if (Groceries[playerid][pChickens] >= 3) {
 					error(playerid, " У вас слишком много куриц,сначала приготовьте несколько из них.");
@@ -11951,7 +11741,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				Groceries[playerid][pChicken] += rand;
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 8 && GetPlayerBablo(playerid) > 10) {
 				if (Groceries[playerid][pHamburgers] >= 3) return error(playerid, " У вас слишком много гамбургеров, сначала приговьте несколько из них.");
 				if (PlayerInfo[playerid][pTraderPerk] > 0) {
@@ -11983,7 +11772,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				Groceries[playerid][pHamburger] += rand;
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 9 && GetPlayerBablo(playerid) > 10) {
 				if (Groceries[playerid][pPizzas] >= 3) return error(playerid, " У вас слишком много пицц, сначала приговьте несколько из них.");
 				if (PlayerInfo[playerid][pTraderPerk] > 0) {
@@ -12012,7 +11800,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				Groceries[playerid][pPizza] += rand;
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (listitem == 10 && GetPlayerBablo(playerid) > 100) {
 				if (PlayerInfo[playerid][pBancka] > 0) return error(playerid, "У вас уже есть баночка.");
 				if (PlayerInfo[playerid][pFBancka] > 0) return error(playerid, "У вас уже есть наполненная баночка!Продайтее ее.");
@@ -12081,18 +11868,13 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	//==============================================================================
 	if (dialogid == 25) {
 		if (response) {
-
-			//------------------------------------------------------------------------------
 			if (listitem == 1) {
 				ShowPlayerDialog(playerid, 26, DIALOG_STYLE_INPUT, "Продать рыбу", "{ffdb58}Введите номер рыбы,\n{ffdb58}Kоторую вы хотите продать", "Ок", "Отмена");
 			}
-			//------------------------------------------------------------------------------
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 26) {
 		if (response) {
 			if (!strlen(inputtext)) {
@@ -12237,7 +12019,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			return true;
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (dialogid == 28) {
 		if (response) {
 			if (!strlen(inputtext)) {
@@ -12567,10 +12348,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			Question9[playerid] = 0;
 			Question10[playerid] = 0;
 			Owibka[playerid] = 0;
-			//   PlayerInfo[playerid][pNeSdal] = 1;
 			return true;
 		}
-		//------------------------------------------------------------------------------
 		if (Question1[playerid] == 1) {
 			if (listitem == 4) {
 				EmptyMessages(playerid, 5);
@@ -12601,7 +12380,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//	PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12619,7 +12397,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question2[playerid] == 1) {
 			if (listitem == 2) {
 				EmptyMessages(playerid, 5);
@@ -12650,7 +12427,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//    PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12668,7 +12444,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question3[playerid] == 1) {
 			if (listitem == 2) {
 				EmptyMessages(playerid, 5);
@@ -12699,7 +12474,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//  PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12717,7 +12491,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question4[playerid] == 1) {
 			if (listitem == 5) {
 				EmptyMessages(playerid, 5);
@@ -12748,7 +12521,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//   PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12766,7 +12538,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question5[playerid] == 1) {
 			if (listitem == 2) {
 				EmptyMessages(playerid, 5);
@@ -12797,7 +12568,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//	PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12815,7 +12585,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question6[playerid] == 1) {
 			if (listitem == 2) {
 				EmptyMessages(playerid, 5);
@@ -12846,7 +12615,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//	PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12864,7 +12632,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question7[playerid] == 1) {
 			if (listitem == 5) {
 				EmptyMessages(playerid, 5);
@@ -12895,7 +12662,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//	PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12913,7 +12679,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question8[playerid] == 1) {
 			if (listitem == 4) {
 				EmptyMessages(playerid, 5);
@@ -12944,7 +12709,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//	PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -12962,7 +12726,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question9[playerid] == 1) {
 			if (listitem == 3) {
 				EmptyMessages(playerid, 5);
@@ -12993,7 +12756,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//	PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -13004,7 +12766,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (Question10[playerid] == 1) {
 			if (listitem == 5) {
 				EmptyMessages(playerid, 5);
@@ -13030,7 +12791,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Question9[playerid] = 0;
 					Question10[playerid] = 0;
 					Owibka[playerid] = 0;
-					//  PlayerInfo[playerid][pNeSdal] = 1;
 					return false;
 				} else {
 					Owibka[playerid] = 1;
@@ -13063,7 +12823,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka[playerid] = 10;
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13081,7 +12840,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13098,7 +12856,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					GivePlayerBablo(playerid, -10);
@@ -13116,7 +12873,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -2);
@@ -13130,7 +12886,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					}
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13166,7 +12921,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka[playerid] = 10;
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13184,7 +12938,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13201,7 +12954,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					GivePlayerBablo(playerid, -10);
@@ -13219,7 +12971,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -125);
@@ -13234,7 +12985,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka4[playerid] = 8;
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13270,7 +13020,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka[playerid] = 10;
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13288,7 +13037,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13305,7 +13053,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					GivePlayerBablo(playerid, -10);
@@ -13323,7 +13070,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -125);
@@ -13338,7 +13084,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka4[playerid] = 8;
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13374,7 +13119,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka[playerid] = 10;
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13392,7 +13136,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13409,7 +13152,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					GivePlayerBablo(playerid, -10);
@@ -13427,7 +13169,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -125);
@@ -13442,7 +13183,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka4[playerid] = 8;
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13478,7 +13218,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka[playerid] = 10;
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13496,7 +13235,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13513,7 +13251,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					GivePlayerBablo(playerid, -10);
@@ -13531,7 +13268,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -125);
@@ -13546,7 +13282,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka4[playerid] = 8;
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13582,7 +13317,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka[playerid] = 10;
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13600,7 +13334,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13617,7 +13350,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					GivePlayerBablo(playerid, -10);
@@ -13635,7 +13367,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -125);
@@ -13650,7 +13381,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka4[playerid] = 8;
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13688,7 +13418,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					SetPlayerSpecialAction(playerid, 21);
 					napitok = "пиво";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 1) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 3;
@@ -13706,7 +13435,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka1[playerid] = 10;
 					napitok = "водку";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 2) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_BEER);
 					PlayerDrunk[playerid] += 1;
@@ -13723,7 +13451,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka2[playerid] = 10;
 					napitok = "коктейль";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 3) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_WINE);
 					PlayerDrunk[playerid] += 5;
@@ -13740,7 +13467,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka3[playerid] = 10;
 					napitok = "Виски";
 				}
-				//------------------------------------------------------------------------------
 				else if (listitem == 4) {
 					SetPlayerSpecialAction(playerid, SPECIAL_ACTION_DRINK_SPRUNK);
 					GivePlayerBablo(playerid, -125);
@@ -13755,7 +13481,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					Butilka4[playerid] = 8;
 					napitok = "Молоко";
 				}
-				//------------------------------------------------------------------------------
 				else {
 					SendClientMessage(playerid, COLOR_WHITE, "Бармен: Извините, но я не слышал о таком напитке.");
 					return true;
@@ -13770,26 +13495,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	/*	if(dialogid == 531)
-		{
-			if(response)
-			{
-				if(strlen(inputtext) < 1 || strlen(inputtext) > MAX_PLAYER_NAME) return ShowPlayerDialog(playerid,531, 1, "UnLeader", "Введите ник игрока для снятия его с поста лидера:", "Принять", "Отмена");
-				format(query, sizeof(query), "SELECT * FROM playerinfo WHERE Name = '%s'", inputtext);
-				mysql_function_query(1, query, false, "", "");
-				mysql_store_result();
-				if(!mysql_num_rows())
-				{
-					ShowPlayerDialog(playerid,531, 1, "UnLeader", "Введите ник игрока для снятия его с поста лидера:", "Принять", "Отмена");
-					return SendClientMessage(playerid, COLOR_WHITE, "Данный игрок не найден в базе данных.");
-				}
-				format(query,sizeof(query),"UPDATE `playerinfo` SET `Leader`=0 WHERE `Name`='%s' LIMIT 1",inputtext);
-				mysql_function_query(1, query, false, "", "");
-			}
-			else {}
-		} */
-
-	//==============================================================================
 	if (dialogid == 3) {
 		if (response) {
 			PlayerInfo[playerid][pSex] = 1;
@@ -13801,7 +13506,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		new listitems[] = "Los-Santos\nSan-Fierro\nLas-Venturas";
 		ShowPlayerDialog(playerid, 4, DIALOG_STYLE_LIST, "Выберите свой город", listitems, "Ок", "Назад");
 	}
-	//------------------------------------------------------------------------------
 	else if (dialogid == 4) {
 		if (response) {
 			if (listitem == 0) {
@@ -13840,13 +13544,13 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 	printf("диалог %d", vasya);
 	return true;
 }
-//==============================================================================
+
 EmptyMessages(playerid, count) {
 	for (new i = 0; i < count; i++) {
 		SendClientMessage(playerid, 0, "\n");
 	}
 }
-//==============================================================================
+
 public OnPlayerUpdate(playerid) {
 	if (IsPlayerNPC(playerid)) return true;
 	if (IsPlayerInRangeOfPoint(playerid, 1, 1544.1162, -1353.5121, 329.4740)) return GivePlayerWeapon(playerid, 46, 1);
@@ -13932,16 +13636,7 @@ public OnPlayerUpdate(playerid) {
 	}
 	return true;
 }
-//==============================================================================
-ClearCK(ck) {
-	new string[MAX_PLAYER_NAME];
-	strmid(CKInfo[ck][cSendername], "нет", 0, strlen(string), 255);
-	strmid(CKInfo[ck][cGiveplayer], "нет", 0, strlen(string), 255);
-	CKInfo[ck][cUsed] = 0;
-	SaveCK();
-	return true;
-}
-//==============================================================================
+
 ClearMarriage(playerid) {
 	if (IsPlayerConnected(playerid)) {
 		new string[MAX_PLAYER_NAME];
@@ -13950,7 +13645,7 @@ ClearMarriage(playerid) {
 	}
 	return true;
 }
-//==============================================================================
+
 ClearPaper(paper) {
 	new string[MAX_PLAYER_NAME];
 	PaperInfo[paper][PaperUsed] = 0;
@@ -13966,7 +13661,7 @@ ClearPaper(paper) {
 	SavePapers();
 	return true;
 }
-//==============================================================================
+
 ClearCrime(playerid) {
 	if (IsPlayerConnected(playerid)) {
 		new string[MAX_PLAYER_NAME];
@@ -14158,7 +13853,7 @@ ClearGroceries(playerid) {
 	}
 	return true;
 }
-//==============================================================================
+
 public OnPlayerDisconnect(playerid, reason) {
 	new string[64];
 	SavePlayer(playerid);
@@ -14258,11 +13953,9 @@ public OnPlayerDisconnect(playerid, reason) {
 		if (PlayerInfo[playerid][pJob] == 11) {
 			if (JobDuty[playerid] == 1) { Medics -= 1; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[playerid][pJob] == 7) {
 			if (JobDuty[playerid] == 1) { Mechanics -= 1; }
 		}
-		//------------------------------------------------------------------------------
 	}
 	return true;
 }
@@ -14279,7 +13972,6 @@ GunSpawn(playerid) {
 		OnWeapon[playerid] = 0;
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2) // ФБР
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14291,7 +13983,6 @@ GunSpawn(playerid) {
 		OnWeapon[playerid] = 0;
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 3 || PlayerInfo[playerid][pLeader] == 3) // Армия
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14304,7 +13995,6 @@ GunSpawn(playerid) {
 		OnWeapon[playerid] = 0;
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) // МЧС
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14312,13 +14002,11 @@ GunSpawn(playerid) {
 		}
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 11 || PlayerInfo[playerid][pLeader] == 11) // Lis
 	{
 		ServerGivePlayerWeapons(playerid, 24, 50); //
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 5 || PlayerInfo[playerid][pLeader] == 5) //LaCosaNostra spawn
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14327,7 +14015,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); // golfbit
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 6 || PlayerInfo[playerid][pLeader] == 6) // Yakuza spawn
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14335,8 +14022,7 @@ GunSpawn(playerid) {
 		}
 		ServerGivePlayerWeapons(playerid, 8, 1); // katana
 		return 1;
-	}
-	//------------------------------------------------------------------------------
+	}	
 	if (PlayerInfo[playerid][pMember] == 8 || PlayerInfo[playerid][pLeader] == 8) //Hitman spawn
 	{
 		ServerGivePlayerWeapons(playerid, 4, 1); //    Нож
@@ -14345,7 +14031,6 @@ GunSpawn(playerid) {
 		}
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 9 || PlayerInfo[playerid][pLeader] == 9) // РЕПОРТЁРЫ
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14354,14 +14039,12 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 43, 60); // Фотоаппарат
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 10 || PlayerInfo[playerid][pLeader] == 10) // ТАКСИ СФ
 	{
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		ServerGivePlayerWeapons(playerid, 24, 40);
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 12 || PlayerInfo[playerid][pLeader] == 12) //Street Racer
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14370,7 +14053,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 13 || PlayerInfo[playerid][pLeader] == 13) // Grove Street Gang
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14379,7 +14061,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 14 || PlayerInfo[playerid][pLeader] == 14) //El Coronos
 	{
 
@@ -14389,7 +14070,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 19 || PlayerInfo[playerid][pLeader] == 19) //Rifa spawn
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14398,7 +14078,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 15 || PlayerInfo[playerid][pLeader] == 15) //Los Santos Vagos
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14407,7 +14086,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 16 || PlayerInfo[playerid][pLeader] == 16) //The Ballas Gang
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14416,7 +14094,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 5, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 18 || PlayerInfo[playerid][pLeader] == 18) //Triads
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14425,7 +14102,6 @@ GunSpawn(playerid) {
 		ServerGivePlayerWeapons(playerid, 8, 1); //Baseball Bat
 		return 1;
 	}
-	//------------------------------------------------------------------------------
 	if (PlayerInfo[playerid][pMember] == 20 || PlayerInfo[playerid][pLeader] == 20) // Russian Mafia Spawn
 	{
 		if (PlayerInfo[playerid][pGunLic] > 0) {
@@ -14436,7 +14112,7 @@ GunSpawn(playerid) {
 	}
 	return true; //Обновить
 }
-//==============================================================================
+
 SetPlayerSpawn(playerid) {
 	if (IsPlayerNPC(playerid)) return true;
 	SetPVarInt(playerid, "K_Times", 0);
@@ -14497,7 +14173,6 @@ SetPlayerSpawn(playerid) {
 				return true;
 			}
 		}
-		//==============================================================================
 		if (flat != 0) {
 			if (SpawnChange[playerid]) {
 				SetPlayerToTeamColor(playerid);
@@ -14508,7 +14183,6 @@ SetPlayerSpawn(playerid) {
 				return true;
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 1 || PlayerInfo[playerid][pLeader] == 1) // Полиция
 		{
 			SetPlayerPos(playerid, 1530.8369, -1664.8872, 6.2188);
@@ -14525,7 +14199,6 @@ SetPlayerSpawn(playerid) {
 			OnWeapon[playerid] = 0;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2) // ФБР
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14543,7 +14216,6 @@ SetPlayerSpawn(playerid) {
 			OnWeapon[playerid] = 0;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 3 || PlayerInfo[playerid][pLeader] == 3) // Армия
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14561,7 +14233,6 @@ SetPlayerSpawn(playerid) {
 			OnWeapon[playerid] = 0;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) // МЧС
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14575,7 +14246,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 0;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 11 || PlayerInfo[playerid][pLeader] == 11) // Lis
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14586,7 +14256,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 3;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 5 || PlayerInfo[playerid][pLeader] == 5) //LaCosaNostra spawn
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14602,7 +14271,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 5;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 6 || PlayerInfo[playerid][pLeader] == 6) // Yakuza spawn
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14616,7 +14284,6 @@ SetPlayerSpawn(playerid) {
 			SetPlayerVirtualWorld(playerid, 4);
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 8 || PlayerInfo[playerid][pLeader] == 8) //Hitman spawn
 		{
 			SetPlayerPos(playerid, -1111.8601, -1015.9464, 129.2188);
@@ -14630,7 +14297,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 0;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 9 || PlayerInfo[playerid][pLeader] == 9) // РЕПОРТЁРЫ
 		{
 			SetPlayerPos(playerid, 739.65, -1346.59, 13.51);
@@ -14642,7 +14308,6 @@ SetPlayerSpawn(playerid) {
 			ServerGivePlayerWeapons(playerid, 43, 60); // Фотоаппарат
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 10 || PlayerInfo[playerid][pLeader] == 10) // ТАКСИ СФ
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14655,7 +14320,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 0;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 12 || PlayerInfo[playerid][pLeader] == 12) //Street Racer
 		{
 			SetPlayerPos(playerid, 2559.6538, -1286.3639, 1060.9844);
@@ -14669,7 +14333,6 @@ SetPlayerSpawn(playerid) {
 			SetPlayerVirtualWorld(playerid, 5);
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 13 || PlayerInfo[playerid][pLeader] == 13) // Grove Street Gang
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14683,7 +14346,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 3;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 14 || PlayerInfo[playerid][pLeader] == 14) //El Coronos
 		{
 
@@ -14699,7 +14361,6 @@ SetPlayerSpawn(playerid) {
 			SetPlayerVirtualWorld(playerid, 10);
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 19 || PlayerInfo[playerid][pLeader] == 19) //Rifa spawn
 		{
 
@@ -14714,7 +14375,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 3;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 15 || PlayerInfo[playerid][pLeader] == 15) //Los Santos Vagos
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14729,7 +14389,6 @@ SetPlayerSpawn(playerid) {
 			SetPlayerVirtualWorld(playerid, 1);
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 16 || PlayerInfo[playerid][pLeader] == 16) //The Ballas Gang
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14743,7 +14402,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 1;
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 18 || PlayerInfo[playerid][pLeader] == 18) //Triads
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14758,7 +14416,6 @@ SetPlayerSpawn(playerid) {
 			SetPlayerVirtualWorld(playerid, 2);
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 20 || PlayerInfo[playerid][pLeader] == 20) // Russian Mafia Spawn
 		{
 			SetPlayerToTeamColor(playerid);
@@ -14773,7 +14430,6 @@ SetPlayerSpawn(playerid) {
 			SetPlayerVirtualWorld(playerid, 4);
 			return 1;
 		}
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[playerid][pMember] == 143 || PlayerInfo[playerid][pLeader] == 143) {
 			SetPlayerToTeamColor(playerid);
 			SetPlayerPos(playerid, 1742.5848, -1905.4375, 5.8248);
@@ -14786,7 +14442,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 0;
 			return true;
 		}
-		//------------------------------------------------------------------------------
 		if ((gTeam[playerid]) == 1) {
 			SetPlayerToTeamColor(playerid);
 			rand = random(sizeof(gMedPlayerSpawns));
@@ -14796,7 +14451,6 @@ SetPlayerSpawn(playerid) {
 			PlayerInfo[playerid][pInt] = 0;
 			return true;
 		} else {
-			//------------------------------------------------------------------------------
 			SetPlayerToTeamColor(playerid);
 			if (PlayerInfo[playerid][pOrigin] == 1) // Los_Santos
 			{
@@ -14845,7 +14499,7 @@ DropPlayerMoney(playerid) {
 	SetTimerEx("DeletePickup", 10000, false, "d", pickmoney);
 	return 1;
 }
-//==============================================================================
+
 public OnPlayerDeath(playerid, killerid, reason) {
 	if (IsPlayerNPC(playerid)) return true;
 	if (GetPVarInt(playerid, "K_Times") > gettime()) return Kick(playerid);
@@ -14910,7 +14564,6 @@ public OnPlayerDeath(playerid, killerid, reason) {
 			if (MafiaZoneWar[j] == true && MafiaZoneFraction_[j] == member_) MafiaZoneDeath_[j]++;
 		}
 	}
-	//=============================================================================
 	if (PlayerInfo[killerid][pJailed] == 0) {
 		if (IsACop(killerid)) {} else {
 			if (ZonaKill[killerid] == 1 || NaCS[playerid] > 0) return false;
@@ -14921,11 +14574,9 @@ public OnPlayerDeath(playerid, killerid, reason) {
 			SetPlayerWantedLevel(killerid, PlayerInfo[killerid][pWanted]);
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (killerid != 255) {
 		if (GetPlayerState(killerid) == 2) return SendClientMessage(killerid, COLOR_YELLOW, "Внимание! DB запрещёно! Не повторяйте этого.");
 	}
-	//------------------------------------------------------------------------------
 	if (reason == 38) {
 		new kstring[128];
 		new kickname[MAX_PLAYER_NAME];
@@ -14994,7 +14645,7 @@ public OnPlayerDeath(playerid, killerid, reason) {
 	SetPlayerColor(playerid, COLOR_GRAD2);
 	return true;
 }
-//==============================================================================
+
 public OnPlayerSpawn(playerid) {
 	SetPlayerSkin(playerid, PlayerInfo[playerid][pChar]);
 	gCarLock[fura[playerid]] = 0;
@@ -15010,7 +14661,6 @@ public OnPlayerSpawn(playerid) {
 	checkk[playerid] = 0;
 	ChekPoint[playerid] = 0;
 	SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
-	//	PlayerPlaySound(playerid,1188, 0,0,0);
 	ResetPlayerMoney(playerid);
 	GivePlayerMoney(playerid, PlayerInfo[playerid][pCash]);
 	GunCheckTime[playerid] = 5;
@@ -15081,11 +14731,6 @@ public OnPlayerSpawn(playerid) {
 	if (gTeam[playerid] == 4) {
 		gTeam[playerid] = 3;
 	}
-	/*	if(gPlayerLogged[playerid] == 0)
-	{
-		error(playerid," Этот сервер требует авторизации! (Kicked)");
-		Kick(playerid);
-	} */
 	if (PlayerInfo[playerid][pReg] == 0) {
 		error(playerid, " Этот сервер требует регистрации! (Kicked)");
 		Kick(playerid);
@@ -15141,17 +14786,7 @@ public OnPlayerSpawn(playerid) {
 	}
 	return true;
 }
-//============================[Лог OOC (/o) чата]===============================
-SaveOOC(string[]) //лог-чата
-{
-	new config[256];
-	format(config, sizeof(config), "%s\n", string);
-	new File:CFile;
-	CFile = fopen("[logs]/OOCChat.txt", io_append);
-	fwrite(CFile, config);
-	fclose(CFile);
-}
-//==============================================================================
+
 CKLog(string[]) {
 	new entry[256];
 	format(entry, sizeof(entry), "%s\n", string);
@@ -15160,7 +14795,7 @@ CKLog(string[]) {
 	fwrite(hFile, entry);
 	fclose(hFile);
 }
-//==============================================================================
+
 PayLog(string[]) {
 	new entry[256];
 	format(entry, sizeof(entry), "%s\n", string);
@@ -15169,7 +14804,7 @@ PayLog(string[]) {
 	fwrite(hFile, entry);
 	fclose(hFile);
 }
-//==============================================================================
+
 KickLog(string[]) {
 	new entry[256];
 	format(entry, sizeof(entry), "%s\n", string);
@@ -15178,7 +14813,7 @@ KickLog(string[]) {
 	fwrite(hFile, entry);
 	fclose(hFile);
 }
-//==============================================================================
+
 BanLog(string[]) {
 	new entry[256];
 	format(entry, sizeof(entry), "%s\n", string);
@@ -15551,7 +15186,6 @@ public OnPlayerEnterCheckpoint(playerid) {
 		PlayerInfo[playerid][pCleanTime] = 3000;
 		return true;
 	}
-	//==============================================================================
 	if (IsPlayerInRangeOfPoint(playerid, 2.0, 2230.8132324219, -2285.7043457031, 13.531787872314)) {
 		Meshok[playerid] = 1;
 		ApplyAnimation(playerid, "CARRY", "crry_prtial", 4.1, 0, 1, 1, 1, 1);
@@ -15567,7 +15201,6 @@ public OnPlayerEnterCheckpoint(playerid) {
 		SendClientMessage(playerid, COLOR_WHITE, string);
 		SetPlayerCheckpoint(playerid, 2230.8132324219, -2285.7043457031, 13.531787872314, 2.0);
 	}
-	//==============================================================================
 	new tmpcar = GetPlayerVehicleID(playerid);
 	if (CP[playerid] == 160) {
 		if (IsALicCar(tmpcar)) {
@@ -15797,7 +15430,6 @@ public OnPlayerEnterCheckpoint(playerid) {
 			return true;
 		}
 	}
-	//==============================================================================
 	if (JobCis[playerid] == 1) {
 		new Veh = GetPlayerVehicleID(playerid);
 		new carid = GetPlayerVehicleID(playerid);
@@ -15824,7 +15456,6 @@ public OnPlayerEnterCheckpoint(playerid) {
 			}
 		}
 	}
-	//==============================================================================
 	if (TaxiCallTime[playerid] > 0 && TaxiAccepted[playerid] < 999) {
 		TaxiAccepted[playerid] = 999;
 		GameTextForPlayer(playerid, "~w~Reached destination", 5000, 1);
@@ -16734,7 +16365,7 @@ UseBackpack(playerid) {
 			SetPlayerAttachedObject(playerid, 1, 3026, 1, -0.118999, -0.050000, -0.000000, 0.000000, 0.000000, 0.000000, 1.052999, 0.896999, 0.982001);
 	}
 }
-//==============================================================================
+
 public OnPlayerPickUpPickup(playerid, pickupid) {
 	new string[144];
 	if (pickupid == vagoskamera) {
@@ -16840,7 +16471,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		DestroyPickup(keys);
 		if (IsACop(playerid)) {
 			SendClientMessage(playerid, COLOR_WHITE, "Вы вернули государству украденные деньги.");
-			//GivePlayerBablo(playerid,50000);
 			DestroyPickup(keys);
 			keyss[playerid] = 0;
 			RemovePlayerAttachedObject(playerid, 1);
@@ -16942,7 +16572,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		if (!PlayerOnJob[playerid]) ShowPlayerDialog(playerid, DIALOG_STARTJOB, DIALOG_STYLE_MSGBOX, "{FFFFFF}Работа шахтёра", "{FFFFFF}Вы согласны устроиться на работу {00C0FF}шахтёра?", "Да", "Нет");
 		else ShowPlayerDialog(playerid, DIALOG_ENDJOB, DIALOG_STYLE_MSGBOX, "{FFFFFF}Работа шахтёра", "{FFFFFF}Вы согласны уволится с работы {00C0FF}шахтёра?", "Да", "Нет");
 	}
-	//==============================================================================
 	else if (pickupid == gmedicines) {
 		if (!IsAMember(playerid)) return SendClientMessage(playerid, COLOR_GREY, " Вы не бандит.");
 		if (GetPVarInt(playerid, "Ukral") > gettime()) return SendClientMessage(playerid, COLOR_WHITE, "Вы уже крали медикаменты!Украсть можно раз в 30 минут.");
@@ -17085,15 +16714,13 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerPos(playerid, -1983.74, 138.13, 27.69);
 		SetPlayerFacingAngle(playerid, 85.3070);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter5) {
-		SetPlayerPos(playerid, 1552.3231, -1674.6780, 16.1953); //
+		SetPlayerPos(playerid, 1552.3231, -1674.6780, 16.1953);
 		GameTextForPlayer(playerid, "~y~Los Santos", 5000, 1);
 		SetPlayerFacingAngle(playerid, 89.8316);
 		SetPlayerInterior(playerid, 0);
 		PlayerInfo[playerid][pInt] = 0;
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter14) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17102,7 +16729,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 0);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter15) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17111,7 +16737,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 1);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter17) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17120,7 +16745,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 10;
 		SetPlayerVirtualWorld(playerid, 0);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter18) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17129,7 +16753,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 2);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter19) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17138,7 +16761,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 1);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter20) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17147,7 +16769,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 5;
 		SetPlayerVirtualWorld(playerid, 1);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter21) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17156,7 +16777,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 5;
 		SetPlayerVirtualWorld(playerid, 2);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter23) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17165,7 +16785,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 3);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter24) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17174,7 +16793,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 2);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter25) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17183,7 +16801,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 4);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter26) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17192,7 +16809,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 3);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter27) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17201,7 +16817,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 4);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter28) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17210,7 +16825,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 5);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter29) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17219,7 +16833,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 4);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter30) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17228,7 +16841,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 5);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter31) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17237,7 +16849,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 6);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter32) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17246,7 +16857,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 7);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter33) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17255,7 +16865,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 6);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter34) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17264,7 +16873,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 5);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter35) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17273,7 +16881,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 6);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter36) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17282,7 +16889,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 7);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter37) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17291,7 +16897,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 7);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter76) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17300,7 +16905,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 8);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter77) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17309,7 +16913,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 9);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter78) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17318,7 +16921,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 10);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter79) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17327,7 +16929,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 8);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter80) {
 		SetPlayerPos(playerid, 372.1661, -131.6861, 1001.4922); // Pizza
 		SetPlayerFacingAngle(playerid, 0.3264);
@@ -17336,7 +16937,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDPIZA");
 		SetPlayerVirtualWorld(playerid, 11);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter81) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17345,7 +16945,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 9);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter82) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17354,7 +16953,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 8);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter83) {
 		SetPlayerPos(playerid, 365.5280, -9.6964, 1001.8516); // Clucken Bell
 		SetPlayerFacingAngle(playerid, 354.9762);
@@ -17363,7 +16961,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDCHICK");
 		SetPlayerVirtualWorld(playerid, 10);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter84) {
 		SetPlayerPos(playerid, 364.4679, -73.8313, 1001.5078); // Burger Shot
 		SetPlayerFacingAngle(playerid, 302.6491);
@@ -17372,7 +16969,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerShopName(playerid, "FDBURG");
 		SetPlayerVirtualWorld(playerid, 9);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter41) {
 		SetPlayerPos(playerid, 2307.8792, -1643.7610, 14.8270);
 		GameTextForPlayer(playerid, "~y~Los Santos", 5000, 3);
@@ -17380,7 +16976,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerInterior(playerid, 0);
 		PlayerInfo[playerid][pInt] = 0;
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter46) {
 		SetPlayerPos(playerid, -25.1326, -139.0670, 1003.5469);
 		SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : {00C0FF}/buy {FFFFFF} - купить, {00C0FF}/sell{FFFFFF}-продать.");
@@ -17388,7 +16983,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerInterior(playerid, 16);
 		PlayerInfo[playerid][pInt] = 16;
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter47) {
 		SetPlayerPos(playerid, -2441.9749, 752.0135, 35.1786);
 		GameTextForPlayer(playerid, "~y~buy-buy", 5000, 3);
@@ -17396,7 +16990,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerInterior(playerid, 0);
 		PlayerInfo[playerid][pInt] = 0;
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter48) {
 		SetPlayerPos(playerid, -25.6821, -185.8139, 1003.5469);
 		SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : {00C0FF}/buy {FFFFFF} - купить,{00C0FF}/sell{FFFFFF}-продать.");
@@ -17404,7 +16997,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerInterior(playerid, 17);
 		PlayerInfo[playerid][pInt] = 17;
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter49) {
 		SetPlayerPos(playerid, 2117.1863, 899.2179, 11.1797);
 		GameTextForPlayer(playerid, "~y~buy-buy", 5000, 3);
@@ -17412,7 +17004,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		SetPlayerInterior(playerid, 0);
 		PlayerInfo[playerid][pInt] = 0;
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter85) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17421,7 +17012,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 1);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter86) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17430,7 +17020,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 2);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter87) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17439,7 +17028,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 3);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter88) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17448,7 +17036,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 4);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter89) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17457,7 +17044,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 5);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter90) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17466,7 +17052,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 6);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter91) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17475,7 +17060,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 7);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter98) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17484,7 +17068,6 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 		PlayerInfo[playerid][pInt] = 6;
 		SetPlayerVirtualWorld(playerid, 8);
 	}
-	//------------------------------------------------------------------------------
 	else if (pickupid == enter99) {
 		SetPlayerPos(playerid, -27.3786, -56.2203, 1003.5469); // Магазин 24/7
 		SetPlayerFacingAngle(playerid, 13.3607);
@@ -17495,7 +17078,7 @@ public OnPlayerPickUpPickup(playerid, pickupid) {
 	}
 	return true;
 }
-//==============================================================================
+
 public OnPlayerStateChange(playerid, newstate, oldstate) {
 	new newcar = GetPlayerVehicleID(playerid);
 	if (IsPlayerNPC(playerid)) return true; // Подключение Ботов
@@ -17584,7 +17167,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 			}
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (newstate == PLAYER_STATE_WASTED) {
 		if (PlayerInfo[playerid][pWanted] >= 1) {
 			new price = PlayerInfo[playerid][pWanted] * 1000;
@@ -17603,7 +17185,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 					}
 				}
 			}
-			//------------------------------------------------------------------------------
 			if (count == 1) {
 				GivePlayerBablo(playerid, -price);
 				PlayerInfo[playerid][pWantedDeaths] += 1;
@@ -17619,7 +17200,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 			}
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (newstate == PLAYER_STATE_DRIVER) {
 		new model = GetVehicleModel(newcar);
 		new oldcar = gLastCar[playerid];
@@ -17655,7 +17235,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				CarEngine[carid] = 1;
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (model >= 596 && model <= 599) {
 			new gun, ammo;
 			GetPlayerWeaponData(playerid, 3, gun, ammo);
@@ -17664,14 +17243,12 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 			PlayerInfo[playerid][pAmmo3] += 5;
 		}
 
-		//------------------------------------------------------------------------------
 		if (IsABoat(newcar)) {
 			if (PlayerInfo[playerid][pBoatLic] < 1) {
 				RemovePlayerFromVehicle(playerid);
 				ShowPlayerDialog(playerid, 12, DIALOG_STYLE_MSGBOX, "{00C0FF}YourWorld :{FFFFFF}", "1\tУ Вас нет лицензии на управление водным транспортом.\n2\tВведите /kpk и следуйте в АвтоШколу.", " ок ", "");
 			}
 		}
-		//==============================================================================
 		if (IsAMotoVeh(newcar)) {
 			if (PlayerInfo[playerid][pMotoLic] < 1) {
 				if (TakingLesson[playerid] == 1) {} else {
@@ -17682,7 +17259,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 
 			}
 		}
-		//------------------------------------------------------------------------------
 		else if (IsAPlane(newcar)) {
 			if (PlayerInfo[playerid][pFlyLic] < 1) {
 				if (TakingLesson[playerid] == 1) {} else {
@@ -17691,7 +17267,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				}
 			}
 		}
-		//------------------------------------------------------------------------------
 		else if (IsALicCar(newcar)) {
 			if (PlayerInfo[playerid][pCarLic] < 1) {
 				if (Practice[playerid] == 1) {
@@ -17729,25 +17304,21 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /delivery.");
 			} else { RemovePlayerFromVehicle(playerid); }
 		}
-		//------------------------------------------------------------------------------
 		else if (IsAnAmbulance(newcar)) {
 			if (PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) {} else { RemovePlayerFromVehicle(playerid); }
 		}
-		//------------------------------------------------------------------------------
 		if (IsATruck(newcar)) {
 			format(string, sizeof(string), "Продукты: %d/%d", PlayerHaul[newcar][pLoad], PlayerHaul[newcar][pCapasity]);
 			SendClientMessage(playerid, COLOR_WHITE, string);
 			SendClientMessage(playerid, COLOR_WHITE, "Вы можете доставлять продукты по бизнесам.");
 			SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /load[тоннаж], /buyprods[купить продукты], /sellprods[продать продукты].");
 		}
-		//------------------------------------------------------------------------------
 		if (IsTrailerAttachedToVehicle(newcar)) {
 			SendClientMessage(playerid, COLOR_WHITE, "Трейлер присоединен.");
 		}
-		//------------------------------------------------------------------------------
-		if (newcar >= RusMafLimo[0] && newcar <= RusMafLimo[1]) //
+		if (newcar >= RusMafLimo[0] && newcar <= RusMafLimo[1])
 		{
-			if (PlayerInfo[playerid][pMember] == 20 || PlayerInfo[playerid][pLeader] == 20) //
+			if (PlayerInfo[playerid][pMember] == 20 || PlayerInfo[playerid][pLeader] == 20)
 			{
 				if (PlayerInfo[playerid][pRank] < 3 && PlayerInfo[playerid][pLeader] != 20) {
 					error(playerid, " Вам нужен 3 ранг чтобы управлять этим видом транспорта.");
@@ -17760,7 +17331,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				error(playerid, "  У тебя нет ключей от этого автомобиля.");
 			}
 		}
-		//------------------------------------------------------------------------------
 		else if (GetVehicleModel(newcar) == 525) //      Механики
 		{
 			if (PlayerInfo[playerid][pJob] == 7) {} else {
@@ -17787,7 +17357,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				TogglePlayerControllable(playerid, 1);
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (newcar >= Vagos[0] && newcar <= Vagos[1]) //        Транспорт Los Santos Vagos
 		{
 			if (PlayerInfo[playerid][pMember] == 15 || PlayerInfo[playerid][pLeader] == 15) {} else {
@@ -17795,7 +17364,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				error(playerid, " У тебя нет ключей от этого автомобиля.");
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (newcar >= Groov[0] && newcar <= Groov[1]) //         Транспорт Грув
 		{
 			if (PlayerInfo[playerid][pMember] == 13 || PlayerInfo[playerid][pLeader] == 13) {} else {
@@ -17911,7 +17479,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				RemovePlayerFromVehicle(playerid);
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (newcar >= Rent[0] && newcar <= Rent[1]) {
 			if (HireCar[playerid] != newcar) {
 				TogglePlayerControllable(playerid, 0);
@@ -17959,7 +17526,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				RemovePlayerFromVehicle(playerid);
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (newcar == Report2) {
 			if (PlayerInfo[playerid][pMember] == 9 || PlayerInfo[playerid][pLeader] == 9) {
 				if (PlayerInfo[playerid][pRank] < 4 && PlayerInfo[playerid][pLeader] != 9) {
@@ -17971,7 +17537,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				RemovePlayerFromVehicle(playerid);
 			}
 		}
-		//------------------------------------------------------------------------------
 		if (oldcar != 685) {
 			if ((housecar != oldcar && oldcar != 0) && (HireCar[playerid] != oldcar && newcar != housecar)) {
 				if (gLastDriver[oldcar] == playerid && oldcar != newcar) {
@@ -18000,7 +17565,7 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 	}
 	return true;
 }
-//==============================================================================
+
 HireCost(carid) {
 	switch (carid) {
 		case 69 :  {
@@ -18024,7 +17589,7 @@ HireCost(carid) {
 	}
 	return false;
 }
-//==============================================================================
+
 forward CarCheck();
 public CarCheck() {
 	new string[144];
@@ -18065,7 +17630,7 @@ public CarCheck() {
 	}
 	return true;
 }
-//==============================================================================
+
 CarInit() {
 	for (new c = 1; c < 254; c++) {
 		gLastDriver[c] = 299;
@@ -18194,7 +17759,7 @@ public OnPlayerExitVehicle(playerid, vehicleid) {
 	}
 	return true;
 }
-//==============================================================================
+
 public OnPlayerRequestClass(playerid, classid) {
 	if (IsPlayerNPC(playerid)) return true; // Подключение Ботов
 	SetPlayerInterior(playerid, 0);
@@ -18212,7 +17777,7 @@ public OnPlayerRequestClass(playerid, classid) {
 	}
 	return 1;
 }
-//==============================================================================
+
 SetPlayerCriminal(playerid, declare, const reason[]) {
 	if (IsPlayerConnected(playerid)) {
 		PlayerInfo[playerid][pCrimes] += 1;
@@ -18250,7 +17815,7 @@ MoneyCheck() {
 		}
 	}
 }
-//==============================================================================
+
 forward OtherTimer();
 public OtherTimer() {
 	GunAntiCheat();
@@ -18285,7 +17850,6 @@ public OtherTimer() {
 						if (distance > 100) format(string, 256, "~n~~n~~n~~n~~n~~n~~n~~g~mph : ~w~%.0f", distance);
 						GameTextForPlayer(i, string, 2000, 5);
 					}
-					//------------------------------------------------------------------------------
 					if (distance > maxspeed && PlayerInfo[i][pAdmin] < 1) {
 						new tmpcar = GetPlayerVehicleID(i);
 						if (!IsAPlane(tmpcar)) {
@@ -18295,7 +17859,6 @@ public OtherTimer() {
 						}
 					}
 				}
-				//------------------------------------------------------------------------------
 				if (TelePos[i][5] < 550.0 && TelePos[i][3] != 0.0) {
 					TelePos[i][0] = TelePos[i][3];
 					TelePos[i][1] = TelePos[i][4];
@@ -18480,7 +18043,7 @@ MafiaZoneCheck() {
 	}
 	return 1;
 }
-//==============================================================================
+
 forward SetPlayerUnjail();
 public SetPlayerUnjail() {
 	new plname[MAX_PLAYER_NAME], GoLotto, string[144], JackpotFallen;
@@ -18732,7 +18295,6 @@ public SetPlayerUnjail() {
 			SetPlayerFacingAngle(i, 76.4112);
 		}
 	}
-	//------------------------------------------------------------------------------
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
 			if (Refueling[i] > 0) {
@@ -18823,24 +18385,16 @@ public SetPlayerUnjail() {
 					ABroadCast(COLOR_YELLOW, string, 1);
 				}
 			}
-			//------------------------------------------------------------------------------
 			new newcar = GetPlayerVehicleID(i); {
 				PlayerInfo[i][pForce] = PlayerInfo[i][pForce] + 1;
 			}
 			//--------------------------[Анти-АФК]------------------------------------------
 			new sendername[MAX_PLAYER_NAME];
 			GetPlayerPos(i, AntiAFK[i][3], AntiAFK[i][4], AntiAFK[i][5]);
-			//			if(is3dafk[i] == 1)	return true;
 			if (PlayerAFKtime[i] >= 30) {
-				//               is3dafk[i] = 1;
-				//               format(string, sizeof(string), "{FFFFFF}Нет на месте:{33aa33} %d секунд.", PlayerAFKtime);
-				//              label[i] = Create3DTextLabel("{FFFFFF}Нет на месте", COLOR_WHITE, 0, 0, 0, 30.0, 0, 0);
-				//               Attach3DTextLabelToPlayer(label[i], i, 0.0, 0.0, 0.0);
 				SetPlayerAttachedObject(i, 7, 19078, 1, 0.329150, -0.072101, 0.156082, 0.000000, 0.000000, 0.000000, 1.000000, 1.000000, 1.000000);
 			}
 			if (PlayerAFKtime[i] < 29) {
-				//               is3dafk[i] = 0;
-				//               Delete3DTextLabel(label[i]);
 				RemovePlayerAttachedObject(i, 7);
 			}
 			if (AntiAFK[i][0] == AntiAFK[i][3] && AntiAFK[i][1] == AntiAFK[i][4] && AntiAFK[i][2] == AntiAFK[i][5]) {
@@ -18873,7 +18427,6 @@ public SetPlayerUnjail() {
 			} else {
 				PlayerAFKtime[i] = 0;
 				RemovePlayerAttachedObject(i, 7);
-				//				Delete3DTextLabel(label[i]);
 				AntiAFK[i][0] = AntiAFK[i][3];
 				AntiAFK[i][1] = AntiAFK[i][4];
 				AntiAFK[i][2] = AntiAFK[i][5];
@@ -18882,7 +18435,6 @@ public SetPlayerUnjail() {
 			if (IsPlayerInVehicle(i, vehicleid)) {
 				if (GetPlayerWeapon(i) == 29 || GetPlayerWeapon(i) == 31 || GetPlayerWeapon(i) == 30 || GetPlayerWeapon(i) == 22) {} else { SetPlayerArmedWeapon(i, 0); }
 			}
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[i][pMutedTime] != 0) {
 				PlayerInfo[i][pMutedTime]--;
 				if (PlayerInfo[i][pMutedTime] == 0) {
@@ -18924,11 +18476,9 @@ public SetPlayerUnjail() {
 					ExtraMetall[i] = 1;
 				}
 			}
-			//==============================================================================
 			if (PlayerInfo[i][pJailed] > 0) {
 				if (PlayerInfo[i][pJailTime] > 0 && WantLawyer[i] == 0) PlayerInfo[i][pJailTime]--;
 				if (PlayerInfo[i][pJailTime] <= 0 && WantLawyer[i] == 0) {
-					//------------------------------------------------------------------------------
 					PlayerInfo[i][pJailTime] = 0;
 					if (PlayerInfo[i][pJailed] == 1) {
 						SetPlayerInterior(i, 6);
@@ -18936,7 +18486,6 @@ public SetPlayerUnjail() {
 						SetPlayerSkin(i, PlayerInfo[i][pChar]);
 						SetPlayerPos(i, 246.5201, 69.0075, 1003.6406);
 					}
-					//------------------------------------------------------------------------------
 					else if (PlayerInfo[i][pJailed] == 2) {
 						SetPlayerWorldBounds(i, 20000.0000, -20000.0000, 20000.0000, -20000.0000); //Reset world to player
 						SetPlayerInterior(i, 0);
@@ -18960,16 +18509,13 @@ public SetPlayerUnjail() {
 			if (PlayerMayNarco[i] > 0) PlayerMayNarco[i]--;
 			if (PlayerMayAlco[i] > 0) PlayerMayAlco[i]--;
 
-			//------------------------------------------------------------------------------
 			if (IsABoat(newcar)) {
 				if (PlayerInfo[i][pBoatLic] < 1 && GetPlayerState(i) == 2) RemovePlayerFromVehicle(i);
 			}
-			//------------------------------------------------------------------------------
 			else if (IsABMX(newcar)) {
 				if (GetPlayerState(i) != 2) RemovePlayerFromVehicle(i);
 			}
 			if (UnfreezePlayer[i] > 0) { UnfreezePlayer[i]--; if (UnfreezePlayer[i] == 0) TogglePlayerControllable(i, true); }
-			//------------------------------------------------------------------------------
 			if (PlayerLomkaTime[i] > 0) {
 				GetPlayerName(i, sendername, sizeof(sendername));
 				PlayerLomkaTime[i]--;
@@ -19005,7 +18551,6 @@ public SetPlayerUnjail() {
 					ProxDetector(30.0, i, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 				}
 			}
-			//------------------------------------------------------------------------------
 			else if (IsAPlane(newcar)) {
 				if (PlayerInfo[i][pFlyLic] < 1 && GetPlayerState(i) == 2) {
 					if (TakingLesson[i] == 1) {} else {
@@ -19014,7 +18559,6 @@ public SetPlayerUnjail() {
 					}
 				}
 			}
-			//------------------------------------------------------------------------------
 			else {
 				if (PlayerInfo[i][pCarLic] < 1 && IsPlayerInAnyVehicle(i) && GetPlayerState(i) == 2) {
 					if (Practice[i] == 1 || IsABMX(newcar) || IsAMoped(newcar)) {} else {
@@ -19023,7 +18567,6 @@ public SetPlayerUnjail() {
 					}
 				}
 			}
-			//------------------------------------------------------------------------------
 			if (UsedFind[i] >= 1) {
 				UsedFind[i] += 1;
 				if (UsedFind[i] >= 120) {
@@ -19042,7 +18585,6 @@ public SetPlayerUnjail() {
 					CallLawyer[i] = 0;
 				}
 			}
-			//------------------------------------------------------------------------------
 			if (TutTime[i] >= 1) {
 				TutTime[i] += 1;
 				if (TutTime[i] == 2) {
@@ -19066,7 +18608,6 @@ public SetPlayerUnjail() {
 					SetPlayerSpawn(i);
 				}
 			}
-			//------------------------------------------------------------------------------
 			if (PlayerTazeTime[i] >= 1) {
 				PlayerTazeTime[i] += 1;
 				if (PlayerTazeTime[i] == 15) {
@@ -19208,7 +18749,6 @@ public SetPlayerUnjail() {
 					tietime[i] = 0;
 				}
 			}
-			//------------------------------------------------------------------------------
 			if (MedicCallTime[i] > 0) {
 				if (MedicCallTime[i] != 0) {
 					MedicCallTime[i] -= 1;
@@ -19221,7 +18761,6 @@ public SetPlayerUnjail() {
 					}
 				}
 			}
-			//------------------------------------------------------------------------------
 			if (Robbed[i] == 1) {
 				if (RobbedTime[i] <= 0) {
 					RobbedTime[i] = 0;
@@ -19254,7 +18793,7 @@ public SetPlayerUnjail() {
 	}
 	return true;
 }
-//==============================================================================
+
 forward CheckGas();
 public CheckGas() {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
@@ -19275,12 +18814,12 @@ public CheckGas() {
 	}
 	return true;
 }
-//==============================================================================
+
 Motor(playerid) {
 	if (PlayerInVeh[playerid] == 1) {}
 	return true;
 }
-//==============================================================================
+
 forward StoppedVehicle();
 public StoppedVehicle() {
 	new Float:x, Float:y, Float:z;
@@ -19303,7 +18842,7 @@ public StoppedVehicle() {
 	}
 	return true;
 }
-//==============================================================================
+
 SetPlayerWeapons(playerid) {
 	if (IsPlayerConnected(playerid) && !IsPlayerNPC(playerid)) {
 		SafeResetPlayerWeapons(playerid);
@@ -19322,64 +18861,54 @@ SetPlayerWeapons(playerid) {
 						ServerGivePlayerWeapons(playerid, 24, 30);
 					}
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 5 || PlayerInfo[playerid][pLeader] == 5) //КОЗА НОСТРА
 				{
 					ServerGivePlayerWeapons(playerid, 22, 30);
 					ServerGivePlayerWeapons(playerid, 1, 1);
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 6 || PlayerInfo[playerid][pLeader] == 6) { //ЯКУДЗА
 
 					ServerGivePlayerWeapons(playerid, 22, 30);
 					ServerGivePlayerWeapons(playerid, 8, 1);
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 8 || PlayerInfo[playerid][pLeader] == 8) // Хитманы
 				{
 					ServerGivePlayerWeapons(playerid, 23, 30); // SD-Pistol
 					ServerGivePlayerWeapons(playerid, 4, 1); // Нож
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 9 || PlayerInfo[playerid][pLeader] == 9) //News
 				{
 					ServerGivePlayerWeapons(playerid, 43, 60);
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 12 || PlayerInfo[playerid][pLeader] == 12) //СТРИТ РЕЙСЕРЫ
 				{
 					ServerGivePlayerWeapons(playerid, 0, 1);
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 16 || PlayerInfo[playerid][pLeader] == 16) //The Ballas Gang
 
 					ServerGivePlayerWeapons(playerid, 0, 1);
 			}
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[playerid][pMember] == 18 || PlayerInfo[playerid][pLeader] == 18) //ТРИАДЫ
 			{
 				ServerGivePlayerWeapons(playerid, 22, 30);
 				ServerGivePlayerWeapons(playerid, 1, 1);
 			}
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[playerid][pMember] == 20 || PlayerInfo[playerid][pLeader] == 20) //РУССКАЯ МАФИЯ
 			{
 				ServerGivePlayerWeapons(playerid, 22, 30);
 				ServerGivePlayerWeapons(playerid, 1, 1);
 
 			}
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[playerid][pMember] == 30 || PlayerInfo[playerid][pLeader] == 30) // Admins
 			{
 				ServerGivePlayerWeapons(playerid, 5, 1);
 				ServerGivePlayerWeapons(playerid, 24, 50);
 				ServerGivePlayerWeapons(playerid, 41, 800);
 			}
-			//------------------------------------------------------------------------------
 		}
 	}
 }
-//==============================================================================
+
 PrintSBizInfo(playerid, targetid) {
 	if (IsPlayerConnected(playerid)) {
 		new coordsstring[256];
@@ -19408,7 +18937,7 @@ PrintSBizInfo(playerid, targetid) {
 		SendClientMessage(playerid, COLOR_GREEN, "_______________________________________");
 	}
 }
-//==============================================================================
+
 PrintBizInfo(playerid, targetid) {
 	if (IsPlayerConnected(playerid)) {
 		new coordsstring[256];
@@ -19435,15 +18964,7 @@ PrintBizInfo(playerid, targetid) {
 		SendClientMessage(playerid, COLOR_GREEN, "_______________________________________");
 	}
 }
-//==============================================================================
-ShowHelper(playerid) {
-	if (IsPlayerConnected(playerid)) {
-		new string[255];
-		format(string, sizeof(string), "Работы\nСервисы\nЛицензеры он-лайн\nЛидеры он-лайн\nЧлены моей Банды/Фракции он-лайн");
-		ShowPlayerDialog(playerid, 9, 2, "Ваш личный KPK", string, "Дальше", "Отмена");
-	}
-}
-//==============================================================================
+
 ShowStats(playerid, targetid) {
 	if (IsPlayerConnected(playerid) && IsPlayerConnected(targetid)) {
 		new cash = GetPlayerBablo(targetid);
@@ -19456,110 +18977,86 @@ ShowStats(playerid, targetid) {
 		new ftext[21];
 		if (PlayerInfo[targetid][pMember] == 4 || PlayerInfo[targetid][pLeader] == 4) { ftext = "МЧС"; } else if (PlayerInfo[targetid][pMember] == 5 || PlayerInfo[targetid][pLeader] == 5) { ftext = "La Cosa Nostra"; } else if (PlayerInfo[targetid][pMember] == 6 || PlayerInfo[targetid][pLeader] == 6) { ftext = "Yakuza"; } else if (PlayerInfo[targetid][pMember] == 7 || PlayerInfo[targetid][pLeader] == 7) { ttext = "Мэрия"; } else if (PlayerInfo[targetid][pMember] == 11 || PlayerInfo[targetid][pLeader] == 11) { ftext = "Лицензёры"; } else if (PlayerInfo[targetid][pMember] == 12 || PlayerInfo[targetid][pLeader] == 12) { ftext = "Street Racers"; } else if (PlayerInfo[targetid][pMember] == 13 || PlayerInfo[targetid][pLeader] == 13) { ftext = "Grove Street Gang"; } else if (PlayerInfo[targetid][pMember] == 14 || PlayerInfo[targetid][pLeader] == 14) { ftext = "El Coronos"; } else if (PlayerInfo[targetid][pMember] == 15 || PlayerInfo[targetid][pLeader] == 15) { ttext = "Los Santos Vagos"; } else if (PlayerInfo[targetid][pMember] == 16 || PlayerInfo[targetid][pLeader] == 16) { ttext = "The Ballas Gang"; } else if (PlayerInfo[targetid][pMember] == 18 || PlayerInfo[targetid][pLeader] == 18) { ttext = "Triads"; } else if (PlayerInfo[targetid][pMember] == 19 || PlayerInfo[targetid][pLeader] == 19) { ftext = "San Fierro Rifa"; } else if (PlayerInfo[targetid][pMember] == 20 || PlayerInfo[targetid][pLeader] == 20) { ftext = "Russian Mafia"; } else if (PlayerInfo[targetid][pMember] == 143 || PlayerInfo[targetid][pLeader] == 143) { ftext = "Администрация"; } else { ftext = "None"; }
 		new rtext[64];
-		//------------------------------------------------------------------------------
 		if (PlayerInfo[targetid][pMember] == 1 || PlayerInfo[targetid][pLeader] == 1) //PD Ranks
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Кадет"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Патрульный"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Офицер"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Инспектор"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Комиссар"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 1) { rtext = "Шериф"; } else { rtext = "Кадет"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 2 || PlayerInfo[targetid][pLeader] == 2) //FBI Ranks
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Стажёр"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Агент"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Спец. Агент"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Командир"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Зам.Директора"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 2) { rtext = "Директор"; } else { rtext = "Стажёр"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 3 || PlayerInfo[targetid][pLeader] == 3) //NG Ranks
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = " Рядовой"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Сержант"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Лейтинант"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Капитан"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Майор"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 3) { rtext = "Генерал "; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 4 || PlayerInfo[targetid][pLeader] == 4) {
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Фельдшер"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Реаниматор"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Спасатель"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Глав.врач"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Зам.Министра здравоохранения"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 4) { rtext = "Министр здравоохранения"; } else { rtext = "Фельдшер"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 5 || PlayerInfo[targetid][pLeader] == 5) //La Cosa Nostra
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Соучастник"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Солдат"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Капо"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Подручный"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Консельери"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 5) { rtext = "Дон"; } else { rtext = "Соучастник"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 6 || PlayerInfo[targetid][pLeader] == 6) //Yakuza
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Вакасю"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Кёдай"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Cятэйгасира"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Сайко"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Оябун-Кобун"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 6) { rtext = "Кумитё"; } else { rtext = "Вакасю"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 8 || PlayerInfo[targetid][pLeader] == 8) //Hitman Ranks
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Внештатный сотрудник"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Меткий стрелок"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Агент"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Специальный Агент"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Зам.Директора"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 8) { rtext = "Директор"; } else { rtext = "Внештатный сотрудник"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 9 || PlayerInfo[targetid][pLeader] == 9) //NR Ranks
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Стажер"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Репортёр"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Новостной редактор"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Репортер Телесети"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Редактор Телесети"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 9) { rtext = "Продюсер Телесети"; } else { rtext = "Новичок"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 10 || PlayerInfo[targetid][pLeader] == 10) //Taxi Company Ranks
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Новичок"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Бомбила"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Таксист"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Опытный Таксист"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Зам.Управляющего"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 10) { rtext = "Управляющий"; } else { rtext = " Новичок"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (IsAnInstructor(targetid)) {
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Стажёр"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Инструктор "; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Старший Инструктор"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Менеджер"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Зам.Главного Инструктора"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 11) { rtext = "Главный Инструктор"; } else { rtext = " Стажёр"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 12 || PlayerInfo[targetid][pLeader] == 12) //Street Race
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Новичек"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Освоившийся"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Водитель"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Опытный водитель"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Зам. Лидера"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 12) { rtext = "Лидер"; } else { rtext = "Новичек"; }
 		}
-
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 13 || PlayerInfo[targetid][pLeader] == 13) //Grove Street Gang
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Youngsta"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Gangsta"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Old Gangsta"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Checked Up "; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Authority"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 13) { rtext = "Босс"; } else { rtext = " Youngsta"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 15 || PlayerInfo[targetid][pLeader] == 15) //Los Santos Vagos
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = " Novato"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Ordinario"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Verificado"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Autoritad"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Adjunto"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 15) { rtext = "Padre"; } else { rtext = " Novato"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 14 || PlayerInfo[targetid][pLeader] == 14) // El Coronos
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Novato"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Comprobar"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Verificado"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "El Entrenador Mayor"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Adjunto"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 14) { rtext = "Padre"; } else { rtext = " Novato"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 16 || PlayerInfo[targetid][pLeader] == 16) // The Ballas Gang
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Young Nigga"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Gangsta"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Old Gangsta"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Killa"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Big Brothers"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 16) { rtext = "Daddy"; } else { rtext = " Young Nigga"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 18 || PlayerInfo[targetid][pLeader] == 18) // Triads
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Сей Кой Джай"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Шо Хай"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Хунг Кван"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Синг Фунг"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Фу Шан Су"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 18) { rtext = "Taй Ло"; } else { rtext = "Сей Кой Джай"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 19 || PlayerInfo[targetid][pLeader] == 19) {
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Novato"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Ordinaro"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Verificado"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Autoridad"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Adjunto"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 19) { rtext = "Padre"; } else { rtext = "Novato"; }
 		}
-		//------------------------------------------------------------------------------
 		else if (PlayerInfo[targetid][pMember] == 20 || PlayerInfo[targetid][pLeader] == 20) // Русская Мафия
 		{
 			if (PlayerInfo[targetid][pRank] == 1) { rtext = "Шнырь"; } else if (PlayerInfo[targetid][pRank] == 2) { rtext = "Фраер"; } else if (PlayerInfo[targetid][pRank] == 3) { rtext = "Жиган"; } else if (PlayerInfo[targetid][pRank] == 4) { rtext = "Смотрящий"; } else if (PlayerInfo[targetid][pRank] == 5) { rtext = "Авторитет"; } else if (PlayerInfo[targetid][pRank] == 6 || PlayerInfo[targetid][pLeader] == 20) { rtext = "Главарь"; } else { rtext = " Шнырь"; }
 		}
-		//------------------------------------------------------------------------------
 		else {
 			rtext = "none";
 		}
 		new jtext[20];
 		if (PlayerInfo[targetid][pJob] == 1) { jtext = "Детектив"; } else if (PlayerInfo[targetid][pJob] == 2) { jtext = "Юрист"; } else if (PlayerInfo[targetid][pJob] == 3) { jtext = "Дальнобойщик"; } else if (PlayerInfo[targetid][pJob] == 4) { jtext = "Наркодиллер"; } else if (PlayerInfo[targetid][pJob] == 5) { jtext = "Автоугонщик"; } else if (PlayerInfo[targetid][pJob] == 6) { jtext = "Карманник"; } else if (PlayerInfo[targetid][pJob] == 7) { jtext = "Механик"; } else if (PlayerInfo[targetid][pJob] == 9) { jtext = "Продавец оружия"; } else if (PlayerInfo[targetid][pJob] == 10) { jtext = "Продавец машин"; } else if (PlayerInfo[targetid][pJob] == 12) { jtext = "Вышибала"; } else if (PlayerInfo[targetid][pJob] == 15) { jtext = "Продавец газет"; }
-		//------------------------------------------------------------------------------
 		else { jtext = "None"; }
-		//------------------------------------------------------------------------------
 		new drank[20];
 		if (PlayerInfo[targetid][pDonateRank] == 1) { drank = "Есть(1 уровня)"; } else if (PlayerInfo[targetid][pDonateRank] == 2) { drank = "Есть(2 уровня)"; } else { drank = "Нет"; }
-		//------------------------------------------------------------------------------
 		new married[20];
 		if (PlayerInfo[targetid][pMarried] == 0) { married = "Нет"; } else { married = "Да"; }
 		strmid(married, PlayerInfo[targetid][pMarriedTo], 0, strlen(PlayerInfo[targetid][pMarriedTo]), 255);
-		//------------------------------------------------------------------------------
 		new robk[10];
 		if (PlayerInfo[targetid][pRobKey] == 0) robk = "Нет";
 		else robk = "Имеется";
@@ -19667,12 +19164,13 @@ ShowStats(playerid, targetid) {
 		ShowPlayerDialog(playerid, 112, DIALOG_STYLE_MSGBOX, str, sctring, "Закрыть", "");
 	}
 }
+
 SetPlayerToTeamColor(playerid) {
 	if (IsPlayerConnected(playerid) && !IsPlayerNPC(playerid)) {
 		SetPlayerColor(playerid, 0xFFFFFF00);
 	}
 }
-//==============================================================================
+
 GameModeInitExitFunc() {
 	new string[128];
 	format(string, sizeof(string), "~r~RESTART");
@@ -19689,7 +19187,7 @@ GameModeInitExitFunc() {
 	SetTimer("GameModeExitFunc", 8000, 0);
 	return true;
 }
-//==============================================================================
+
 forward GameModeExitFunc();
 public GameModeExitFunc() {
 	KillTimer(synctimer);
@@ -19707,7 +19205,7 @@ public GameModeExitFunc() {
 	}
 	GameModeExit();
 }
-//==============================================================================
+
 GetInitials(playerid) {
 	if (IsPlayerConnected(playerid)) {
 		new name[MAX_PLAYER_NAME];
@@ -19720,7 +19218,7 @@ GetInitials(playerid) {
 	}
 	return false;
 }
-//==============================================================================
+
 LoadStuff() {
 	new arrCoords[14][64];
 	new strFromFile2[256];
@@ -19751,7 +19249,7 @@ LoadStuff() {
 	}
 	return true;
 }
-//==============================================================================
+
 SaveStuff() {
 	new coordsstring[256];
 	format(coordsstring, sizeof(coordsstring), "%d,%d,%d,%d", Jackpot, Tax, TaxValue, Security, Treasury, CopSal, FbiSal, NGSal, MedSal, SwatSal, ReportSal, PolSal, LicSal, NonJobSal);
@@ -19764,7 +19262,6 @@ SaveStuff() {
 	return true;
 }
 
-//==============================================================================
 LoadCK() {
 	new arrCoords[3][64];
 	new strFromFile2[256];
@@ -19785,28 +19282,7 @@ LoadCK() {
 	}
 	return true;
 }
-//==============================================================================
-SaveCK() {
-	new idx;
-	new File: file2;
-	while (idx < sizeof(CKInfo)) {
-		new coordsstring[256];
-		format(coordsstring, sizeof(coordsstring), "%s|%s|%d\n",
-			CKInfo[idx][cSendername],
-			CKInfo[idx][cGiveplayer],
-			CKInfo[idx][cUsed]);
-		if (idx == 0) {
-			file2 = fopen("[logs]/ck.cfg", io_write);
-		} else {
-			file2 = fopen("[logs]/ck.cfg", io_append);
-		}
-		fwrite(file2, coordsstring);
-		idx++;
-		fclose(file2);
-	}
-	return true;
-}
-//==============================================================================
+
 LoadPapers() {
 	new arrCoords[11][64];
 	new strFromFile2[256];
@@ -19835,7 +19311,7 @@ LoadPapers() {
 	}
 	return true;
 }
-//==============================================================================
+
 SavePapers() {
 	new idx;
 	new File: file2; {
@@ -19863,18 +19339,6 @@ SavePapers() {
 	}
 	return true;
 }
-LoadMaterials() {
-	new arrCoords[1][64];
-	new strFromFile2[256];
-	new File: file = fopen("materials.ini", io_read);
-	if (file) {
-		fread(file, strFromFile2);
-		split(strFromFile2, arrCoords, '|');
-		medwarehouse = strval(arrCoords[0]);
-		fclose(file);
-	}
-	return 1;
-}
 
 SaveMaterials() {
 	new coordsstring[256];
@@ -19884,7 +19348,7 @@ SaveMaterials() {
 	fclose(file2);
 	return 1;
 }
-//==============================================================================
+
 LoadProperty() {
 	new arrCoords[36][64];
 	new strFromFile2[256];
@@ -19993,7 +19457,7 @@ LoadObwyak() {
 	}
 	return true;
 }
-//==============================================================================
+
 LoadBizz() {
 	new arrCoords[20][64];
 	new strFromFile2[256];
@@ -20038,7 +19502,7 @@ LoadBizz() {
 	}
 	return true;
 }
-//==============================================================================
+
 LoadSBizz() {
 	new arrCoords[16][64];
 	new strFromFile2[256];
@@ -20080,7 +19544,6 @@ LoadSBizz() {
 	return true;
 }
 
-//==============================================================================
 public OnGameModeInit() {
 	LoadProperty();
 	LoadFlats();
@@ -20105,7 +19568,6 @@ public OnGameModeInit() {
 	TextDrawSetShadow(TextDraw4, 1);
 	SetTimer("AvtoRestart", 1000, true);
 	SetTimer("PredAvtoRestart", 1000, true);
-	//==============================================================================
 	for (new i = 0; i < GetMaxPlayers(); i++) //создаём отдельные текстдравы для каждого игрока(Тоесть жизни авто скорость и бензин)
 	{
 		TextDraw1[i] = TextDrawCreate(60.000000, 313.000000, "0 %");
@@ -20134,17 +19596,13 @@ public OnGameModeInit() {
 		MafiaZoneRandom[i] = -1;
 		MafiaZoneStatus[i] = -1;
 	}
-	//------------------------------------------------------------------------------
 	for (new i = 0; i < sizeof(CreatedCars); i++) {
 		CreatedCars[i] = 0;
 	}
-	//------------------------------------------------------------------------------
 	for (new i = 0; i <= sizeof(Peds) - 1; i++) {
 		AddPlayerClass(Peds[i][0], 1958.3783, 1343.1572, 1100.3746, 269.1425, -1, -1, -1, -1, -1, -1);
 	}
 	print("cars1");
-	//---------------------------[Домашний Транспорт]-------------------------------
-
 	for (new h = 0; h < sizeof(HouseInfo); h++) // House Car System
 	{
 		new housespawncar1,
@@ -20159,14 +19617,10 @@ public OnGameModeInit() {
 	}
 	print("cars");
 	AddStaticVehicleEx(carselect[14], 1279.4, -1337.0, 13.5, 1.0, -1, -1, -1); //long
-	//==============================================================================
 	CreateObject(2970, -2531.7299804688, 53.5, 7.5999999046326, 0, 0, 0);
-	//------------------------------------------------------------------------------
 	for (new i = 0; i < sizeof(HouseInfo); i++) // House Car System
 	{
-		//	hCar[h] = CreateVehicle(HouseInfo[h][hVec], HouseCarSpawns[h][0], HouseCarSpawns[h][1], HouseCarSpawns[h][2], HouseCarSpawns[h][3], HouseInfo[h][hVcol1], HouseInfo[h][hVcol2], 60000);
 		AddVehicleComponent(hCar[i], HouseInfo[i][hKoleso]);
-		//	AddVehicleComponent (hCar[i], HouseInfo[i][hSpoiler]);
 		AddVehicleComponent(hCar[i], HouseInfo[i][hBamper]);
 		AddVehicleComponent(hCar[i], HouseInfo[i][hBamper2]);
 		ChangeVehiclePaintjob(hCar[i], HouseInfo[i][hPaintjob]);
@@ -21176,7 +20630,7 @@ public OnGameModeInit() {
 	CreateObject(3016, -1510.69995117, 478.50000000, 6.30000019, 0.00000000, 0.00000000, 0.00000000);
 	CreateObject(3015, -1510.59997559, 479.50000000, 6.19999981, 0.00000000, 0.00000000, 0.00000000);
 	CreateObject(3014, -1511.40002441, 478.29998779, 6.40000010, 0.00000000, 0.00000000, 0.00000000);
-	//==============================================================================
+
 	CreateObject(2060, 2172.89526367, -2256.86108398, 12.46142387, 0.00000000, 0.00000000, 44.00000000);
 	CreateObject(2060, 2172.89453125, -2256.86035156, 12.46142387, 0.00000000, 0.00000000, 43.99475098);
 	CreateObject(2060, 2172.42309570, -2256.42822266, 12.46099281, 0.00000000, 0.00000000, 47.25003052);
@@ -21204,7 +20658,6 @@ public OnGameModeInit() {
 	Create3DTextLabel("{FFFFFF}Введи команду {00C0FF}/sdat {FFFFFF}для сдачи запретных веществ.", COLOR_WHITE, 1580.40, -1636.75, 13.56, 40.0, 0, 1);
 	Create3DTextLabel("{FFFFFF}Введи команду {00C0FF}/sdat {FFFFFF}для сдачи запретных веществ.", COLOR_WHITE, -1614.71, 680.93, 7.19, 40.0, 0, 1);
 	Create3DTextLabel("{FFFFFF}Введи команду {00C0FF}/sdat {FFFFFF}для сдачи запретных веществ.", COLOR_WHITE, -1519.48, 479.52, 7.18, 40.0, 0, 1);
-	//------------------------------------------------------------------------------
 	Textdraw0 = TextDrawCreate(500.000000, 401.000000, "YourGame-Server");
 	Textdraw1 = TextDrawCreate(536.000000, 412.000000, "   RPG");
 	Textdraw2 = TextDrawCreate(514.000000, 394.000000, "YourGame.su");
@@ -21232,13 +20685,11 @@ public OnGameModeInit() {
 	TextDrawSetShadow(Textdraw0, 1);
 	TextDrawSetShadow(Textdraw1, 1);
 	TextDrawSetShadow(Textdraw2, 1);
-	//------------------------------------------------------------------------------
 	new string[MAX_PLAYER_NAME];
 	new string1[MAX_PLAYER_NAME];
 	for (new c = 0; c < CAR_AMOUNT; c++) {
 		Gas[c] = GasMax;
 	}
-	//------------------------------------------------------------------------------
 	txtTimeDisp = TextDrawCreate(548.0, 23.0, "00:00");
 	TextDrawAlignment(txtTimeDisp, 0);
 	TextDrawBackgroundColor(txtTimeDisp, 0x000000FF);
@@ -21250,7 +20701,6 @@ public OnGameModeInit() {
 	TextDrawSetShadow(txtTimeDisp, 10);
 	UpdateTime();
 	SetTimer("UpdateTime", 1000 * 60, 1);
-	//------------------------------------------------------------------------------
 	InitDraws();
 	printf("LoadDraws");
 	LoadBizz();
@@ -21263,7 +20713,6 @@ public OnGameModeInit() {
 	printf("LoadCK");
 	LoadPapers();
 	printf("LPapersz");
-	//------------------------------------------------------------------------------
 	News[hTaken1] = 0;
 	News[hTaken2] = 0;
 	News[hTaken3] = 0;
@@ -21279,7 +20728,6 @@ public OnGameModeInit() {
 	strmid(News[hContact3], "No-one", 0, strlen(string1), 255);
 	strmid(News[hContact4], "No-one", 0, strlen(string1), 255);
 	strmid(News[hContact5], "No-one", 0, strlen(string1), 255);
-	//------------------------------------------------------------------------------
 	SetGameModeText("EY: LS/SF/LV [RPG]");
 	format(objstore, sizeof(objstore), "MOLE: Я ничего неполучил, свяжитесь со мной попозже.");
 	format(cbjstore, sizeof(cbjstore), "HQ: Некого нет в вашей местности, Out.");
@@ -21298,7 +20746,6 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(474, 2821.3923, -1187.8322, 24.9783, 268.0295, 6, 6, 900);
 	AddStaticVehicleEx(566, 2821.7532, -1178.3933, 25.1081, 271.2586, 6, 6, 900);
 	Vagos[1] = AddStaticVehicleEx(566, 2826.9658, -1169.4065, 24.9781, 184.0925, 6, 6, 900);
-	//==============================================================================
 	Aztek[0] = AddStaticVehicleEx(535, 1774.5341, -1892.2129, 13.2282, 178.8699, 2, 2, 900);
 	AddStaticVehicleEx(535, 1797.4159, -1884.8256, 13.2465, 271.3840, 2, 2, 900);
 	AddStaticVehicleEx(534, 1806.4478, -1914.3119, 13.2024, 0.8553, 2, 2, 900);
@@ -21323,25 +20770,24 @@ public OnGameModeInit() {
 	AddStaticVehicle(584, -169.0684, -205.3586, 2.6031, 167.1223, 1, 1);
 	AddStaticVehicle(591, -189.1694, -247.2982, 2.0550, 269.1382, 1, 1);
 	//====================================[TRIADS]==================================
-	Triad[0] = AddStaticVehicleEx(409, 659.7657, -1279.4584, 13.8359, 181.6864, 0, 0, 900); //
-	AddStaticVehicleEx(560, 670.4441, -1286.2716, 13.4166, 180.0360, 0, 0, 900); //
-	AddStaticVehicleEx(560, 692.6685, -1219.3087, 16.5963, 118.8620, 0, 0, 900); //
-	AddStaticVehicleEx(560, 687.8652, -1233.4291, 15.8813, 120.9831, 0, 0, 900); //
-	AddStaticVehicleEx(560, 659.9333, -1257.4114, 13.4035, 179.0736, 0, 0, 900); //
-	Triad[1] = AddStaticVehicleEx(560, 670.4203, -1260.3315, 13.4365, 179.5769, 0, 0, 900); //
-	//==============================================================================
-	Street[0] = AddStaticVehicleEx(560, 1093.7612, 1313.3556, 10.5253, 90.3775, 1, 1, 900); //
-	Street[1] = AddStaticVehicleEx(560, 1093.7035, 1307.3967, 10.5254, 91.7893, 1, 1, 900); //
-	Street[2] = AddStaticVehicleEx(562, 1080.1821, 1229.6794, 10.4791, 359.0475, 1, 1, 900); //
-	Street[3] = AddStaticVehicleEx(562, 1084.3190, 1229.6608, 10.4798, 359.9464, 1, 1, 900); //
-	Street[4] = AddStaticVehicleEx(559, 1093.8137, 1280.2571, 10.4766, 93.8684, 1, 1, 900); //
-	Street[5] = AddStaticVehicleEx(559, 1093.6864, 1274.1539, 10.4766, 92.1922, 1, 1, 900); //
-	Street[6] = AddStaticVehicleEx(558, 1063.4071, 1230.0215, 10.4579, 0.8437, 1, 1, 900); //
-	Street[7] = AddStaticVehicleEx(558, 1069.8411, 1229.8333, 10.4568, 358.7612, 1, 1, 900); //
-	Street[8] = AddStaticVehicleEx(558, 1074.1637, 1229.6835, 10.4580, 0.1527, 1, 1, 900); //
-	Street[9] = AddStaticVehicleEx(562, 1090.6993, 1229.6162, 10.4798, 0.4343, 1, 1, 900); //
-	Street[10] = AddStaticVehicleEx(559, 1093.9480, 1266.1349, 10.4767, 92.7073, 1, 1, 900); //
-	Street[11] = AddStaticVehicleEx(560, 1093.9105, 1299.9916, 10.5256, 92.9952, 1, 1, 900); //
+	Triad[0] = AddStaticVehicleEx(409, 659.7657, -1279.4584, 13.8359, 181.6864, 0, 0, 900);
+	AddStaticVehicleEx(560, 670.4441, -1286.2716, 13.4166, 180.0360, 0, 0, 900);
+	AddStaticVehicleEx(560, 692.6685, -1219.3087, 16.5963, 118.8620, 0, 0, 900);
+	AddStaticVehicleEx(560, 687.8652, -1233.4291, 15.8813, 120.9831, 0, 0, 900);
+	AddStaticVehicleEx(560, 659.9333, -1257.4114, 13.4035, 179.0736, 0, 0, 900);
+	Triad[1] = AddStaticVehicleEx(560, 670.4203, -1260.3315, 13.4365, 179.5769, 0, 0, 900);
+	Street[0] = AddStaticVehicleEx(560, 1093.7612, 1313.3556, 10.5253, 90.3775, 1, 1, 900);
+	Street[1] = AddStaticVehicleEx(560, 1093.7035, 1307.3967, 10.5254, 91.7893, 1, 1, 900);
+	Street[2] = AddStaticVehicleEx(562, 1080.1821, 1229.6794, 10.4791, 359.0475, 1, 1, 900);
+	Street[3] = AddStaticVehicleEx(562, 1084.3190, 1229.6608, 10.4798, 359.9464, 1, 1, 900);
+	Street[4] = AddStaticVehicleEx(559, 1093.8137, 1280.2571, 10.4766, 93.8684, 1, 1, 900);
+	Street[5] = AddStaticVehicleEx(559, 1093.6864, 1274.1539, 10.4766, 92.1922, 1, 1, 900);
+	Street[6] = AddStaticVehicleEx(558, 1063.4071, 1230.0215, 10.4579, 0.8437, 1, 1, 900);
+	Street[7] = AddStaticVehicleEx(558, 1069.8411, 1229.8333, 10.4568, 358.7612, 1, 1, 900);
+	Street[8] = AddStaticVehicleEx(558, 1074.1637, 1229.6835, 10.4580, 0.1527, 1, 1, 900);
+	Street[9] = AddStaticVehicleEx(562, 1090.6993, 1229.6162, 10.4798, 0.4343, 1, 1, 900);
+	Street[10] = AddStaticVehicleEx(559, 1093.9480, 1266.1349, 10.4767, 92.7073, 1, 1, 900);
+	Street[11] = AddStaticVehicleEx(560, 1093.9105, 1299.9916, 10.5256, 92.9952, 1, 1, 900);
 	//---------sultan tuning------------------
 	ChangeVehiclePaintjob(Street[0], 2);
 	AddVehicleComponent(Street[0], 1026);
@@ -21476,26 +20922,24 @@ public OnGameModeInit() {
 	AddVehicleComponent(Street[8], 1084);
 	AddVehicleComponent(Street[8], 1167);
 
-	//==============================================================================
 	AddStaticVehicleEx(525, -1914.4410, 305.2249, 40.7902, 178.5627, 1, 1, 300); // MEXАНЬКО ---------------------------------------
 	AddStaticVehicleEx(525, -1934.3958, 256.6778, 40.7903, 272.2288, 1, 1, 300); // MEXАНЬКО ---------------------------------------
 	AddStaticVehicleEx(525, -1935.0892, 262.4083, 40.7902, 275.2245, 1, 1, 300); // MEXАНЬКО ---------------------------------------
-	AddStaticVehicleEx(525, -1916.6123, 255.5192, 40.9203, 0.0980, 1, 1, 300); //
-	AddStaticVehicleEx(525, -1928.3384, 273.3940, 40.9237, 179.6367, 1, 1, 300); //
-	AddStaticVehicleEx(525, -1935.2673, 269.5776, 40.9236, 274.1251, 1, 1, 300); //
-	AddStaticVehicleEx(525, -1922.7992, 243.3373, 40.9255, 358.5219, 1, 1, 300); //
-	AddStaticVehicleEx(525, -1920.6392, 304.9603, 40.7901, 181.3944, 1, 1, 600); //
-	//____________________________________________________________________________________________________________________________
-	Instruc[0] = AddStaticVehicleEx(426, -2020.2783, -94.2018, 35.6280, 90.1748, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2030.0892, -87.4376, 35.6269, 180.4134, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2036.5526, -87.4422, 35.6292, 179.6703, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2042.9564, -87.4947, 35.6233, 179.9443, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2049.2705, -87.4750, 35.6285, 179.5720, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2055.7153, -87.4565, 35.6288, 179.2945, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2062.1067, -87.5038, 35.6400, 181.4848, 46, 46, 400); //
-	AddStaticVehicleEx(426, -2068.4680, -87.4161, 35.6286, 179.4523, 46, 46, 400); //
-	Instruc[1] = AddStaticVehicleEx(426, -2092.6816, -98.4454, 35.6210, 269.5468, 46, 46, 400); //
-	//___________________________________________________________________________________________________________________________
+	AddStaticVehicleEx(525, -1916.6123, 255.5192, 40.9203, 0.0980, 1, 1, 300);
+	AddStaticVehicleEx(525, -1928.3384, 273.3940, 40.9237, 179.6367, 1, 1, 300);
+	AddStaticVehicleEx(525, -1935.2673, 269.5776, 40.9236, 274.1251, 1, 1, 300);
+	AddStaticVehicleEx(525, -1922.7992, 243.3373, 40.9255, 358.5219, 1, 1, 300);
+	AddStaticVehicleEx(525, -1920.6392, 304.9603, 40.7901, 181.3944, 1, 1, 600);
+
+	Instruc[0] = AddStaticVehicleEx(426, -2020.2783, -94.2018, 35.6280, 90.1748, 46, 46, 400);
+	AddStaticVehicleEx(426, -2030.0892, -87.4376, 35.6269, 180.4134, 46, 46, 400);
+	AddStaticVehicleEx(426, -2036.5526, -87.4422, 35.6292, 179.6703, 46, 46, 400);
+	AddStaticVehicleEx(426, -2042.9564, -87.4947, 35.6233, 179.9443, 46, 46, 400);
+	AddStaticVehicleEx(426, -2049.2705, -87.4750, 35.6285, 179.5720, 46, 46, 400);
+	AddStaticVehicleEx(426, -2055.7153, -87.4565, 35.6288, 179.2945, 46, 46, 400);
+	AddStaticVehicleEx(426, -2062.1067, -87.5038, 35.6400, 181.4848, 46, 46, 400);
+	AddStaticVehicleEx(426, -2068.4680, -87.4161, 35.6286, 179.4523, 46, 46, 400);
+	Instruc[1] = AddStaticVehicleEx(426, -2092.6816, -98.4454, 35.6210, 269.5468, 46, 46, 400);
 	M4C[0] = AddStaticVehicleEx(416, -2638.3411, 586.7634, 14.6036, 0.7280, 1, 3, 900); // МЧС фургон
 	AddStaticVehicleEx(416, -2705.9285, 623.5914, 14.6034, 178.8139, 1, 3, 900); //         МЧС фургон
 	AddStaticVehicleEx(416, -2640.6465, 608.7252, 14.6025, 181.3149, 1, 3, 900); //         МЧС фургон
@@ -21504,12 +20948,11 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(416, -2669.8337, 609.5032, 14.6137, 179.5912, 1, 3, 900); //         МЧС фургон
 	AddStaticVehicleEx(415, -2697.6150, 608.5897, 14.6867, 176.4231, 3, 1, 900); //Гепарды медики
 	AddStaticVehicleEx(415, -2693.1843, 608.5897, 14.6877, 177.7290, 3, 1, 900); //Гепарды медики
-	AddStaticVehicleEx(415, -2685.2971, 608.5897, 14.2256, 177.0186, 3, 1, 900); //
-	AddStaticVehicleEx(415, -2677.9248, 608.5897, 14.2257, 177.7388, 3, 1, 900); //
+	AddStaticVehicleEx(415, -2685.2971, 608.5897, 14.2256, 177.0186, 3, 1, 900);
+	AddStaticVehicleEx(415, -2677.9248, 608.5897, 14.2257, 177.7388, 3, 1, 900);
 	AddStaticVehicleEx(609, -2707.1736, 595.2089, 14.2236, 270.3797, 3, 3, 900);
 	AddStaticVehicleEx(609, -2707.7346, 602.8040, 14.2242, 268.7805, 3, 3, 900);
 	M4C[1] = AddStaticVehicleEx(416, -2646.3025, 586.6199, 14.6025, 1.3585, 1, 3, 900); // МЧС фургон
-	//____________________________________________________________________________________________________________________________
 	Groov[0] = AddStaticVehicleEx(492, 2473.1091, -1693.5739, 13.2967, 358.3529, 86, 86, 900); // Grove Street Gang -----------------
 	AddStaticVehicleEx(482, 2505.3611, -1694.1339, 13.6749, 359.0538, 86, 86, 900); //     Grove Street Gang ------------------------
 	AddStaticVehicleEx(492, 2510.2700, -1687.6451, 13.3393, 50.5034, 86, 86, 900); //    Grove Street Gang ------------------------
@@ -21517,10 +20960,9 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(535, 2504.9570, -1652.8077, 13.3133, 150.8386, 86, 86, 900); //    Grove Street Gang ------------------------
 	AddStaticVehicleEx(567, 2481.9978, -1692.5370, 13.2249, 355.1308, 86, 86, 900); //    Grove Street Gang ------------------------
 	AddStaticVehicleEx(567, 2507.7644, -1667.1017, 13.2636, 11.2308, 86, 86, 900); //     Grove Street Gang ------------------------
-	AddStaticVehicleEx(536, 2484.4934, -1651.5065, 13.2120, 88.3069, 86, 86, 900); //
-	AddStaticVehicleEx(536, 2472.6980, -1651.7489, 13.2071, 90.6958, 86, 86, 900); //
+	AddStaticVehicleEx(536, 2484.4934, -1651.5065, 13.2120, 88.3069, 86, 86, 900);
+	AddStaticVehicleEx(536, 2472.6980, -1651.7489, 13.2071, 90.6958, 86, 86, 900);
 	Groov[1] = AddStaticVehicleEx(567, 2505.7063, -1676.0760, 13.2456, 326.9925, 86, 86, 900); // Grove Street Gang ----------------
-	//____________________________________________________________________________________________________________________________
 	LKN[0] = AddStaticVehicleEx(487, 1116.9788, -2021.3130, 74.5684, 183.9530, 0, 0, 900); // LCN вертолёт -----------------------
 	AddStaticVehicleEx(409, 1261.4736, -2012.4209, 59.1753, 180.6290, 0, 0, 900); // LCN  лимузин ----------------------
 	AddStaticVehicleEx(560, 1246.3229, -2040.6078, 59.5225, 270.6992, 0, 0, 900); // LCN султан  ---------------------------------
@@ -21529,61 +20971,58 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(533, 1276.3042, -2011.6254, 58.6604, 89.6014, 0, 0, 900);
 	AddStaticVehicleEx(533, 1276.4741, -2026.9012, 58.6868, 91.5107, 0, 0, 900);
 	LKN[1] = AddStaticVehicleEx(533, 1276.7037, -2040.4103, 58.7363, 90.6770, 0, 0, 900);
-	//____________________________________________________________________________________________________________________________
 	Yakudza[0] = AddStaticVehicleEx(409, -2174.2668, 705.9076, 53.6905, 181.8948, 0, 0, 900); // ЯКУДЗА лимузин ------------------------------
 	AddStaticVehicleEx(560, -2176.6797, 635.9197, 49.1426, 51.6964, 0, 0, 900); // ЯКУДЗА султан ----------------------------
 	AddStaticVehicleEx(560, -2181.7764, 646.2629, 49.1424, 90.8759, 0, 0, 900); // ЯКУДЗА султан ----------------------------
 	AddStaticVehicleEx(487, -2191.8511, 656.2933, 74.0127, 87.9716, 0, 0, 900); // ЯКУДЗА вертолёт -----------------------------
 	AddStaticVehicleEx(560, -2213.5923, 638.1583, 49.1547, 271.7797, 0, 0, 900); //   ЯКУДЗА султан ---------------------------------
-	AddStaticVehicleEx(507, -2178.8594, 715.2338, 53.7169, 179.3407, 0, 0, 900); //
-	AddStaticVehicleEx(507, -2184.3994, 714.9557, 53.7219, 179.0538, 0, 0, 900); //
+	AddStaticVehicleEx(507, -2178.8594, 715.2338, 53.7169, 179.3407, 0, 0, 900);
+	AddStaticVehicleEx(507, -2184.3994, 714.9557, 53.7219, 179.0538, 0, 0, 900);
 	Yakudza[1] = AddStaticVehicleEx(560, -2207.0881, 632.4547, 49.0086, 0.0624, 0, 0, 900); //ЯКУДЗА вирго -----------------------
-	//____________________________________________________________________________________________________________________________
-	Taxi[0] = AddStaticVehicleEx(438, -1702.7164, 1011.9161, 17.6438, 270.7443, 6, 6, 900); //
-	AddStaticVehicleEx(438, -1702.6383, 1003.6492, 17.6406, 268.9789, 6, 6, 900); //
-	AddStaticVehicleEx(438, -1702.7065, 1024.2166, 17.6405, 270.1539, 6, 6, 900); //
-	AddStaticVehicleEx(438, -1702.8143, 1032.5734, 17.6428, 271.4232, 6, 6, 900); //
-	AddStaticVehicleEx(579, -1734.9384, 1007.9759, 17.5167, 271.2485, 6, 6, 900); //
-	AddStaticVehicleEx(579, -1734.7959, 1024.8219, 17.4800, 268.0387, 6, 6, 900); //
-	AddStaticVehicleEx(579, -1734.5052, 1016.1552, 17.2910, 268.4641, 6, 6, 900); //
-	AddStaticVehicleEx(560, -1720.4913, 1024.4169, 17.2927, 93.7957, 6, 6, 900); //
-	AddStaticVehicleEx(560, -1720.0944, 1012.1600, 17.2914, 88.5257, 6, 6, 900); //
-	AddStaticVehicleEx(560, -1720.7181, 1028.2944, 17.2912, 90.9459, 6, 6, 900); //
-	AddStaticVehicleEx(560, -1720.0579, 1008.0293, 17.2912, 91.7361, 6, 6, 900); //
-	AddStaticVehicleEx(420, -1688.0786, 999.6130, 17.3667, 90.0722, 6, 6, 900); //
-	AddStaticVehicleEx(420, -1687.9735, 1003.8098, 17.3655, 90.6417, 6, 6, 900); //
-	AddStaticVehicleEx(420, -1687.9990, 1007.8484, 17.3657, 88.3756, 6, 6, 900); //
-	AddStaticVehicleEx(420, -1687.8751, 1012.0521, 17.3667, 91.2906, 6, 6, 900); //
-	AddStaticVehicleEx(420, -1687.7727, 1016.2585, 17.3638, 87.1446, 6, 6, 900); //
-	AddStaticVehicleEx(420, -1687.7158, 1020.0754, 17.3653, 91.4141, 6, 6, 900); //
-	AddStaticVehicleEx(409, -1713.5836, 998.5845, 17.7141, 179.5061, 1, 1, 900); //
-	Taxi[1] = AddStaticVehicleEx(409, -1710.3057, 998.6193, 17.7009, 178.6692, 0, 0, 900); //
+	Taxi[0] = AddStaticVehicleEx(438, -1702.7164, 1011.9161, 17.6438, 270.7443, 6, 6, 900);
+	AddStaticVehicleEx(438, -1702.6383, 1003.6492, 17.6406, 268.9789, 6, 6, 900);
+	AddStaticVehicleEx(438, -1702.7065, 1024.2166, 17.6405, 270.1539, 6, 6, 900);
+	AddStaticVehicleEx(438, -1702.8143, 1032.5734, 17.6428, 271.4232, 6, 6, 900);
+	AddStaticVehicleEx(579, -1734.9384, 1007.9759, 17.5167, 271.2485, 6, 6, 900);
+	AddStaticVehicleEx(579, -1734.7959, 1024.8219, 17.4800, 268.0387, 6, 6, 900);
+	AddStaticVehicleEx(579, -1734.5052, 1016.1552, 17.2910, 268.4641, 6, 6, 900);
+	AddStaticVehicleEx(560, -1720.4913, 1024.4169, 17.2927, 93.7957, 6, 6, 900);
+	AddStaticVehicleEx(560, -1720.0944, 1012.1600, 17.2914, 88.5257, 6, 6, 900);
+	AddStaticVehicleEx(560, -1720.7181, 1028.2944, 17.2912, 90.9459, 6, 6, 900);
+	AddStaticVehicleEx(560, -1720.0579, 1008.0293, 17.2912, 91.7361, 6, 6, 900);
+	AddStaticVehicleEx(420, -1688.0786, 999.6130, 17.3667, 90.0722, 6, 6, 900);
+	AddStaticVehicleEx(420, -1687.9735, 1003.8098, 17.3655, 90.6417, 6, 6, 900);
+	AddStaticVehicleEx(420, -1687.9990, 1007.8484, 17.3657, 88.3756, 6, 6, 900);
+	AddStaticVehicleEx(420, -1687.8751, 1012.0521, 17.3667, 91.2906, 6, 6, 900);
+	AddStaticVehicleEx(420, -1687.7727, 1016.2585, 17.3638, 87.1446, 6, 6, 900);
+	AddStaticVehicleEx(420, -1687.7158, 1020.0754, 17.3653, 91.4141, 6, 6, 900);
+	AddStaticVehicleEx(409, -1713.5836, 998.5845, 17.7141, 179.5061, 1, 1, 900);
+	Taxi[1] = AddStaticVehicleEx(409, -1710.3057, 998.6193, 17.7009, 178.6692, 0, 0, 900);
 	//=============================[Репортеры вертолет]=============================
 	Report2 = AddStaticVehicleEx(488, 741.9671, -1368.7783, 25.8694, 314.2643, -1, -1, 900);
 	//--------------------------------[РЕПОРТЁРЫ]-----------------------------------
 	Report[0] = AddStaticVehicleEx(582, 762.6199, -1377.8403, 13.6757, 268.4924, 77, 1, 900); //   newsvan
 	AddStaticVehicleEx(582, 762.7374, -1371.1536, 13.5858, 269.7543, 77, 1, 900); // newsvan
-	AddStaticVehicleEx(582, 762.9130, -1364.8353, 13.5765, 270.3379, 77, 1, 900); //
-	AddStaticVehicleEx(582, 762.8632, -1358.2122, 13.5804, 269.7573, 77, 1, 900); //
-	AddStaticVehicleEx(585, 759.7320, -1333.8406, 13.1280, 180.7411, 77, 77, 900); //
-	AddStaticVehicleEx(585, 753.8488, -1333.8054, 13.1279, 181.3865, 77, 77, 900); //
-	AddStaticVehicleEx(585, 748.0480, -1333.8330, 13.1281, 180.8133, 77, 77, 900); //
-	Report[1] = AddStaticVehicleEx(585, 742.2719, -1333.9988, 13.1277, 180.0177, 77, 77, 900); //
+	AddStaticVehicleEx(582, 762.9130, -1364.8353, 13.5765, 270.3379, 77, 1, 900);
+	AddStaticVehicleEx(582, 762.8632, -1358.2122, 13.5804, 269.7573, 77, 1, 900);
+	AddStaticVehicleEx(585, 759.7320, -1333.8406, 13.1280, 180.7411, 77, 77, 900);
+	AddStaticVehicleEx(585, 753.8488, -1333.8054, 13.1279, 181.3865, 77, 77, 900);
+	AddStaticVehicleEx(585, 748.0480, -1333.8330, 13.1281, 180.8133, 77, 77, 900);
+	Report[1] = AddStaticVehicleEx(585, 742.2719, -1333.9988, 13.1277, 180.0177, 77, 77, 900);
 	//---------------------------------[ХИТМАНЫ]------------------------------------
-	Hit[0] = AddStaticVehicleEx(487, -1146.1799, -1040.2810, 129.3954, 30.8842, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1108.8740, -1041.4104, 128.9178, 359.5188, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1095.5991, -1041.2925, 128.9177, 355.7986, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1085.2266, -1032.4696, 128.9255, 64.7755, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1084.9138, -1025.5720, 128.9246, 66.4451, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1085.1167, -994.3525, 128.9468, 122.6466, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1085.5128, -985.9437, 128.9089, 122.8418, 0, 0, 900); //
-	AddStaticVehicleEx(560, -1085.8280, -978.5054, 128.9413, 128.3845, 0, 0, 900); //
-	AddStaticVehicleEx(522, -1097.5392, -976.4625, 128.7871, 151.6506, 0, 0, 900); //
-	AddStaticVehicleEx(522, -1103.2748, -974.3704, 128.7865, 155.4165, 0, 0, 900); //
-	AddStaticVehicleEx(522, -1108.9985, -971.7581, 128.7798, 148.2605, 0, 0, 900); //
-	AddStaticVehicleEx(522, -1119.7751, -998.4826, 128.9200, 181.4883, 0, 0, 900); //
+	Hit[0] = AddStaticVehicleEx(487, -1146.1799, -1040.2810, 129.3954, 30.8842, 0, 0, 900);
+	AddStaticVehicleEx(560, -1108.8740, -1041.4104, 128.9178, 359.5188, 0, 0, 900);
+	AddStaticVehicleEx(560, -1095.5991, -1041.2925, 128.9177, 355.7986, 0, 0, 900);
+	AddStaticVehicleEx(560, -1085.2266, -1032.4696, 128.9255, 64.7755, 0, 0, 900);
+	AddStaticVehicleEx(560, -1084.9138, -1025.5720, 128.9246, 66.4451, 0, 0, 900);
+	AddStaticVehicleEx(560, -1085.1167, -994.3525, 128.9468, 122.6466, 0, 0, 900);
+	AddStaticVehicleEx(560, -1085.5128, -985.9437, 128.9089, 122.8418, 0, 0, 900);
+	AddStaticVehicleEx(560, -1085.8280, -978.5054, 128.9413, 128.3845, 0, 0, 900);
+	AddStaticVehicleEx(522, -1097.5392, -976.4625, 128.7871, 151.6506, 0, 0, 900);
+	AddStaticVehicleEx(522, -1103.2748, -974.3704, 128.7865, 155.4165, 0, 0, 900);
+	AddStaticVehicleEx(522, -1108.9985, -971.7581, 128.7798, 148.2605, 0, 0, 900);
+	AddStaticVehicleEx(522, -1119.7751, -998.4826, 128.9200, 181.4883, 0, 0, 900);
 	Hit[1] = AddStaticVehicleEx(522, -1119.4960, -1022.5143, 128.9267, 179.0880, 0, 0, 900);
-	//____________________________________________________________________________________________________________________________
 	Balla[0] = AddStaticVehicleEx(566, 2012.2290, -1110.7532, 25.9549, 139.9010, 85, 0, 900);
 	AddStaticVehicleEx(566, 2000.0647, -1143.5834, 25.2177, 269.2925, 85, 0, 900);
 	AddStaticVehicleEx(517, 2019.3447, -1128.2896, 24.8203, 88.5800, 85, 0, 900);
@@ -21608,17 +21047,15 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(558, -1955.7188, 459.4841, 34.9762, 2.0320, 13, 13, 600);
 	AddStaticVehicleEx(585, -1928.7947, 459.5515, 34.9763, 358.6559, 14, 14, 600);
 	kvartiraSF[1] = AddStaticVehicleEx(405, -1900.0426, 474.0867, 34.9749, 90.4343, 15, 15, 600);
-	//____________________________________________________________________________________________________________________________
 	RusMaf[0] = AddStaticVehicleEx(579, -2536.5706, 2367.0774, 4.9357, 196.2585, 0, 0, 900);
-	AddStaticVehicleEx(579, -2542.0623, 2366.4958, 4.9222, 192.4822, 0, 0, 900); //
-	AddStaticVehicleEx(580, -2516.4978, 2367.0195, 4.7917, 204.8624, 0, 0, 900); //
-	AddStaticVehicleEx(560, -2546.5730, 2355.5532, 4.6904, 330.7680, 0, 0, 900); //
-	AddStaticVehicleEx(560, -2540.3708, 2355.3445, 4.6892, 332.8611, 0, 0, 900); //
-	AddStaticVehicleEx(507, -2523.2856, 2366.9619, 4.8131, 201.8255, 0, 0, 900); //
-	AddStaticVehicleEx(507, -2529.9800, 2366.7751, 4.8316, 195.1953, 0, 0, 900); //
-	AddStaticVehicleEx(409, -2515.6748, 2355.5032, 4.7842, 270.7273, 0, 0, 900); //
-	RusMaf[1] = AddStaticVehicleEx(487, -2528.9722, 2346.0010, 13.4057, 269.2085, 0, 0, 900); //
-	//______________________________________________________________________________
+	AddStaticVehicleEx(579, -2542.0623, 2366.4958, 4.9222, 192.4822, 0, 0, 900);
+	AddStaticVehicleEx(580, -2516.4978, 2367.0195, 4.7917, 204.8624, 0, 0, 900);
+	AddStaticVehicleEx(560, -2546.5730, 2355.5532, 4.6904, 330.7680, 0, 0, 900);
+	AddStaticVehicleEx(560, -2540.3708, 2355.3445, 4.6892, 332.8611, 0, 0, 900);
+	AddStaticVehicleEx(507, -2523.2856, 2366.9619, 4.8131, 201.8255, 0, 0, 900);
+	AddStaticVehicleEx(507, -2529.9800, 2366.7751, 4.8316, 195.1953, 0, 0, 900);
+	AddStaticVehicleEx(409, -2515.6748, 2355.5032, 4.7842, 270.7273, 0, 0, 900);
+	RusMaf[1] = AddStaticVehicleEx(487, -2528.9722, 2346.0010, 13.4057, 269.2085, 0, 0, 900);
 	Rifa[0] = AddStaticVehicleEx(445, -2459.6221, -94.9366, 25.8355, 90.9837, 93, 93, 900); // RIFA Султан ----------------------
 	AddStaticVehicleEx(482, -2466.7896, -118.5653, 25.7870, 179.1900, 93, 93, 900); //  RIFA Автобусик --------------------------
 	AddStaticVehicleEx(445, -2475.4705, -134.0442, 25.4922, 272.3264, 93, 93, 900); //   RIFA 4х дверка -----------------------------
@@ -21640,72 +21077,70 @@ public OnGameModeInit() {
 	dalnoboishikauto[1] = AddStaticVehicleEx(515, -1.36523438, -361.15039062, 6.58340836, 90.00000000, -1, -1, 600); //Roadtrain
 	//===================================ЛС нубы===========================================
 	AddStaticVehicleEx(462, 825.9998, -1345.4810, 13.1291, 88.8686, 10, 10, 600); // LSSSSS CARRSSSS
-	AddStaticVehicleEx(462, 825.8162, -1347.2656, 13.1263, 88.8540, 13, 13, 600); //
-	AddStaticVehicleEx(462, 825.8953, -1348.9767, 13.1291, 88.9828, 1, 2, 600); //
-	AddStaticVehicleEx(462, 825.8489, -1350.9532, 13.1311, 89.6165, 1, 3, 600); //
-	AddStaticVehicleEx(462, 821.9857, -1355.2749, 13.1393, 358.7020, 10, 10, 600); //
-	AddStaticVehicleEx(462, 820.0739, -1355.2245, 13.1401, 2.1668, 13, 13, 600); //
-	AddStaticVehicleEx(462, 818.2985, -1355.1820, 13.1394, 359.2921, 1, 2, 600); //
-	AddStaticVehicleEx(462, 816.4154, -1355.0900, 13.1400, 1.9159, 1, 3, 600); //
+	AddStaticVehicleEx(462, 825.8162, -1347.2656, 13.1263, 88.8540, 13, 13, 600);
+	AddStaticVehicleEx(462, 825.8953, -1348.9767, 13.1291, 88.9828, 1, 2, 600);
+	AddStaticVehicleEx(462, 825.8489, -1350.9532, 13.1311, 89.6165, 1, 3, 600);
+	AddStaticVehicleEx(462, 821.9857, -1355.2749, 13.1393, 358.7020, 10, 10, 600);
+	AddStaticVehicleEx(462, 820.0739, -1355.2245, 13.1401, 2.1668, 13, 13, 600);
+	AddStaticVehicleEx(462, 818.2985, -1355.1820, 13.1394, 359.2921, 1, 2, 600);
+	AddStaticVehicleEx(462, 816.4154, -1355.0900, 13.1400, 1.9159, 1, 3, 600);
 	AddStaticVehicleEx(492, 836.8270, -1315.3625, 13.2387, 89.5031, 24, 55, 600); // END LSSSS CARRS
 	//===================================СФ нубы===========================================
 	AddStaticVehicleEx(462, -1981.9546, 165.0476, 27.2862, 106.2455, 13, 13, 600); // SFFFFFFF CARRRSSSSSSS
-	AddStaticVehicleEx(462, -1982.1451, 162.5379, 27.2873, 105.3298, 1, 2, 600); //
-	AddStaticVehicleEx(462, -1982.2272, 160.3802, 27.2874, 100.8896, 1, 3, 600); //
-	AddStaticVehicleEx(462, -1982.2668, 158.3040, 27.2859, 99.9099, 10, 10, 600); //
-	AddStaticVehicleEx(462, -1982.3590, 156.0713, 27.2862, 100.5883, 13, 13, 600); //
-	AddStaticVehicleEx(462, -1982.3381, 153.8458, 27.2872, 98.2976, 1, 2, 600); //
-	AddStaticVehicleEx(507, -2027.3184, 103.3375, 27.8810, 268.5125, 53, 53, 600); //
-	AddStaticVehicleEx(462, -1981.7577, 130.2937, 27.2868, 100.3799, 3, 1, 600); //
-	AddStaticVehicleEx(462, -1981.7904, 128.0339, 27.2862, 100.6963, 12, 12, 600); //
-	AddStaticVehicleEx(462, -1981.9045, 125.9427, 27.2861, 96.6069, 14, 14, 600); //
-	AddStaticVehicleEx(462, -1982.1202, 123.7120, 27.2872, 96.8036, 2, 1, 600); //
-	AddStaticVehicleEx(462, -1982.2122, 121.3794, 27.2864, 95.6455, 3, 1, 600); //
+	AddStaticVehicleEx(462, -1982.1451, 162.5379, 27.2873, 105.3298, 1, 2, 600);
+	AddStaticVehicleEx(462, -1982.2272, 160.3802, 27.2874, 100.8896, 1, 3, 600);
+	AddStaticVehicleEx(462, -1982.2668, 158.3040, 27.2859, 99.9099, 10, 10, 600);
+	AddStaticVehicleEx(462, -1982.3590, 156.0713, 27.2862, 100.5883, 13, 13, 600);
+	AddStaticVehicleEx(462, -1982.3381, 153.8458, 27.2872, 98.2976, 1, 2, 600);
+	AddStaticVehicleEx(507, -2027.3184, 103.3375, 27.8810, 268.5125, 53, 53, 600);
+	AddStaticVehicleEx(462, -1981.7577, 130.2937, 27.2868, 100.3799, 3, 1, 600);
+	AddStaticVehicleEx(462, -1981.7904, 128.0339, 27.2862, 100.6963, 12, 12, 600);
+	AddStaticVehicleEx(462, -1981.9045, 125.9427, 27.2861, 96.6069, 14, 14, 600);
+	AddStaticVehicleEx(462, -1982.1202, 123.7120, 27.2872, 96.8036, 2, 1, 600);
+	AddStaticVehicleEx(462, -1982.2122, 121.3794, 27.2864, 95.6455, 3, 1, 600);
 	AddStaticVehicleEx(462, -1982.3198, 119.1780, 27.2796, 94.8795, 12, 12, 600); // ENDDD SFFFFF CARRRRRSSS
 	//===================================ЛВ нубы===========================================
-	AddStaticVehicleEx(436, 2805.1436, 1332.5701, 10.5260, 270.2810, 95, 1, 600); //
-	AddStaticVehicleEx(445, 2810.2339, 1374.8018, 10.6250, 179.8135, 39, 39, 600); //
-	AddStaticVehicleEx(458, 2853.2991, 1361.3514, 10.6888, 89.1116, 113, 1, 600); //
-	AddStaticVehicleEx(467, 2781.8953, 1295.0095, 10.4900, 179.6949, 2, 1, 600); //
-	AddStaticVehicleEx(426, 2765.6438, 1272.0359, 10.4933, 269.9665, 7, 7, 600); //
-	AddStaticVehicleEx(462, 2815.0022, 1306.9070, 10.3499, 113.7781, 1, 3, 600); //
-	AddStaticVehicleEx(462, 2815.0325, 1303.3121, 10.3489, 115.6427, 10, 10, 600); //
-	AddStaticVehicleEx(462, 2815.1946, 1300.2065, 10.3550, 119.3115, 13, 13, 600); //
-	AddStaticVehicleEx(462, 2815.0977, 1297.0571, 10.3481, 111.7523, 1, 2, 600); //
-	AddStaticVehicleEx(462, 2815.0183, 1293.9839, 10.3498, 112.2389, 1, 3, 600); //
-	AddStaticVehicleEx(462, 2815.1294, 1291.0408, 10.3491, 114.3487, 10, 10, 600); //
-	AddStaticVehicleEx(462, 2815.0049, 1288.2744, 10.3497, 112.1169, 13, 13, 600); //
-	AddStaticVehicleEx(462, 2815.0652, 1285.6174, 10.3531, 109.8913, 1, 2, 600); //
-	AddStaticVehicleEx(462, 2815.1694, 1283.0048, 10.3536, 116.6928, 1, 3, 600); //
-	AddStaticVehicleEx(462, 2815.0459, 1280.2860, 10.3497, 116.5030, 10, 10, 600); //
-	AddStaticVehicleEx(462, 2815.0610, 1277.5355, 10.3482, 111.6510, 13, 13, 600); //
+	AddStaticVehicleEx(436, 2805.1436, 1332.5701, 10.5260, 270.2810, 95, 1, 600);
+	AddStaticVehicleEx(445, 2810.2339, 1374.8018, 10.6250, 179.8135, 39, 39, 600);
+	AddStaticVehicleEx(458, 2853.2991, 1361.3514, 10.6888, 89.1116, 113, 1, 600);
+	AddStaticVehicleEx(467, 2781.8953, 1295.0095, 10.4900, 179.6949, 2, 1, 600);
+	AddStaticVehicleEx(426, 2765.6438, 1272.0359, 10.4933, 269.9665, 7, 7, 600);
+	AddStaticVehicleEx(462, 2815.0022, 1306.9070, 10.3499, 113.7781, 1, 3, 600);
+	AddStaticVehicleEx(462, 2815.0325, 1303.3121, 10.3489, 115.6427, 10, 10, 600);
+	AddStaticVehicleEx(462, 2815.1946, 1300.2065, 10.3550, 119.3115, 13, 13, 600);
+	AddStaticVehicleEx(462, 2815.0977, 1297.0571, 10.3481, 111.7523, 1, 2, 600);
+	AddStaticVehicleEx(462, 2815.0183, 1293.9839, 10.3498, 112.2389, 1, 3, 600);
+	AddStaticVehicleEx(462, 2815.1294, 1291.0408, 10.3491, 114.3487, 10, 10, 600);
+	AddStaticVehicleEx(462, 2815.0049, 1288.2744, 10.3497, 112.1169, 13, 13, 600);
+	AddStaticVehicleEx(462, 2815.0652, 1285.6174, 10.3531, 109.8913, 1, 2, 600);
+	AddStaticVehicleEx(462, 2815.1694, 1283.0048, 10.3536, 116.6928, 1, 3, 600);
+	AddStaticVehicleEx(462, 2815.0459, 1280.2860, 10.3497, 116.5030, 10, 10, 600);
+	AddStaticVehicleEx(462, 2815.0610, 1277.5355, 10.3482, 111.6510, 13, 13, 600);
 	AddStaticVehicleEx(462, 2815.0286, 1274.6405, 10.3486, 109.5109, 1, 2, 600); // END LVVVV CARS
-	//------------------------------------------------------------------------------
-	AddStaticVehicleEx(439, 1107.5176, -306.4810, 73.8879, 91.3718, 40, 40, 600); // ---------------------------------------------
-	AddStaticVehicleEx(439, 1059.3320, -342.6186, 73.8882, 91.5555, 40, 40, 600); //  --------------------------------------------
-	AddStaticVehicleEx(453, -2968.2708, 496.3456, 0.2806, 357.7631, -1, -1, 600); // ---------------------------------------------
-	AddStaticVehicleEx(560, -2498.3018, -602.6840, 132.2669, 358.5695, -1, -1, 600); //   ---------------------------------------
-	AddStaticVehicleEx(404, -2337.6492, -126.2056, 35.0456, 2.0038, -1, -1, 600); //  --------------------------------------------
-	AddStaticVehicleEx(445, 2151.6057, 1818.4509, 10.6953, 64.1825, -1, -1, 600); // ----------------------------------------------
+	AddStaticVehicleEx(439, 1107.5176, -306.4810, 73.8879, 91.3718, 40, 40, 600);
+	AddStaticVehicleEx(439, 1059.3320, -342.6186, 73.8882, 91.5555, 40, 40, 600);
+	AddStaticVehicleEx(453, -2968.2708, 496.3456, 0.2806, 357.7631, -1, -1, 600);
+	AddStaticVehicleEx(560, -2498.3018, -602.6840, 132.2669, 358.5695, -1, -1, 600);
+	AddStaticVehicleEx(404, -2337.6492, -126.2056, 35.0456, 2.0038, -1, -1, 600);
+	AddStaticVehicleEx(445, 2151.6057, 1818.4509, 10.6953, 64.1825, -1, -1, 600);
 	AddStaticVehicleEx(401, -1897.8558, -846.5352, 31.8031, 270.0366, -1, -1, 600); //   Авто СФ  ---------------------------------
-	AddStaticVehicleEx(400, -263.1647, -2219.1448, 28.7358, 111.0151, -1, -1, 600); // -- -----------------------------------------
-	AddStaticVehicleEx(510, -1897.8243, -877.5616, 31.6310, 90.2963, 2, 2, 600); //
-	AddStaticVehicleEx(510, -1871.6204, -960.5840, 31.6291, 93.3921, 1, 1, 600); //
-	AddStaticVehicleEx(462, -1898.7106, -918.7181, 31.6198, 88.4094, 3, 3, 600); //
-	AddStaticVehicleEx(462, -1885.9866, -777.8161, 31.6192, 271.8154, 0, 0, 600); //
-	//____________________________________________________________________________________________________________________________
+	AddStaticVehicleEx(400, -263.1647, -2219.1448, 28.7358, 111.0151, -1, -1, 600);
+	AddStaticVehicleEx(510, -1897.8243, -877.5616, 31.6310, 90.2963, 2, 2, 600);
+	AddStaticVehicleEx(510, -1871.6204, -960.5840, 31.6291, 93.3921, 1, 1, 600);
+	AddStaticVehicleEx(462, -1898.7106, -918.7181, 31.6198, 88.4094, 3, 3, 600);
+	AddStaticVehicleEx(462, -1885.9866, -777.8161, 31.6192, 271.8154, 0, 0, 600);
 	AddStaticVehicleEx(458, 2145.4512, 1409.1614, 10.5257, 359.1257, -1, -1, 600); //      Авто ЛВ ------------------------------
 	AddStaticVehicleEx(560, 2217.6045, 1517.1034, 10.5253, 92.0260, -1, -1, 600); //       Авто ЛВ ------------------------------
 	AddStaticVehicleEx(452, 720.1, -1694.0, -0.4, 179.4, -1, -1, 600); //Fishboat/*Speeder*/
 	AddStaticVehicleEx(452, 721.2, -1629.4, -0.4, 180.9, -1, -1, 600); //Fishboat/*Speeder*/
 	AddStaticVehicleEx(452, -1474.4949, 693.0169, 0.1996, 0.0751, -1, -1, 600); //Fishboat SF/*Speeder*/
 	AddStaticVehicleEx(452, -1720.0717, 1439.6177, -0.4913, 357.6789, -1, -1, 600); //Fishboat SF/*Speeder*/
-	AddStaticVehicleEx(405, 29.2282, -2636.3044, 40.2897, 95.2178, -1, -1, 600); //  ----------------------------------------------92
-	AddStaticVehicleEx(445, -2266.3359, 200.7529, 35.0389, 268.3788, -1, -1, 600); // ----------------------------------------------93
-	AddStaticVehicleEx(560, 1265.2557, -1802.1469, 13.1118, 150.4491, -1, -1, 600); // ------------------------------------------
-	AddStaticVehicleEx(452, 2113.6138, -103.9571, -0.4819, 131.1217, -1, -1, 600); // ---------------------------------------------
-	AddStaticVehicleEx(452, 2114.7671, -87.2741, -0.2426, 122.2977, -1, -1, 600); //  ---------------------------------------------
-	AddStaticVehicleEx(405, 2449.4817, 111.2742, 26.3538, 268.8032, -1, -1, 600); //  ---------------------------------------------
+	AddStaticVehicleEx(405, 29.2282, -2636.3044, 40.2897, 95.2178, -1, -1, 600);
+	AddStaticVehicleEx(445, -2266.3359, 200.7529, 35.0389, 268.3788, -1, -1, 600);
+	AddStaticVehicleEx(560, 1265.2557, -1802.1469, 13.1118, 150.4491, -1, -1, 600);
+	AddStaticVehicleEx(452, 2113.6138, -103.9571, -0.4819, 131.1217, -1, -1, 600);
+	AddStaticVehicleEx(452, 2114.7671, -87.2741, -0.2426, 122.2977, -1, -1, 600);
+	AddStaticVehicleEx(405, 2449.4817, 111.2742, 26.3538, 268.8032, -1, -1, 600);
 	AddStaticVehicleEx(592, 1397.3390, 1337.2651, 12.0301, 360.0000, -1, -1, 600); //  транспорт аэро СФ ---------------------------
 	AddStaticVehicleEx(593, 1286.9884, 1324.5450, 11.2808, 266.9478, -1, -1, 600); //  транспорт аэро СФ ---------------------------
 	AddStaticVehicleEx(593, 1289.8994, 1361.8674, 11.2841, 266.8304, -1, -1, 600); //  транспорт аэро СФ ---------------------------
@@ -21717,13 +21152,12 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(513, -1390.3510, -482.7985, 13.7883, 250.3124, -1, -1, 600); // Airport SF ----------------------------------
 	AddStaticVehicleEx(513, 1835.3215, -2624.1938, 13.5405, 56.0569, -1, -1, 600); //  Airport LS ----------------------------------
 	AddStaticVehicleEx(513, 1813.2893, -2625.6296, 13.5394, 53.2858, -1, -1, 600); //  Airport LS ----------------------------------
-	AddStaticVehicleEx(402, 2180.1489, 1878.6643, 10.6520, 0.9398, -1, -1, 600); // -----------------------------------------------
-	AddStaticVehicleEx(439, 2246.0574, 1788.3158, 10.5907, 181.6367, -1, -1, 600); // ---------------------------------------------
-	AddStaticVehicleEx(439, 2172.5813, 1981.3502, 10.7163, 90.8902, -1, -1, 600); // ----------------------------------------------
-	AddStaticVehicleEx(439, 2076.9407, 2160.4753, 10.7161, 296.1867, -1, -1, 600); // ---------------------------------------------
-	AddStaticVehicleEx(592, 395.4486, 2502.9504, 17.6794, 90.0938, 1, 1, 600); //
-	AddStaticVehicleEx(519, -1366.2584, -216.6863, 15.0673, 345.8361, 1, 1, 600); //
-	//==============================================================================
+	AddStaticVehicleEx(402, 2180.1489, 1878.6643, 10.6520, 0.9398, -1, -1, 600);
+	AddStaticVehicleEx(439, 2246.0574, 1788.3158, 10.5907, 181.6367, -1, -1, 600);
+	AddStaticVehicleEx(439, 2172.5813, 1981.3502, 10.7163, 90.8902, -1, -1, 600);
+	AddStaticVehicleEx(439, 2076.9407, 2160.4753, 10.7161, 296.1867, -1, -1, 600);
+	AddStaticVehicleEx(592, 395.4486, 2502.9504, 17.6794, 90.0938, 1, 1, 600);
+	AddStaticVehicleEx(519, -1366.2584, -216.6863, 15.0673, 345.8361, 1, 1, 600);
 	AddStaticVehicleEx(562, 2216.9907, -1157.2010, 25.3913, 269.5313, -1, -1, 300); // ЛС
 	AddStaticVehicleEx(562, 1280.0585, -1830.1501, 13.0431, 89.4245, -1, -1, 300); //  ЛС
 	AddStaticVehicleEx(560, 2148.4001, -1175.8213, 23.5253, 89.7123, -1, -1, 300); //  ЛС
@@ -21747,83 +21181,81 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(405, 1555.2979, -1718.5148, 13.2541, 90.0710, -1, -1, 300); //  ЛС
 	AddStaticVehicleEx(421, 1422.2740, -1548.9465, 13.2476, 179.5020, -1, -1, 300); // ЛС
 	AddStaticVehicleEx(560, -1658.4651, -580.9396, 13.8538, 107.7015, -1, -1, 300); // СФ
-	AddStaticVehicleEx(405, -2146.7776, -407.2939, 35.0484, 320.4085, -1, -1, 300); //
-	AddStaticVehicleEx(475, -2629.9714, -54.6395, 4.0410, 178.5938, -1, -1, 300); //
-	AddStaticVehicleEx(516, -2681.7148, 268.2626, 4.0414, 359.3069, -1, -1, 300); //       60
-	AddStaticVehicleEx(542, -2408.0967, 740.9853, 34.7204, 0.0745, -1, -1, 300); //
-	AddStaticVehicleEx(559, -2460.5471, 741.0335, 34.7209, 358.7899, -1, -1, 300); //
-	AddStaticVehicleEx(562, -2782.0347, 766.2728, 50.3610, 95.4734, -1, -1, 300); //
-	AddStaticVehicleEx(560, -2618.5564, 1375.6062, 6.8240, 358.9253, -1, -1, 300); //
-	AddStaticVehicleEx(401, -2437.3748, 1032.5120, 50.0961, 358.9574, -1, -1, 300); //
-	AddStaticVehicleEx(402, -2429.3184, 952.6487, 45.0016, 271.3651, -1, -1, 300); //
-	AddStaticVehicleEx(603, -2318.6650, 1029.5175, 50.5333, 178.3063, -1, -1, 300); //      70
-	AddStaticVehicleEx(589, -2222.0376, 724.2926, 49.1195, 271.9971, -1, -1, 300); //
-	AddStaticVehicleEx(561, -2156.9431, 649.9692, 52.0726, 271.0413, -1, -1, 300); //
-	AddStaticVehicleEx(565, -2125.7397, 656.1635, 52.0726, 132.7387, -1, -1, 300); //
-	AddStaticVehicleEx(560, -2152.1714, 378.3821, 34.9491, 177.8394, -1, -1, 300); //
-	AddStaticVehicleEx(554, -2077.6887, 265.6211, 35.1270, 268.2577, -1, -1, 300); //
-	AddStaticVehicleEx(549, -2032.5751, 179.6017, 28.5450, 274.4774, -1, -1, 300); //
-	AddStaticVehicleEx(402, -2019.0425, 375.7849, 34.8771, 0.4389, -1, -1, 300); //
-	AddStaticVehicleEx(404, -1956.2375, 585.5790, 34.8197, 0.8650, -1, -1, 300); //
-	AddStaticVehicleEx(458, -1932.3971, 585.1214, 34.8301, 359.4680, -1, -1, 300); //
-	AddStaticVehicleEx(479, -1498.5226, 844.7313, 6.8929, 89.4470, -1, -1, 300); //
-	AddStaticVehicleEx(603, -1702.6222, 409.7613, 6.8840, 171.8205, -1, -1, 300); //
-	AddStaticVehicleEx(561, -2215.9805, -87.0894, 35.0258, 358.7682, -1, -1, 300); //
-	AddStaticVehicleEx(405, -2183.4822, 42.5413, 35.0257, 267.7889, -1, -1, 300); //
-	AddStaticVehicleEx(562, -2235.3293, 305.6320, 34.8218, 1.4678, -1, -1, 300); //
-	AddStaticVehicleEx(585, -2289.2754, 1101.2231, 79.8405, 266.8818, -1, -1, 300); //     90
-	AddStaticVehicleEx(400, -2178.5273, 1223.8784, 33.6353, 2.7000, -1, -1, 300); //
-	AddStaticVehicleEx(505, -2511.8704, 1205.2421, 37.1264, 87.9047, -1, -1, 300); //
-	AddStaticVehicleEx(505, -2529.7844, 1229.0474, 37.1327, 32.4456, -1, -1, 300); //
-	AddStaticVehicleEx(480, -2443.9214, 2242.1860, 4.5346, 359.6313, -1, -1, 300); //
+	AddStaticVehicleEx(405, -2146.7776, -407.2939, 35.0484, 320.4085, -1, -1, 300);
+	AddStaticVehicleEx(475, -2629.9714, -54.6395, 4.0410, 178.5938, -1, -1, 300);
+	AddStaticVehicleEx(516, -2681.7148, 268.2626, 4.0414, 359.3069, -1, -1, 300);
+	AddStaticVehicleEx(542, -2408.0967, 740.9853, 34.7204, 0.0745, -1, -1, 300);
+	AddStaticVehicleEx(559, -2460.5471, 741.0335, 34.7209, 358.7899, -1, -1, 300);
+	AddStaticVehicleEx(562, -2782.0347, 766.2728, 50.3610, 95.4734, -1, -1, 300);
+	AddStaticVehicleEx(560, -2618.5564, 1375.6062, 6.8240, 358.9253, -1, -1, 300);
+	AddStaticVehicleEx(401, -2437.3748, 1032.5120, 50.0961, 358.9574, -1, -1, 300);
+	AddStaticVehicleEx(402, -2429.3184, 952.6487, 45.0016, 271.3651, -1, -1, 300);
+	AddStaticVehicleEx(603, -2318.6650, 1029.5175, 50.5333, 178.3063, -1, -1, 300);
+	AddStaticVehicleEx(589, -2222.0376, 724.2926, 49.1195, 271.9971, -1, -1, 300);
+	AddStaticVehicleEx(561, -2156.9431, 649.9692, 52.0726, 271.0413, -1, -1, 300);
+	AddStaticVehicleEx(565, -2125.7397, 656.1635, 52.0726, 132.7387, -1, -1, 300);
+	AddStaticVehicleEx(560, -2152.1714, 378.3821, 34.9491, 177.8394, -1, -1, 300);
+	AddStaticVehicleEx(554, -2077.6887, 265.6211, 35.1270, 268.2577, -1, -1, 300);
+	AddStaticVehicleEx(549, -2032.5751, 179.6017, 28.5450, 274.4774, -1, -1, 300);
+	AddStaticVehicleEx(402, -2019.0425, 375.7849, 34.8771, 0.4389, -1, -1, 300);
+	AddStaticVehicleEx(404, -1956.2375, 585.5790, 34.8197, 0.8650, -1, -1, 300);
+	AddStaticVehicleEx(458, -1932.3971, 585.1214, 34.8301, 359.4680, -1, -1, 300);
+	AddStaticVehicleEx(479, -1498.5226, 844.7313, 6.8929, 89.4470, -1, -1, 300);
+	AddStaticVehicleEx(603, -1702.6222, 409.7613, 6.8840, 171.8205, -1, -1, 300);
+	AddStaticVehicleEx(561, -2215.9805, -87.0894, 35.0258, 358.7682, -1, -1, 300);
+	AddStaticVehicleEx(405, -2183.4822, 42.5413, 35.0257, 267.7889, -1, -1, 300);
+	AddStaticVehicleEx(562, -2235.3293, 305.6320, 34.8218, 1.4678, -1, -1, 300);
+	AddStaticVehicleEx(585, -2289.2754, 1101.2231, 79.8405, 266.8818, -1, -1, 300);
+	AddStaticVehicleEx(400, -2178.5273, 1223.8784, 33.6353, 2.7000, -1, -1, 300);
+	AddStaticVehicleEx(505, -2511.8704, 1205.2421, 37.1264, 87.9047, -1, -1, 300);
+	AddStaticVehicleEx(505, -2529.7844, 1229.0474, 37.1327, 32.4456, -1, -1, 300);
+	AddStaticVehicleEx(480, -2443.9214, 2242.1860, 4.5346, 359.6313, -1, -1, 300);
 	AddStaticVehicleEx(560, -2476.5769, 2225.2368, 4.5447, 178.7871, -1, -1, 300); // СФ
-	AddStaticVehicleEx(421, 1783.6021, -1025.8364, 23.8434, 333.6516, -1, -1, 300); //
-	AddStaticVehicleEx(479, 1426.8616, -1056.6398, 22.9586, 0.6264, -1, -1, 300); //
-	AddStaticVehicleEx(516, 1314.6045, -871.0888, 39.4121, 269.5345, -1, -1, 300); //
-	AddStaticVehicleEx(529, 1181.8198, -926.1049, 42.8522, 278.7087, -1, -1, 300); //
-	AddStaticVehicleEx(559, 986.9466, -905.8787, 41.8607, 181.6934, -1, -1, 300); //
-	AddStaticVehicleEx(558, 763.0032, -1026.2504, 23.6292, 171.5150, -1, -1, 300); //
-	AddStaticVehicleEx(562, 700.9086, -1199.9783, 14.9371, 328.9723, -1, -1, 300); //
-	AddStaticVehicleEx(585, 408.4361, -1318.6412, 14.4831, 209.2215, -1, -1, 300); //
-	AddStaticVehicleEx(401, 343.0909, -1346.9855, 14.2875, 119.3574, -1, -1, 300); //
-	AddStaticVehicleEx(400, 209.1800, -1422.1796, 13.3417, 314.5993, -1, -1, 300); //
-	AddStaticVehicleEx(405, 489.1241, -1498.8655, 20.2361, 353.4773, -1, -1, 300); //
-	AddStaticVehicleEx(421, 353.7181, -1808.7424, 4.4291, 179.5624, -1, -1, 300); //
-	AddStaticVehicleEx(436, 311.7828, -1789.2671, 4.3428, 358.3995, -1, -1, 300); //
-	AddStaticVehicleEx(516, 783.2449, -1634.1703, 13.2150, 90.9759, -1, -1, 300); //
-	AddStaticVehicleEx(529, 1098.1848, -1772.6263, 12.9791, 269.3724, -1, -1, 300); //
-	AddStaticVehicleEx(542, 1062.4709, -1754.9944, 13.1744, 88.5668, -1, -1, 300); //
-	AddStaticVehicleEx(542, 1098.2307, -1754.7957, 13.0972, 268.7991, -1, -1, 300); //
-	AddStaticVehicleEx(549, 1297.0128, -2490.4551, 10.5500, 54.3155, -1, -1, 300); //      130
-	AddStaticVehicleEx(480, 1804.6260, -2307.5337, -2.8226, 1.0666, -1, -1, 300); //
-	AddStaticVehicleEx(401, 1434.5120, -2707.5645, 13.3185, 37.4264, -1, -1, 300); //
-	AddStaticVehicleEx(400, 2200.0889, -2521.6675, 13.6393, 2.6994, -1, -1, 300); //
-	AddStaticVehicleEx(443, 2158.2427, -2294.3262, 14.0919, 224.4564, -1, -1, 300); //
-	AddStaticVehicleEx(481, 1946.1908, -1380.5582, 18.0967, 90.4587, -1, -1, 300); //
-	AddStaticVehicleEx(481, 1945.8822, -1379.0096, 18.0950, 88.4418, -1, -1, 300); //
-	AddStaticVehicleEx(481, 1945.4143, -1365.0471, 18.0913, 88.5227, -1, -1, 300); //
-	AddStaticVehicleEx(481, 1944.9277, -1368.0684, 18.0882, 90.1624, -1, -1, 300); //
-	AddStaticVehicleEx(558, 2391.5427, -1487.6722, 23.4578, 89.0039, -1, -1, 300); //
-	AddStaticVehicleEx(585, 2612.5200, -1397.1954, 34.5700, 182.3753, -1, -1, 300); //     145
-	AddStaticVehicleEx(505, 2434.8005, -1224.7297, 25.2898, 140.1047, -1, -1, 300); //
-	AddStaticVehicleEx(473, 2488.8076, -2267.5596, -0.1202, 90.0908, -1, -1, 300); //
-	AddStaticVehicleEx(473, 2356.7249, -2505.8188, -0.3044, 0.6139, -1, -1, 300); //
-	AddStaticVehicleEx(492, -1964.0983, 175.7521, 27.1444, 90.0283, 81, 27, 300); //
+	AddStaticVehicleEx(421, 1783.6021, -1025.8364, 23.8434, 333.6516, -1, -1, 300);
+	AddStaticVehicleEx(479, 1426.8616, -1056.6398, 22.9586, 0.6264, -1, -1, 300);
+	AddStaticVehicleEx(516, 1314.6045, -871.0888, 39.4121, 269.5345, -1, -1, 300);
+	AddStaticVehicleEx(529, 1181.8198, -926.1049, 42.8522, 278.7087, -1, -1, 300);
+	AddStaticVehicleEx(559, 986.9466, -905.8787, 41.8607, 181.6934, -1, -1, 300);
+	AddStaticVehicleEx(558, 763.0032, -1026.2504, 23.6292, 171.5150, -1, -1, 300);
+	AddStaticVehicleEx(562, 700.9086, -1199.9783, 14.9371, 328.9723, -1, -1, 300);
+	AddStaticVehicleEx(585, 408.4361, -1318.6412, 14.4831, 209.2215, -1, -1, 300);
+	AddStaticVehicleEx(401, 343.0909, -1346.9855, 14.2875, 119.3574, -1, -1, 300);
+	AddStaticVehicleEx(400, 209.1800, -1422.1796, 13.3417, 314.5993, -1, -1, 300);
+	AddStaticVehicleEx(405, 489.1241, -1498.8655, 20.2361, 353.4773, -1, -1, 300);
+	AddStaticVehicleEx(421, 353.7181, -1808.7424, 4.4291, 179.5624, -1, -1, 300);
+	AddStaticVehicleEx(436, 311.7828, -1789.2671, 4.3428, 358.3995, -1, -1, 300);
+	AddStaticVehicleEx(516, 783.2449, -1634.1703, 13.2150, 90.9759, -1, -1, 300);
+	AddStaticVehicleEx(529, 1098.1848, -1772.6263, 12.9791, 269.3724, -1, -1, 300);
+	AddStaticVehicleEx(542, 1062.4709, -1754.9944, 13.1744, 88.5668, -1, -1, 300);
+	AddStaticVehicleEx(542, 1098.2307, -1754.7957, 13.0972, 268.7991, -1, -1, 300);
+	AddStaticVehicleEx(549, 1297.0128, -2490.4551, 10.5500, 54.3155, -1, -1, 300);
+	AddStaticVehicleEx(480, 1804.6260, -2307.5337, -2.8226, 1.0666, -1, -1, 300);
+	AddStaticVehicleEx(401, 1434.5120, -2707.5645, 13.3185, 37.4264, -1, -1, 300);
+	AddStaticVehicleEx(400, 2200.0889, -2521.6675, 13.6393, 2.6994, -1, -1, 300);
+	AddStaticVehicleEx(443, 2158.2427, -2294.3262, 14.0919, 224.4564, -1, -1, 300);
+	AddStaticVehicleEx(481, 1946.1908, -1380.5582, 18.0967, 90.4587, -1, -1, 300);
+	AddStaticVehicleEx(481, 1945.8822, -1379.0096, 18.0950, 88.4418, -1, -1, 300);
+	AddStaticVehicleEx(481, 1945.4143, -1365.0471, 18.0913, 88.5227, -1, -1, 300);
+	AddStaticVehicleEx(481, 1944.9277, -1368.0684, 18.0882, 90.1624, -1, -1, 300);
+	AddStaticVehicleEx(558, 2391.5427, -1487.6722, 23.4578, 89.0039, -1, -1, 300);
+	AddStaticVehicleEx(585, 2612.5200, -1397.1954, 34.5700, 182.3753, -1, -1, 300);
+	AddStaticVehicleEx(505, 2434.8005, -1224.7297, 25.2898, 140.1047, -1, -1, 300);
+	AddStaticVehicleEx(473, 2488.8076, -2267.5596, -0.1202, 90.0908, -1, -1, 300);
+	AddStaticVehicleEx(473, 2356.7249, -2505.8188, -0.3044, 0.6139, -1, -1, 300);
+	AddStaticVehicleEx(492, -1964.0983, 175.7521, 27.1444, 90.0283, 81, 27, 300);
 	//----------------------------вертушки в аэро--------------------------------------------------
-	AddStaticVehicleEx(487, 1679.6703, -2626.8630, 13.7241, 25.5493, 0, 0, 300); //
-	AddStaticVehicleEx(487, 1698.1920, -2622.4810, 13.7246, 29.6896, 1, 1, 300); //
-	AddStaticVehicleEx(469, -1220.4818, -10.8919, 14.1603, 135.5109, 1, 0, 300); //
-	AddStaticVehicleEx(469, -1183.2186, 26.2471, 14.1610, 136.7316, 1, 0, 300); //
-	AddStaticVehicleEx(487, -1173.7252, -449.8770, 14.3245, 57.5242, 1, 1, 300); //
-	AddStaticVehicleEx(487, -1164.5161, -421.7247, 14.3255, 64.9601, 0, 0, 300); //
-	//------------------------------------------------------------------------------
+	AddStaticVehicleEx(487, 1679.6703, -2626.8630, 13.7241, 25.5493, 0, 0, 300);
+	AddStaticVehicleEx(487, 1698.1920, -2622.4810, 13.7246, 29.6896, 1, 1, 300);
+	AddStaticVehicleEx(469, -1220.4818, -10.8919, 14.1603, 135.5109, 1, 0, 300);
+	AddStaticVehicleEx(469, -1183.2186, 26.2471, 14.1610, 136.7316, 1, 0, 300);
+	AddStaticVehicleEx(487, -1173.7252, -449.8770, 14.3245, 57.5242, 1, 1, 300);
+	AddStaticVehicleEx(487, -1164.5161, -421.7247, 14.3255, 64.9601, 0, 0, 300);
 	AddStaticVehicleEx(571, 2286.2141, -2354.5000, 12.8306, 225.8705, -1, -1, 160); //     Картинг в доках
 	AddStaticVehicleEx(571, 2279.9412, -2348.4141, 12.8312, 225.8585, -1, -1, 160); //     Картинг в доках
 	AddStaticVehicleEx(571, 2291.7932, -2345.5356, 12.8305, 227.3060, -1, -1, 160); //     Картинг в доках
 	AddStaticVehicleEx(571, 2287.5615, -2341.6433, 12.8306, 226.5350, -1, -1, 160); //     Картинг в доках
 	AddStaticVehicleEx(571, 2299.6785, -2338.3186, 12.8307, 224.3563, -1, -1, 160); //     Картинг в доках
 	AddStaticVehicleEx(571, 2295.3887, -2334.9448, 12.8307, 227.9102, -1, -1, 160); //     Картинг в доках
-	//____________________________________________________________________________________________________________________________
 	AddStaticVehicleEx(410, -1927.5238, 2361.3521, 48.7863, 110.9599, -1, -1, 600); //  транспорт сёл ЛВ --------------------------
 	AddStaticVehicleEx(405, -1940.3041, 2393.3438, 49.3672, 113.0318, -1, -1, 600); //  транспорт сёл ЛВ --------------------------
 	AddStaticVehicleEx(400, -1813.0715, 2038.4827, 9.0303, 297.1578, -1, -1, 600); //   транспорт сёл ЛВ --------------------------
@@ -21834,70 +21266,68 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(506, -865.5940, 1547.3992, 22.9259, 89.2237, -1, -1, 600); //    транспорт сёл ЛВ --------------------------
 	//==========================Милиция============================================
 	copcar[0] = AddStaticVehicleEx(415, 1602.5720, -1704.3496, 5.6643, 90.1128, 79, 79, 900); // Милиция
-	AddStaticVehicleEx(415, 1602.5693, -1700.1198, 5.6643, 90.0205, 79, 79, 900); //
-	AddStaticVehicleEx(415, 1602.5072, -1696.1161, 5.6643, 90.1182, 79, 79, 900); //
-	AddStaticVehicleEx(415, 1602.4255, -1692.0356, 5.6643, 90.7346, 79, 79, 900); //
-	AddStaticVehicleEx(415, 1602.5214, -1688.0435, 5.6642, 89.3209, 79, 79, 900); //
-	AddStaticVehicleEx(523, 1538.9541, -1645.3267, 5.4545, 179.7493, 1, 1, 900); //
-	AddStaticVehicleEx(523, 1534.5938, -1645.2668, 5.4572, 181.5467, 1, 1, 900); //
-	AddStaticVehicleEx(523, 1530.6656, -1645.3198, 5.4532, 182.9257, 1, 1, 900); //
-	AddStaticVehicleEx(523, 1526.7952, -1645.4211, 5.4623, 180.6268, 0, 0, 900); //
-	AddStaticVehicleEx(490, 1545.1165, -1650.9420, 6.0180, 90.4736, 0, 0, 900); //
-	AddStaticVehicleEx(490, 1545.2371, -1659.1180, 6.0193, 90.3042, 0, 0, 900); //
-	AddStaticVehicleEx(596, 1544.5679, -1668.1284, 5.6080, 88.1794, 53, 1, 900); //
-	AddStaticVehicleEx(596, 1544.5021, -1672.2939, 5.6131, 87.0515, 53, 1, 900); //
-	AddStaticVehicleEx(596, 1544.5006, -1676.1885, 5.6076, 87.4025, 53, 1, 900); //
-	AddStaticVehicleEx(596, 1544.5443, -1680.1318, 5.5840, 93.5059, 53, 1, 900); //
-	AddStaticVehicleEx(596, 1544.5735, -1684.3894, 5.6082, 90.7358, 53, 1, 900); //
-	AddStaticVehicleEx(599, 1578.4407, -1710.4963, 6.1231, 359.7231, 0, 1, 900); //
-	AddStaticVehicleEx(599, 1570.1849, -1710.6830, 6.1230, 359.9185, 0, 1, 900); //
-	AddStaticVehicleEx(427, 1558.9153, -1710.7469, 6.0374, 359.9720, 0, 1, 900); //
+	AddStaticVehicleEx(415, 1602.5693, -1700.1198, 5.6643, 90.0205, 79, 79, 900);
+	AddStaticVehicleEx(415, 1602.5072, -1696.1161, 5.6643, 90.1182, 79, 79, 900);
+	AddStaticVehicleEx(415, 1602.4255, -1692.0356, 5.6643, 90.7346, 79, 79, 900);
+	AddStaticVehicleEx(415, 1602.5214, -1688.0435, 5.6642, 89.3209, 79, 79, 900);
+	AddStaticVehicleEx(523, 1538.9541, -1645.3267, 5.4545, 179.7493, 1, 1, 900);
+	AddStaticVehicleEx(523, 1534.5938, -1645.2668, 5.4572, 181.5467, 1, 1, 900);
+	AddStaticVehicleEx(523, 1530.6656, -1645.3198, 5.4532, 182.9257, 1, 1, 900);
+	AddStaticVehicleEx(523, 1526.7952, -1645.4211, 5.4623, 180.6268, 0, 0, 900);
+	AddStaticVehicleEx(490, 1545.1165, -1650.9420, 6.0180, 90.4736, 0, 0, 900);
+	AddStaticVehicleEx(490, 1545.2371, -1659.1180, 6.0193, 90.3042, 0, 0, 900);
+	AddStaticVehicleEx(596, 1544.5679, -1668.1284, 5.6080, 88.1794, 53, 1, 900);
+	AddStaticVehicleEx(596, 1544.5021, -1672.2939, 5.6131, 87.0515, 53, 1, 900);
+	AddStaticVehicleEx(596, 1544.5006, -1676.1885, 5.6076, 87.4025, 53, 1, 900);
+	AddStaticVehicleEx(596, 1544.5443, -1680.1318, 5.5840, 93.5059, 53, 1, 900);
+	AddStaticVehicleEx(596, 1544.5735, -1684.3894, 5.6082, 90.7358, 53, 1, 900);
+	AddStaticVehicleEx(599, 1578.4407, -1710.4963, 6.1231, 359.7231, 0, 1, 900);
+	AddStaticVehicleEx(599, 1570.1849, -1710.6830, 6.1230, 359.9185, 0, 1, 900);
+	AddStaticVehicleEx(427, 1558.9153, -1710.7469, 6.0374, 359.9720, 0, 1, 900);
 	copcar[1] = AddStaticVehicleEx(497, 1549.4149, -1609.2180, 13.5854, 90.4477, 0, 1, 900); // Вертолет ЛСПД
 	//===================АРМИЯ==========================
-	armycar[0] = AddStaticVehicleEx(497, -1309.4657, 494.1862, 18.4122, 6.1163, 16, 16, 900); //
-	AddStaticVehicleEx(497, -1270.0748, 497.7913, 18.4036, 319.7002, 16, 16, 900); //
-	AddStaticVehicleEx(430, -1438.5708, 506.9269, -0.1900, 94.5669, 16, 16, 900); //
-	AddStaticVehicleEx(430, -1449.8566, 496.2770, -0.1655, 98.7484, 16, 16, 900); //
-	AddStaticVehicleEx(425, -1321.4579, 449.2822, 10.2016, 358.7920, 43, 0, 900); //
-	AddStaticVehicleEx(520, -1411.3811, 517.2366, 18.9660, 87.2426, 44, 86, 900); //
-	AddStaticVehicleEx(520, -1453.4697, 502.3450, 18.9868, 273.4987, 44, 86, 900); //
-	AddStaticVehicleEx(415, -1235.6252, 459.0164, 6.9394, 87.4754, 86, 86, 900); //
-	AddStaticVehicleEx(415, -1235.6858, 438.6565, 6.9165, 358.5375, 86, 86, 900); //
-	AddStaticVehicleEx(415, -1243.4373, 438.7376, 6.9332, 0.0290, 86, 86, 900); //
-	AddStaticVehicleEx(415, -1249.8519, 438.7154, 6.9068, 2.9524, 86, 86, 900); //
-	AddStaticVehicleEx(415, -1256.1256, 438.7581, 6.9030, 3.1448, 86, 86, 900); //
-	AddStaticVehicleEx(415, -1256.6406, 459.0638, 6.9104, 271.1389, 86, 86, 900); //
-	AddStaticVehicleEx(597, -1350.8578, 455.6987, 6.9548, 359.0216, 86, 86, 900); //
-	AddStaticVehicleEx(597, -1357.1709, 455.7314, 6.9568, 359.9191, 86, 86, 900); //
-	AddStaticVehicleEx(597, -1362.6379, 455.7625, 6.9574, 359.9046, 86, 86, 900); //
-	AddStaticVehicleEx(597, -1369.0449, 455.8953, 6.9566, 359.8089, 86, 86, 900); //
-	AddStaticVehicleEx(470, -1263.6368, 438.8710, 7.1748, 359.1517, 86, 86, 900); //
-	AddStaticVehicleEx(470, -1270.0016, 438.9914, 7.1785, 359.5744, 86, 86, 900); //
-	AddStaticVehicleEx(470, -1276.8778, 439.0779, 7.1743, 359.2513, 86, 86, 900); //
-	armycar[1] = AddStaticVehicleEx(470, -1284.4529, 438.9701, 7.1585, 1.8553, 86, 86, 900); //
+	armycar[0] = AddStaticVehicleEx(497, -1309.4657, 494.1862, 18.4122, 6.1163, 16, 16, 900);
+	AddStaticVehicleEx(497, -1270.0748, 497.7913, 18.4036, 319.7002, 16, 16, 900);
+	AddStaticVehicleEx(430, -1438.5708, 506.9269, -0.1900, 94.5669, 16, 16, 900);
+	AddStaticVehicleEx(430, -1449.8566, 496.2770, -0.1655, 98.7484, 16, 16, 900);
+	AddStaticVehicleEx(425, -1321.4579, 449.2822, 10.2016, 358.7920, 43, 0, 900);
+	AddStaticVehicleEx(520, -1411.3811, 517.2366, 18.9660, 87.2426, 44, 86, 900);
+	AddStaticVehicleEx(520, -1453.4697, 502.3450, 18.9868, 273.4987, 44, 86, 900);
+	AddStaticVehicleEx(415, -1235.6252, 459.0164, 6.9394, 87.4754, 86, 86, 900);
+	AddStaticVehicleEx(415, -1235.6858, 438.6565, 6.9165, 358.5375, 86, 86, 900);
+	AddStaticVehicleEx(415, -1243.4373, 438.7376, 6.9332, 0.0290, 86, 86, 900);
+	AddStaticVehicleEx(415, -1249.8519, 438.7154, 6.9068, 2.9524, 86, 86, 900);
+	AddStaticVehicleEx(415, -1256.1256, 438.7581, 6.9030, 3.1448, 86, 86, 900);
+	AddStaticVehicleEx(415, -1256.6406, 459.0638, 6.9104, 271.1389, 86, 86, 900);
+	AddStaticVehicleEx(597, -1350.8578, 455.6987, 6.9548, 359.0216, 86, 86, 900);
+	AddStaticVehicleEx(597, -1357.1709, 455.7314, 6.9568, 359.9191, 86, 86, 900);
+	AddStaticVehicleEx(597, -1362.6379, 455.7625, 6.9574, 359.9046, 86, 86, 900);
+	AddStaticVehicleEx(597, -1369.0449, 455.8953, 6.9566, 359.8089, 86, 86, 900);
+	AddStaticVehicleEx(470, -1263.6368, 438.8710, 7.1748, 359.1517, 86, 86, 900);
+	AddStaticVehicleEx(470, -1270.0016, 438.9914, 7.1785, 359.5744, 86, 86, 900);
+	AddStaticVehicleEx(470, -1276.8778, 439.0779, 7.1743, 359.2513, 86, 86, 900);
+	armycar[1] = AddStaticVehicleEx(470, -1284.4529, 438.9701, 7.1585, 1.8553, 86, 86, 900);
 	//-------------------------------ФБР--------------------------------------------
-	fbicar[0] = AddStaticVehicleEx(415, -1599.9465, 692.9821, -5.4742, 178.8045, 0, 0, 900); //
-	AddStaticVehicleEx(415, -1604.1709, 692.9595, -5.4792, 177.0607, 0, 0, 900); //
-	AddStaticVehicleEx(415, -1608.3766, 693.3263, -5.4711, 180.4542, 0, 0, 900); //
-	AddStaticVehicleEx(415, -1612.7426, 692.7325, -5.4757, 179.3282, 0, 0, 900); //
-	AddStaticVehicleEx(415, -1616.7330, 692.7235, -5.4779, 180.1576, 0, 0, 900); //
-	AddStaticVehicleEx(415, -1620.9653, 692.6471, -5.4867, 179.9194, 0, 0, 900); //
-	AddStaticVehicleEx(415, -1624.8040, 692.7762, -5.4801, 178.8144, 0, 0, 900); //
-	AddStaticVehicleEx(490, -1640.1177, 682.3457, -5.1234, 270.1901, 0, 0, 900); //
-	AddStaticVehicleEx(490, -1640.1504, 677.9055, -5.1238, 269.6599, 0, 0, 900); //
-	AddStaticVehicleEx(490, -1640.0879, 674.0535, -5.1227, 271.1219, 0, 0, 900); //
-	AddStaticVehicleEx(601, -1639.0095, 657.7919, -5.4545, 269.8890, 0, 0, 900); //
-	AddStaticVehicleEx(599, -1573.4387, 709.9295, -5.0746, 90.9033, 0, 0, 900); //
-	AddStaticVehicleEx(599, -1573.5674, 718.1451, -5.0766, 90.0847, 0, 0, 900); //
-	AddStaticVehicleEx(597, -1573.1168, 742.3653, -5.5145, 270.6827, 0, 0, 900); //
-	AddStaticVehicleEx(597, -1584.0233, 748.7179, -5.5640, 180.7421, 0, 0, 900); //
-	AddStaticVehicleEx(597, -1588.4471, 748.7737, -5.5653, 179.7640, 0, 0, 900); //
-	fbicar[1] = AddStaticVehicleEx(497, -1680.0774, 706.8117, 30.7778, 90.2516, 0, 1, 900); //
-	//____________________________________________________________________________________________________________________________
+	fbicar[0] = AddStaticVehicleEx(415, -1599.9465, 692.9821, -5.4742, 178.8045, 0, 0, 900);
+	AddStaticVehicleEx(415, -1604.1709, 692.9595, -5.4792, 177.0607, 0, 0, 900);
+	AddStaticVehicleEx(415, -1608.3766, 693.3263, -5.4711, 180.4542, 0, 0, 900);
+	AddStaticVehicleEx(415, -1612.7426, 692.7325, -5.4757, 179.3282, 0, 0, 900);
+	AddStaticVehicleEx(415, -1616.7330, 692.7235, -5.4779, 180.1576, 0, 0, 900);
+	AddStaticVehicleEx(415, -1620.9653, 692.6471, -5.4867, 179.9194, 0, 0, 900);
+	AddStaticVehicleEx(415, -1624.8040, 692.7762, -5.4801, 178.8144, 0, 0, 900);
+	AddStaticVehicleEx(490, -1640.1177, 682.3457, -5.1234, 270.1901, 0, 0, 900);
+	AddStaticVehicleEx(490, -1640.1504, 677.9055, -5.1238, 269.6599, 0, 0, 900);
+	AddStaticVehicleEx(490, -1640.0879, 674.0535, -5.1227, 271.1219, 0, 0, 900);
+	AddStaticVehicleEx(601, -1639.0095, 657.7919, -5.4545, 269.8890, 0, 0, 900);
+	AddStaticVehicleEx(599, -1573.4387, 709.9295, -5.0746, 90.9033, 0, 0, 900);
+	AddStaticVehicleEx(599, -1573.5674, 718.1451, -5.0766, 90.0847, 0, 0, 900);
+	AddStaticVehicleEx(597, -1573.1168, 742.3653, -5.5145, 270.6827, 0, 0, 900);
+	AddStaticVehicleEx(597, -1584.0233, 748.7179, -5.5640, 180.7421, 0, 0, 900);
+	AddStaticVehicleEx(597, -1588.4471, 748.7737, -5.5653, 179.7640, 0, 0, 900);
+	fbicar[1] = AddStaticVehicleEx(497, -1680.0774, 706.8117, 30.7778, 90.2516, 0, 1, 900);
 	AddStaticVehicle(593, 326.5935, 2536.1567, 17.2636, 178.2292, -1, -1); //  Самолёт пустыня -------------------------------------185
 	AddStaticVehicle(462, 667.1559, -546.0300, 15.9357, 88.8480, 3, 3); //     Скутер в селе ---------------------------------------186
 	AddStaticVehicle(462, 667.0647, -543.2286, 15.9352, 89.1490, 3, 3); //     Скутер в селе ---------------------------------------187
-	//____________________________________________________________________________________________________________________________
 	AddStaticVehicle(429, 1413.3777, 784.7541, 10.5000, 89.1568, -1, -1); //    170
 	AddStaticVehicle(402, 1544.6826, 786.4494, 10.6518, 359.2574, -1, -1); //   172
 	AddStaticVehicle(459, 1682.5525, 1307.0559, 10.5474, 180.4112, -1, -1); //  173
@@ -21937,26 +21367,25 @@ public OnGameModeInit() {
 	AddStaticVehicle(405, 889.0182, 1895.2166, 10.6952, 271.5473, -1, -1); //   223
 	AddStaticVehicle(400, 782.8831, 1891.0220, 5.1132, 267.6222, -1, -1); //    224
 	AddStaticVehicle(445, 681.5436, 1944.9957, 5.4138, 359.0340, -1, -1); //    225
-	//==============================================================================
 	AddStaticVehicle(484, -493.1218, 615.1981, 0.1835, 2.8396, 1, 1); // водный транспорт
 	AddStaticVehicle(473, -792.7775, 943.1886, -0.4438, 102.3197, 1, 1); //  водный транспорт
 	AddStaticVehicle(473, -2026.3375, 2327.3901, -0.2820, 89.8646, 1, 1); // водный транспорт
 	AddStaticVehicle(484, -2251.1204, 2432.8679, 0.3027, 229.0226, 1, 1); // водный транспорт
 	AddStaticVehicle(493, -1510.4563, -2330.0530, -0.1144, 3.7504, 1, 1); // водный транспорт
 	//====================================3Dtext====================================
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1381.9602, 462.6776, 20.9054, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -2029.4852, 156.4265, 29.8359, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -2406.0986, 976.8326, 46.2969, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -1675.9276, 413.9869, 8.1797, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1005.5187, -939.6584, 43.1797, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1944.3627, -1773.0619, 14.3906, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 2115.7927, 921.1973, 11.8203, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1594.8954, 2198.7017, 11.8203, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -1328.9003, 2677.1355, 51.0625, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 2202.1008, 2475.4858, 11.8203, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -91.2990, -1170.5698, 3.3950, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -1605.9832, -2714.3477, 49.5335, 10, 0); //
-	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -2243.9092, -2560.1267, 32.9219, 10, 0); //
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1381.9602, 462.6776, 20.9054, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -2029.4852, 156.4265, 29.8359, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -2406.0986, 976.8326, 46.2969, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -1675.9276, 413.9869, 8.1797, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1005.5187, -939.6584, 43.1797, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1944.3627, -1773.0619, 14.3906, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 2115.7927, 921.1973, 11.8203, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 1594.8954, 2198.7017, 11.8203, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -1328.9003, 2677.1355, 51.0625, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, 2202.1008, 2475.4858, 11.8203, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -91.2990, -1170.5698, 3.3950, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -1605.9832, -2714.3477, 49.5335, 10, 0);
+	Create3DTextLabel("{FFFFFF}Используйте клавишу {00C0FF}H{FFFFFF},чтобы заправить транспорт.", COLOR_YELLOW, -2243.9092, -2560.1267, 32.9219, 10, 0);
 	Create3DTextLabel("{FFFFFF}Используйте {00C0FF}Alt{FFFFFF},чтобы начать работу с банкоматом.", COLOR_YELLOW, -544.59997558594, -506.89999389648, 26.39999961853, 5, 0);
 	Create3DTextLabel("{FFFFFF}Используйте {00C0FF}Alt{FFFFFF},чтобы начать работу с банкоматом.", COLOR_YELLOW, 1466.99609375, -1749.8603515625, 16.34700012207, 5, 0);
 	Create3DTextLabel("{FFFFFF}Используйте {00C0FF}Alt{FFFFFF},чтобы начать работу с банкоматом.", COLOR_YELLOW, 395.90900000, -1806.81000000, 8.74000000, 5, 0);
@@ -22038,7 +21467,6 @@ public OnGameModeInit() {
 	PlayerHaul[Truck[9]][pCapasity] = 100;
 	PlayerHaul[Truck[10]][pCapasity] = 50;
 	PlayerHaul[Truck[11]][pCapasity] = 50;
-	//==============================================================================
 	AddStaticVehicleEx(574, -2513.1873, 763.1990, 34.8970, 266.5857, 1, 1, 15); //Tug 1
 	AddStaticVehicleEx(574, -2513.0789, 773.6850, 34.8982, 269.9322, 1, 1, 15); //Tug 2
 	AddStaticVehicleEx(574, -2494.5940, 784.0894, 34.8893, 269.7961, 1, 1, 15); //Tug 3
@@ -22047,7 +21475,6 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(574, -2459.0286, 793.4220, 34.8963, 87.3689, 1, 1, 15); //Tug 6
 	AddStaticVehicleEx(574, -2459.0684, 786.6382, 34.8980, 87.9702, 1, 1, 15); //Tug 7
 	AddStaticVehicleEx(574, -2459.1719, 779.6375, 34.8980, 89.9101, 1, 1, 15); //Tug 8
-	//=======================================================================================================
 	for (new f = 0; f < sizeof(FlatsInfo); f++) {
 		new text[600];
 		if (FlatsInfo[f][fOwned] == 0) {
@@ -22074,7 +21501,6 @@ public OnGameModeInit() {
 		}
 		HouseInfo[i][hLabel] = Create3DTextLabel(text, 0x33CCFFAA, HouseInfo[i][hEntrancex], HouseInfo[i][hEntrancey], HouseInfo[i][hEntrancez] + 1.0, 13.0, 0, 1);
 	}
-	//------------------------------------------------------------------------------
 	for (new h = 0; h < sizeof(BizzInfo); h++) {
 		new biz[64];
 		if (BizzInfo[h][bMafia] == 0) biz = "None";
@@ -22381,13 +21807,11 @@ public OnGameModeInit() {
 	enter82 = CreatePickup(1318, 24, 2472.5903, 2034.2532, 11.0625);
 	enter83 = CreatePickup(1318, 24, -1213.3663, 1830.9479, 41.9297);
 	enter84 = CreatePickup(1318, 24, -857.6808, 1535.8795, 22.5870);
-	//------------------------------------------------------------------------------
 	enter41 = CreatePickup(1318, 24, 2306.2217, -1636.5061, -3.3887); //  БАР Зелёные бутылки выход
 	enter46 = CreatePickup(1318, 24, -2441.9995, 755.3438, 35.1719); //   24/7 вход
 	enter47 = CreatePickup(1318, 24, -25.8395, -141.3743, 1003.5469); //  24/7 выход
 	enter48 = CreatePickup(1318, 24, 2117.4353, 896.7814, 11.1797); //    24/7 вход
 	enter49 = CreatePickup(1318, 24, -25.8746, -187.9468, 1003.5469); //  24/7 выход
-	//------------------------------------------------------------------------------
 	enter85 = CreatePickup(1318, 24, 1000.2590, -919.9160, 42.3281); //  24/7 вход
 	enter86 = CreatePickup(1318, 24, 2194.9395, 1990.9404, 12.2969); //  24/7 вход
 	enter87 = CreatePickup(1318, 24, 1315.5619, -898.4269, 39.5781); //  24/7 вход
@@ -22395,11 +21819,9 @@ public OnGameModeInit() {
 	enter89 = CreatePickup(1318, 24, 2452.4731, 2064.9563, 10.8203); //  24/7 вход
 	enter90 = CreatePickup(1318, 24, 2546.5510, 1972.2891, 10.8203); //  24/7 вход
 	enter91 = CreatePickup(1318, 24, 2884.6150, 2454.0466, 11.0690); //  24/7 вход
-	//------------------------------------------------------------------------------
 	enter98 = CreatePickup(1318, 24, 2247.7087, 2396.2324, 10.8203); //  24/7
 	enter99 = CreatePickup(1318, 24, 1833.2655, -1842.6333, 13.5781); //  24/7
 	CreateDynamic3DTextLabel("{FFFFFF}Место работы: Покупка пакетов\n Используйте {00C0FF}/materials get{FFFFFF}", COLOR_WHITE, 2814.4006, 2587.2817, 9.9087, 30.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 1, -1, -1, -1, 100.0);
-	//------------------------------------------------------------------------------
 	CreateDynamic3DTextLabel("{FFFFFF}Используйте: {00C0FF}/job{FFFFFF} для просмотра списка работ.", COLOR_WHITE, 362.6015, 173.5510, 1008.3828, 5.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, -1, -1, -1, 100.0);
 	Create3DTextLabel(" {FFFFFF}Дом Los Santos Vagos ", COLOR_CGREEN3d, 2808.1963, -1190.1615, 25.3398, 20.0, 0, 1);
 	Create3DTextLabel(" {FFFFFF}Дом The Triads Mafia ", COLOR_CGREEN3d, 690.9224, -1275.9976, 13.5603, 20.0, 0, 1);
@@ -22412,7 +21834,6 @@ public OnGameModeInit() {
 	Create3DTextLabel(" {FFFFFF}Дом The Rifa Gang ", COLOR_CGREEN3d, -2455.8096, -135.8703, 26.1197, 20.0, 0, 1);
 	Create3DTextLabel(" {FFFFFF}Дом Yakuza ", COLOR_CGREEN3d, -2192.5847, 647.4197, 49.4375, 20.0, 0, 1);
 	CreatePickup(1239, 23, 2548.9758, -1294.6970, 1060.9844, 5);
-	//------------------------------------------------------------------------------
 	Create3DTextLabel(" {FFFFFF}Лифт на крышу\n ALT ", 0x008080FF, -2200.7607, 647.4109, 49.4375, 25, 0);
 	Create3DTextLabel(" {FFFFFF}Лифт с крыши\n ALT ", 0x008080FF, -2183.6543, 652.6331, 73.8359, 25, 0);
 	Create3DTextLabel("{FFFFFF}Лифт на крышу\n ALT", 0xDBBEA3AA, -2695.6084, 640.1595, 14.4531, 35, 0);
@@ -22432,11 +21853,9 @@ public OnGameModeInit() {
 	CreateDynamic3DTextLabel("{FFFFFF}Используйте {00C0FF}/buylic{FFFFFF} для просмотра списка платных лицензий", COLOR_WHITE, -2022.4332, -116.7212, 1035.1719, 5.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, -1, -1, -1, 100.0);
 	CreateDynamic3DTextLabel("{FFFFFF}Используйте {00C0FF}/buyticket{FFFFFF} чтобы использовать картинг", COLOR_WHITE, 2276.6072, -2358.8628, 13.5469, 5.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, -1, -1, -1, 100.0);
 	CreateDynamic3DTextLabel("{FFFFFF}Используйте {00C0FF}/taketest{FFFFFF} чтобы пройти тест", COLOR_WHITE, -2026.8765, -114.6630, 1035.1719, 5.0, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, -1, -1, -1, 100.0);
-	//------------------------------------------------------------------------------
 	Create3DTextLabel("{ffdb58}Смена жительства ", 0x6053F3FF, 830.2521, -1363.8726, -0.5015, 20.0, 0, 1);
 	Create3DTextLabel("{ffdb58}Смена жительства ", 0x6053F3FF, -1973.1696, 118.0815, 27.6875, 20.0, 0, 1);
 	Create3DTextLabel("{ffdb58}Смена жительства ", 0x6053F3FF, 2846.1631, 1287.4299, 11.3906, 20.0, 0, 1);
-	//------------------------------------------------------------------------------
 	new randa = random(sizeof(RandCars));
 	randa = random(sizeof(RandCars));
 	carselect[0] = RandCars[randa][0];
@@ -22492,31 +21911,31 @@ public OnGameModeInit() {
 	AddStaticVehicleEx(562, -1984.4646, 275.2286, 34.8391, 178.5163, 35, 1, 30000);
 	AddStaticVehicleEx(411, -1987.0736, 304.4549, 34.9038, 269.2108, 64, 1, 30000);
 	AddStaticVehicleEx(506, -1946.6042, 273.3972, 35.1783, 126.9609, 3, 3, 30000); // RENTTT SFFFFFFF
-	AddStaticVehicleEx(541, -1955.2990, 303.4136, 35.0936, 134.3704, 68, 8, 30000); //
-	AddStaticVehicleEx(558, -1946.4192, 264.6456, 35.1016, 89.4539, 30, 1, 30000); //
-	AddStaticVehicleEx(559, -1947.5764, 257.1290, 35.1251, 46.8382, 13, 8, 30000); //
-	AddStaticVehicleEx(560, -1958.4509, 257.1102, 35.1736, 359.3237, 21, 1, 30000); //
-	AddStaticVehicleEx(411, -1955.0824, 302.2404, 40.7742, 179.2677, 112, 1, 30000); //
-	AddStaticVehicleEx(411, -1946.3317, 273.9201, 40.7773, 124.8102, 112, 1, 30000); //
+	AddStaticVehicleEx(541, -1955.2990, 303.4136, 35.0936, 134.3704, 68, 8, 30000);
+	AddStaticVehicleEx(558, -1946.4192, 264.6456, 35.1016, 89.4539, 30, 1, 30000);
+	AddStaticVehicleEx(559, -1947.5764, 257.1290, 35.1251, 46.8382, 13, 8, 30000);
+	AddStaticVehicleEx(560, -1958.4509, 257.1102, 35.1736, 359.3237, 21, 1, 30000);
+	AddStaticVehicleEx(411, -1955.0824, 302.2404, 40.7742, 179.2677, 112, 1, 30000);
+	AddStaticVehicleEx(411, -1946.3317, 273.9201, 40.7773, 124.8102, 112, 1, 30000);
 	AddStaticVehicleEx(415, -1954.9531, 257.2287, 40.8185, 357.6235, 62, 1, 30000); // END RENTTTT SFFFF
 	RentSF[1] = AddStaticVehicleEx(415, -1971.2850, 306.2487, 34.9440, 179.2231, 25, 1, 30000);
 	//=================================[RentMoto]===========================================
-	RentMoto[0] = AddStaticVehicleEx(522, -1888.3154, -152.2872, 11.4682, 98.9656, 13, 13, 30000); //
-	AddStaticVehicleEx(522, -1888.2272, -148.3036, 11.4582, 100.8078, 12, 12, 30000); //
-	AddStaticVehicleEx(522, -1887.7982, -144.2545, 11.4596, 107.9652, 11, 11, 30000); //
-	AddStaticVehicleEx(461, -1871.8335, -144.1123, 11.4527, 203.4326, 43, 1, 30000); //
-	AddStaticVehicleEx(522, -1867.0698, -143.6613, 11.4391, 209.6152, 3, 3, 30000); //
-	AddStaticVehicleEx(461, -1859.4500, -144.1288, 11.4832, 217.8385, 37, 1, 30000); //
-	AddStaticVehicleEx(521, -1854.3693, -144.1648, 11.4650, 205.6531, 6, 6, 30000); //
-	AddStaticVehicleEx(471, -1849.7581, -142.6122, 11.3802, 245.5927, 7, 7, 30000); //
-	AddStaticVehicleEx(471, -1849.5597, -139.5052, 11.3796, 246.6373, 8, 8, 30000); //
-	AddStaticVehicleEx(471, -1849.3716, -136.0860, 11.3793, 241.4050, 9, 9, 30000); //
-	AddStaticVehicleEx(461, -1849.5042, -132.4625, 11.4404, 251.2005, 10, 10, 30000); //
-	AddStaticVehicleEx(468, -1850.4312, -129.1663, 11.4294, 332.2503, 2, 2, 30000); //
-	AddStaticVehicleEx(461, -1854.1107, -128.8028, 11.4834, 335.2760, 1, 1, 30000); //
-	AddStaticVehicleEx(468, -1858.5803, -128.5085, 11.5714, 324.5590, 0, 0, 30000); //
-	AddStaticVehicleEx(468, -1862.6467, -128.1196, 11.5682, 330.1745, 1, 1, 30000); //
-	RentMoto[1] = AddStaticVehicleEx(521, -1866.9001, -127.6036, 11.4636, 339.2358, 4, 4, 30000); //
+	RentMoto[0] = AddStaticVehicleEx(522, -1888.3154, -152.2872, 11.4682, 98.9656, 13, 13, 30000);
+	AddStaticVehicleEx(522, -1888.2272, -148.3036, 11.4582, 100.8078, 12, 12, 30000);
+	AddStaticVehicleEx(522, -1887.7982, -144.2545, 11.4596, 107.9652, 11, 11, 30000);
+	AddStaticVehicleEx(461, -1871.8335, -144.1123, 11.4527, 203.4326, 43, 1, 30000);
+	AddStaticVehicleEx(522, -1867.0698, -143.6613, 11.4391, 209.6152, 3, 3, 30000);
+	AddStaticVehicleEx(461, -1859.4500, -144.1288, 11.4832, 217.8385, 37, 1, 30000);
+	AddStaticVehicleEx(521, -1854.3693, -144.1648, 11.4650, 205.6531, 6, 6, 30000);
+	AddStaticVehicleEx(471, -1849.7581, -142.6122, 11.3802, 245.5927, 7, 7, 30000);
+	AddStaticVehicleEx(471, -1849.5597, -139.5052, 11.3796, 246.6373, 8, 8, 30000);
+	AddStaticVehicleEx(471, -1849.3716, -136.0860, 11.3793, 241.4050, 9, 9, 30000);
+	AddStaticVehicleEx(461, -1849.5042, -132.4625, 11.4404, 251.2005, 10, 10, 30000);
+	AddStaticVehicleEx(468, -1850.4312, -129.1663, 11.4294, 332.2503, 2, 2, 30000);
+	AddStaticVehicleEx(461, -1854.1107, -128.8028, 11.4834, 335.2760, 1, 1, 30000);
+	AddStaticVehicleEx(468, -1858.5803, -128.5085, 11.5714, 324.5590, 0, 0, 30000);
+	AddStaticVehicleEx(468, -1862.6467, -128.1196, 11.5682, 330.1745, 1, 1, 30000);
+	RentMoto[1] = AddStaticVehicleEx(521, -1866.9001, -127.6036, 11.4636, 339.2358, 4, 4, 30000);
 	//===============================[Мусоровозки]=============================================
 	dvr[0] = AddStaticVehicleEx(408, -1916.3066, -1681.4327, 23.5693, 268.5903, 26, 26, 600);
 	dvr[1] = AddStaticVehicleEx(408, -1916.7106, -1663.5057, 23.5693, 271.1588, 26, 26, 600);
@@ -22673,7 +22092,7 @@ public Timer() {
 		}
 	}
 }
-//==============================================================================
+
 forward SyncUp();
 public SyncUp() {
 	SyncTime();
@@ -22685,7 +22104,7 @@ public SyncUp() {
 		}
 	}
 }
-//==============================================================================
+
 SyncTime() {
 	new tmphour, tmpminute, tmpsecond;
 	gettime(tmphour, tmpminute, tmpsecond);
@@ -22702,7 +22121,7 @@ SyncTime() {
 		}
 	}
 }
-//==============================================================================
+
 GetClosestPlayer(p1) {
 	new x, Float:dis, Float:dis2, player;
 	player = -1;
@@ -22720,7 +22139,7 @@ GetClosestPlayer(p1) {
 	}
 	return player;
 }
-//==============================================================================
+
 forward Production();
 public Production() {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
@@ -22735,7 +22154,7 @@ public Production() {
 		}
 	}
 }
-//==============================================================================
+
 PayDay() {
 	new string[128];
 	new account, interest;
@@ -22776,7 +22195,6 @@ PayDay() {
 					SendClientMessage(i, COLOR_LIGHTBLUE, string);
 				}
 			}
-			//------------------------------------------------------------------------------
 			new playername2[MAX_PLAYER_NAME];
 			GetPlayerName(i, playername2, sizeof(playername2));
 			account = PlayerInfo[i][pAccount];
@@ -22792,7 +22210,6 @@ PayDay() {
 				}
 				HouseInfo[key][hTakings] = HouseInfo[key][hTakings] + rent;
 			}
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[i][pMember] == 1) {
 				workpay = CopSal * PlayerInfo[i][pRank];
 				new Taxx = workpay * Tax / 80;
@@ -22855,12 +22272,10 @@ PayDay() {
 				SendClientMessage(i, COLOR_WHITE, "{00C0FF}Зарплата: ");
 				format(string, sizeof(string), "{00C0FF}>{FFFFFF} Банковский процент: {00C0FF}%d${ffffff}. Налоги: {00C0FF}-%d${ffffff}. Текущие расходы: {00C0FF}-%d${ffffff}.", interest, Tax, TaxValue);
 				SendClientMessage(i, COLOR_WHITE, string);
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[i][pPhousekey] != 0 || PlayerInfo[i][pPbiskey] != 255) {
 					format(string, sizeof(string), "{00C0FF}>{FFFFFF} Плата за электричество: {00C0FF}-%d${ffffff}.", ebill);
 					SendClientMessage(i, COLOR_WHITE, string);
 				}
-				//------------------------------------------------------------------------------
 				format(string, sizeof(string), "{00C0FF}>{FFFFFF} Cумма в банке: {00C0FF}%d${ffffff}. Полученная зарплата: {00C0FF}%d${ffffff}.", PlayerInfo[i][pAccount], checks);
 				SendClientMessage(i, COLOR_WHITE, string);
 				new hour, minute, year, month, day;
@@ -22880,7 +22295,6 @@ PayDay() {
 					SetVehicleParamsEx(i, false, lights, alarm, doors, bonnet, boot, objective);
 					CarEngine[i] = 0;
 				}
-				//------------------------------------------------------------------------------
 				GameTextForPlayer(i, "~y~PayDay~n~~w~Paycheck", 7000, 1);
 				rent = 0;
 				PlayerInfo[i][pPayDay] = 0;
@@ -22896,7 +22310,6 @@ PayDay() {
 						PlayerInfo[i][pPayDayHad] = 0;
 					}
 				}
-				//				getexp(i);
 			} else {
 				SendClientMessage(i, COLOR_WHITE, "{00C0FF}YourWorld{ffffff} : Из-за малого времени пребывания на сервере, вы не получили зарплату.");
 			}
@@ -22952,13 +22365,6 @@ OnPlayerRegister(playerid, const password[]) {
 	return 1;
 }
 
-//==============================================================================
-Name(i) {
-	new pl[24];
-	GetPlayerName(i, pl, 24);
-	return pl;
-}
-//==============================================================================
 SavePlayer(playerid) {
 	new string[64]; // Масив с путём для файла
 	new playername[MAX_PLAYER_NAME]; // Масив для получения имени игрока
@@ -23088,7 +22494,7 @@ SavePlayer(playerid) {
 	ini_setInteger(File, "pFs", PlayerInfo[playerid][pFs]);
 	ini_closeFile(File); // Закрываем файл
 }
-//==============================================================================
+
 OnPlayerLogin(playerid, password[]) {
 	if (IsPlayerNPC(playerid)) return 1; // Подключение Ботов
 	new string[64]; // Масив с путём для файла
@@ -23236,7 +22642,6 @@ OnPlayerLogin(playerid, password[]) {
 				Kick(playerid);
 				return 0;
 			}
-			//------------------------------------------------------------------------------
 			SendClientMessage(playerid, COLOR_WHITE, "Добро пожаловать на сервер {ffdb58}YourWorld [RPG].{ffffff} Приятной вам игры!");
 			printf("%s has logged in.", playername2);
 			new string2[60], tmp2[50];
@@ -23433,7 +22838,7 @@ OnPropUpdate() {
 	}
 	return true;
 }
-//==============================================================================
+
 BroadCast(color, const string[]) {
 	SendClientMessageToAll(color, string);
 	return true;
@@ -23462,7 +22867,7 @@ split(const strsrc[], strdest[][], delimiter = '|') {
 		i++;
 	}
 }
-//==============================================================================
+
 OOCOff(color, const string[]) {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
@@ -23472,7 +22877,7 @@ OOCOff(color, const string[]) {
 		}
 	}
 }
-//==============================================================================
+
 OOCNews(color, const string[]) {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
@@ -23482,7 +22887,7 @@ OOCNews(color, const string[]) {
 		}
 	}
 }
-//==============================================================================
+
 SendTeamMessage(team, color, string[]) {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
@@ -23492,18 +22897,7 @@ SendTeamMessage(team, color, string[]) {
 		}
 	}
 }
-//==============================================================================
-SendRadMessage(color, string[]) {
-	for (new i = 0; i < GetMaxPlayers(); i++) {
-		if (IsPlayerConnected(i)) {
-			if (PlayerInfo[i][pMember] == 1 || PlayerInfo[i][pLeader] == 1 || PlayerInfo[i][pMember] == 2 || PlayerInfo[i][pLeader] == 2 || PlayerInfo[i][pMember] == 3 || PlayerInfo[i][pLeader] == 3) {
-				SendClientMessage(i, color, string);
-			}
-		}
-	}
-}
 
-//==============================================================================
 SendRadioMessage(member, color, const string[]) {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
@@ -23526,17 +22920,6 @@ SendJobMessage(job, color, const string[]) {
 	}
 }
 
-SendTeamBeepMessage(team, color, string[]) {
-	for (new i = 0; i < GetMaxPlayers(); i++) {
-		if (IsPlayerConnected(i)) {
-			if (gTeam[i] == team) {
-				SendClientMessage(i, color, string);
-				RingTone[i] = 20;
-			}
-		}
-	}
-}
-//==============================================================================
 SendEnemyMessage(color, string[]) {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
@@ -23546,7 +22929,7 @@ SendEnemyMessage(color, string[]) {
 		}
 	}
 }
-//==============================================================================
+
 SendAdminMessage(color, string[]) {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
@@ -23556,14 +22939,14 @@ SendAdminMessage(color, string[]) {
 		}
 	}
 }
-//==============================================================================
+
 PlayerPlayMusic(playerid) {
 	if (IsPlayerConnected(playerid)) {
 		SetTimer("StopMusic", 5000, 0);
 		PlayerPlaySound(playerid, 1068, 0.0, 0.0, 0.0);
 	}
 }
-//==============================================================================
+
 forward StopMusic();
 public StopMusic() {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
@@ -23588,7 +22971,7 @@ public UpdateExit() {
 	exitp = false;
 	return 1;
 }
-//==============================================================================
+
 SetPlayerFree(playerid, declare, const reason[]) {
 	if (IsPlayerConnected(playerid)) {
 		ClearCrime(playerid);
@@ -23694,7 +23077,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SendClientMessage(playerid, COLOR_YELLOW, " Возьмите автомобиль и отправляйтесь работать.");
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/czona", true) == 0) {
 		if (PlayerInfo[playerid][pAdmin] < 1) return error(playerid, " Вы не в праве использовать данную команду.");
 		tmp = strtok(cmdtext, idx);
@@ -24161,7 +23543,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		ServerGivePlayerWeapons(playerid, 24, 9999);
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/fixveh", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 4) return error(playerid, " Вы не уполномочены использовать эту команду.");
@@ -24192,7 +23573,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SendClientMessage(playerid, COLOR_WHITE, "Теперь вы можете кататься на картинге");
 		return true;
 	}
-	//==============================================================================
 	if (strcmp("/taketest", cmd, true) == 0) {
 		if (!IsPlayerInRangeOfPoint(playerid, 1.5, -2026.8765, -114.6630, 1035.1719)) return true;
 		if (PlayerInfo[playerid][pCarLic] == 1) return error(playerid, " У Вас уже есть права.");
@@ -24208,7 +23588,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				\nг) Совершить умышленное столкновение", "Далее", "Отмена");
 		Question1[playerid] = 1;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/ghangs", true) == 0) {
 		tmp = strtok(cmdtext, idx);
 		if (!strlen(tmp)) return SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /ghangs [1-9]");
@@ -24334,8 +23713,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-
-	//==============================================================================
 	if (strcmp(cmd, "/pobeg", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new ranpobeg[MAX_PLAYERS];
@@ -24394,7 +23771,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/leaders", true) == 0) {
 		string[0] = 0;
 		for (new i = 0; i < GetMaxPlayers(); i++) {
@@ -24411,7 +23787,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		ShowPlayerDialog(playerid, 1199, DIALOG_STYLE_MSGBOX, "{999999}Лидеры онлайн", string, "ENTER", "");
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/tpcor", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 6) return error(playerid, " Вы не администритор.");
@@ -24432,7 +23807,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/rob", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new twosoldiers = 0;
@@ -24465,7 +23839,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			return true;
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/togpm", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pLevel] < 5 && PlayerInfo[playerid][pAdmin] < 1 && PlayerInfo[playerid][pLeader] == 0) return error(playerid, " Вы не можете закрывать ПМ.");
@@ -24479,7 +23852,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/fwarn", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -24769,7 +24141,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					MoveDynamicObject(TR2Gate, 664.973938, -1309.604858, 15.234329, 2.0);
 					PlayerPlaySound(playerid, 1190, 0.0, 0.0, 0.0); //Звук открывания ворот
 					triad2 = false;
-					//}
 				}
 			}
 		}
@@ -24799,7 +24170,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/pay", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pLevel] < 1) return error(playerid, " Вы должны иметь как минимум 1 уровень, чтобы передавать деньги.");
@@ -24842,7 +24212,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/charity", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -24862,7 +24231,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/resetgun", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -24877,50 +24245,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//===========================[СМЕНА ПАРОЛЯ]=====================================
-	/*    if(strcmp(cmd, "/setpass", true) == 0)
-		{
-			if(IsPlayerConnected(playerid) && gPlayerLogged[playerid] == 1)
-			{
-				new length = strlen(cmdtext);
-				while ((idx < length) && (cmdtext[idx] <= ' '))
-				{
-					idx++;
-				}
-				new offset = idx;
-				new result[256];
-				while ((idx < length) && ((idx - offset) < (sizeof(result) - 1)))
-				{
-					result[idx - offset] = cmdtext[idx];
-					idx++;
-				}
-				result[idx - offset] = EOS;
-				for(new i = strlen(result); i != 0; --i)
-					switch(result[i])
-					{
-						case 'А'..'Я', 'а'..'я', ' ':
-						return SendClientMessage(playerid,-1,"Пароль не должен состоять из запрещенных символов");
-					}
-				if(!strlen(result)) return SendClientMessage(playerid, COLOR_GRAD2, "Используйте: /setpass [новый пароль]");
-				if(IsPlayerConnected(playerid)) {
-				if(strlen(result) < 6 || strlen(result) > 15) return SendClientMessage(playerid,-1, "Длина пароля должна быть от 6 до 15 символов.");
-					new escname[30];
-					new Pname[MAX_PLAYER_NAME];
-					new Query[100];
-					GetPlayerName(playerid, Pname, sizeof(Pname));
-					mysql_real_escape_string(Pname, escname);
-					format(Query, sizeof(Query),"UPDATE `playerinfo` SET `Key` = '%s' WHERE `Name` = '%s'", result ,escname);
-					mysql_function_query(1, Query, false, "", "");
-					format(string,sizeof(string), " Ваш новый пароль: {FFFFFF}%s",result);
-					SendClientMessage(playerid, COLOR_LIGHTRED, string);
-					SendClientMessage(playerid, COLOR_LIGHTRED, " Не забывайте сделать скриншот с новым паролем, для этого нажмите F8");
-					GetPlayerName(playerid,sendername,sizeof(sendername));
-					format(string, sizeof(string), "%s изменил свой пароль, новый пароль: %s", sendername,result);
-					return 1;
-			}
-		}
-			return 1;
-		} */
 	//===========================================Чистый чат=========================
 	if (strcmp(cmdtext, "/cc", true) == 0) {
 		if (PlayerInfo[playerid][pAdmin] < 2) return error(playerid, " Вы должны быть, как минимум 2-го уровня модерирования.");
@@ -24931,13 +24255,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SendClientMessageToAll(COLOR_LIGHTRED, "{00C0FF}YourWorld{FFFFFF} : Чат был очищен Администрацией сервера.");
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/payday", true) == 0) {
 		if (PlayerInfo[playerid][pAdmin] < 6) return error(playerid, " У Вас недостаточно прав для того, чтобы использовать эту команду.");
 		PayDay();
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/tow", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pJob] != 7) return error(playerid, " Вам нужно работать механиком.");
@@ -24967,7 +24289,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/check", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 1) return error(playerid, " У Вас недостаточно прав для того, чтобы использовать эту команду.");
@@ -24981,7 +24302,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/carcolor", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new house = PlayerInfo[playerid][pPhousekey];
@@ -25029,7 +24349,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/carupgrade", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new house = PlayerInfo[playerid][pPhousekey], PlName[MAX_PLAYER_NAME];
@@ -25042,7 +24361,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/resetupgrades", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPlayerBablo(playerid) < 100000) return SendClientMessage(playerid, COLOR_GRAD1, "Это стоит 100000$.");
@@ -25061,7 +24379,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//-------------------------0xFFFFFF00-------------------------------------------
 	if (strcmp(cmd, "/cvet", true) == 0) {
 		GetPlayerName(playerid, playername, sizeof(playername));
 		tmp = strtok(cmdtext, idx);
@@ -25087,7 +24404,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			return true;
 		}
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/hide", true) == 0) // Командой класть вещи в тайник
 	{
 		if (IsPlayerConnected(playerid)) {
@@ -25157,7 +24473,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 	}
 	if (strcmp(cmd, "/usedrugs", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
-			//            if(IsACop(playerid)) return error(playerid," Не доступно для законников.");
 			new xx_job[256];
 			xx_job = strtok(cmdtext, idx);
 			if (!strlen(xx_job)) {
@@ -25210,7 +24525,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 	//=================================[KFC]========================================
 	if (strcmp(cmd, "/kfcc", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
-			//          if (!IsAtKFC(playerid)) return error(playerid," Вы слишком далеко.");
 			if (IsPlayerInRangeOfPoint(playerid, 5.0, -2352.6719, -153.5959, 35.3203) ||
 				IsPlayerInRangeOfPoint(playerid, 5.0, -2345.1042, 1024.0560, 50.6953) ||
 				IsPlayerInRangeOfPoint(playerid, 5.0, -1719.1241, 1352.8751, 7.1787) ||
@@ -25231,7 +24545,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			return true;
 		}
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/buygunsf", true) == 0) {
 		if (GetPlayerBablo(playerid) < 1000) return error(playerid, " У вас нет данной суммы.");
 		if (!IsPlayerInRangeOfPoint(playerid, 40.0, 315.580993, -143.19459, 999.601623)) return error(playerid, "Вы не в Ammo SF");
@@ -25331,7 +24644,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmdtext, "/menulcn", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPlayerBablo(playerid) < 30) return error(playerid, " У вас нет данной суммы.");
@@ -25343,7 +24655,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmdtext, "/menu", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPlayerBablo(playerid) < 30) return error(playerid, " У вас нет данной суммы.");
@@ -25355,7 +24666,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/upgrade", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new gunid[16];
@@ -25371,7 +24681,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				return 1;
 			}
 			strmid(gunid, tmp, 0, strlen(cmdtext), 255);
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[playerid][pLevel] >= 2 && (strcmp(gunid, "health", true, strlen(gunid)) == 0) && PlayerInfo[playerid][gPupgrade] >= 2) {
 				if (PlayerInfo[playerid][pSHealth] < 50) {
 					PlayerInfo[playerid][pSHealth] = PlayerInfo[playerid][pSHealth] + 5.0;
@@ -25383,7 +24692,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					return 1;
 				}
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pLevel] >= 2 && (strcmp(gunid, "miser", true, strlen(gunid)) == 0) && PlayerInfo[playerid][gPupgrade] >= 3) {
 				if (PlayerInfo[playerid][pMiserPerk] < 3) {
 					PlayerInfo[playerid][pMiserPerk] += 1;
@@ -25395,7 +24703,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					return 1;
 				}
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pLevel] >= 2 && (strcmp(gunid, "trader", true, strlen(gunid)) == 0)) {
 				if (PlayerInfo[playerid][pTraderPerk] < 3) {
 					PlayerInfo[playerid][pTraderPerk] += 1;
@@ -25407,7 +24714,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					return 1;
 				}
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pLevel] >= 2 && (strcmp(gunid, "painkillers", true, strlen(gunid)) == 0) && PlayerInfo[playerid][gPupgrade] >= 3) {
 				if (PlayerInfo[playerid][pPainPerk] < 3) {
 					PlayerInfo[playerid][pPainPerk] += 1;
@@ -25552,7 +24858,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/noooc", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 1 && (!noooc)) {
@@ -25567,7 +24872,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/fuel", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (gGas[playerid] == 0) {
@@ -25582,7 +24886,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/ad", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pMuted] == 1) return PlayerMuteMessage(playerid);
@@ -25624,7 +24927,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				}
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			GetPlayerName(playerid, sendername, sizeof(sendername));
 			new length = strlen(cmdtext);
 			while ((idx < length) && (cmdtext[idx] <= ' ')) {
@@ -25830,7 +25132,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/togooc", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (!gOoc[playerid]) {
@@ -25843,7 +25144,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/tognews", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (!gNews[playerid]) {
@@ -25856,7 +25156,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/togdep", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (togdep[playerid] == 0) {
@@ -25881,7 +25180,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/me", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPVarInt(playerid, "me") > gettime()) return error(playerid, " Не флуди.");
@@ -25915,7 +25213,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/c", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPVarInt(playerid, "cc") > gettime()) return error(playerid, " Не флуди.");
@@ -25975,11 +25272,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			} // Вот антирекл
 			if (Masked[playerid] == 1) {
 				format(string, sizeof(string), "{33FF00}Неизвестный говорит: %s.", result);
-				SetPlayerChatBubble(playerid, result, COLOR_WHITE, 50.0, 10000); //
+				SetPlayerChatBubble(playerid, result, COLOR_WHITE, 50.0, 10000);
 				ProxDetector(3.0, playerid, string, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE);
 			} else {
 				format(string, sizeof(string), "{33FF00}%s[%d] говорит: %s.", sendername, playerid, result);
-				SetPlayerChatBubble(playerid, result, COLOR_WHITE, 50.0, 10000); //
+				SetPlayerChatBubble(playerid, result, COLOR_WHITE, 50.0, 10000);
 				ProxDetector(3.0, playerid, string, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE, COLOR_WHITE);
 			}
 			SetPVarInt(playerid, "cc", gettime() + 3);
@@ -25987,7 +25284,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/s", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetInitials(playerid);
@@ -26063,7 +25359,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/megaphone", true) == 0 || strcmp(cmd, "/m", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pMuted] == 1) return PlayerMuteMessage(playerid);
@@ -26092,21 +25387,18 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						ProxDetector(70.0, playerid, string, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
 					}
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2) {
 					new currank[64];
 					if (PlayerInfo[playerid][pRank] == 1) { currank = "Стажёр"; } else if (PlayerInfo[playerid][pRank] == 2) { currank = "Агент"; } else if (PlayerInfo[playerid][pRank] == 3) { currank = "Спец. Агент"; } else if (PlayerInfo[playerid][pRank] == 4) { currank = "Командир"; } else if (PlayerInfo[playerid][pRank] == 5) { currank = "Зам.Директора"; } else if (PlayerInfo[playerid][pRank] == 6) { currank = "Директор"; } else { currank = "Стажёр"; }
 					format(string, sizeof(string), "[%s %s: %s]", currank, sendername, result);
 					ProxDetector(75.0, playerid, string, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
 				}
-				//------------------------------------------------------------------------------
 				if (PlayerInfo[playerid][pMember] == 3 || PlayerInfo[playerid][pLeader] == 3) {
 					new currank[64];
 					if (PlayerInfo[playerid][pRank] == 1) { currank = "Рядовой"; } else if (PlayerInfo[playerid][pRank] == 2) { currank = "Сержант"; } else if (PlayerInfo[playerid][pRank] == 3) { currank = "Лейтинант"; } else if (PlayerInfo[playerid][pRank] == 4) { currank = "Капитан"; } else if (PlayerInfo[playerid][pRank] == 5) { currank = "Майор"; } else if (PlayerInfo[playerid][pRank] == 6) { currank = "Генерал"; } else { currank = "Рядовой"; }
 					format(string, sizeof(string), "[%s %s: %s]", currank, sendername, result);
 					ProxDetector(75.0, playerid, string, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW, COLOR_YELLOW);
 				}
-				//------------------------------------------------------------------------------
 				printf("%s", string);
 			} else {
 				error(playerid, " Вы не законник.");
@@ -26115,7 +25407,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/meg", true) == 0 || strcmp(cmd, "/e", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pMuted] == 1) return PlayerMuteMessage(playerid);
@@ -26181,7 +25472,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				return true;
 			}
 			if (MuteFamily[playerid] > 0) return error(playerid, " Вы заткнуты лидером.");
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[playerid][pMember] == 1 || PlayerInfo[playerid][pLeader] == 1) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 1) { format(string, sizeof(string), " Шериф %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), " Комиссар %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), " Инспектор %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), " Офицер %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), " Патрульный %s[%d](рация): %s, приём. **", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), " Кадет %s[%d](рация): %s, приём.", sendername, playerid, result); } else {
 					format(string, sizeof(string), " Кадет %s(%d)(рация): %s, прием.", sendername, playerid, result);
@@ -26189,7 +25479,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendRadioMessage(1, TEAM_BLUE_COLOR, string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 2) { format(string, sizeof(string), " Директор FBI %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), " Зам. директора %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), " Спец. агент %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), " Старший агент %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), " Агент %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), " Стажер %s[%d](рация): %s, приём.", sendername, playerid, result); } else {
 					format(string, sizeof(string), " Агент %s(%d)(рация): %s, приём.", sendername, playerid, result);
@@ -26197,7 +25486,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendRadioMessage(2, TEAM_BLUE_COLOR, string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 3 || PlayerInfo[playerid][pLeader] == 3) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 3) { format(string, sizeof(string), " Генерал %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), " Майор %s[%d](рация){33AA33}: %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), " Лейтенант %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), " Капитан %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), " Сержант %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), " Рядовой %s[%d](рация): %s, приём.", sendername, playerid, result); } else {
 					format(string, sizeof(string), " Рядовой %s(%d)(рация): %s, приём.", sendername, playerid, result);
@@ -26205,7 +25493,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendRadioMessage(3, TEAM_BLUE_COLOR, string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 7 || PlayerInfo[playerid][pLeader] == 7) {
 				if (PlayerInfo[playerid][pRank] == 6) { format(string, sizeof(string), " Мэр штата %s[%d]: %s конец связи", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), " Зам. мэра %s[%d]: %s конец связи **", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), " Депутат %s[%d]: %s конец связи **", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), " Судья %s[%d]: %s конец связи **", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), " Адвокат %s[%d]: %s конец связи **", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), " Охранник %s[%d]: %s конец связи **", sendername, playerid, result); } else {
 					format(string, sizeof(string), " Охранник %s(%d): %s конец связи", sendername, playerid, result);
@@ -26213,7 +25500,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendRadioMessage(7, TEAM_BLUE_COLOR, string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 4) { format(string, sizeof(string), " Министр здравоохранения %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), " Глав. врач %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), " Хирург %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), " Спасатель %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), " Реаниматор %s[%d](рация): %s, приём.", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), " Фельдшер %s[%d](рация): %s, приём.", sendername, playerid, result); } else {
 					format(string, sizeof(string), " Фельдшер %s(%d)(рация): %s, приём.", sendername, playerid, result);
@@ -26221,7 +25507,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendRadioMessage(4, TEAM_BLUE_COLOR, string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else {
 				error(playerid, " Вы не можете использовать эту команду.");
 				return true;
@@ -26259,7 +25544,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					}
 				}
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) {
 				if (GetPVarInt(playerid, "MedicTime") > gettime()) return error(playerid, " Сменить статус можно раз в 3 минуты.");
 				if (JobDuty[playerid] == 1) {
@@ -26274,7 +25558,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				}
 				SetPVarInt(playerid, "MedicTime", gettime() + 180);
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pJob] == 7) {
 				if (GetPVarInt(playerid, "MehTime") > gettime()) return error(playerid, " Сменить статус можно раз в 3 минуты.");
 				if (JobDuty[playerid] == 1) {
@@ -26293,7 +25576,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/departments", true) == 0 || strcmp(cmd, "/d", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pMuted] == 1) {
@@ -26321,7 +25603,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				return true;
 			}
 			if (MuteFamily[playerid] > 0) return error(playerid, " Вы заткнуты лидером.");
-			//------------------------------------------------------------------------------
 			if (PlayerInfo[playerid][pMember] == 1 || PlayerInfo[playerid][pLeader] == 1) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 1) { format(string, sizeof(string), "Шериф %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), "Комиссар %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), "Инспектор %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), "Офицер %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), "Патрульный %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), "Кадет %s[%d]: %s", sendername, playerid, result); } else {
 					format(string, sizeof(string), "Кадет %s[%d]: %s", sendername, playerid, result);
@@ -26336,7 +25617,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				printf("%s", string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 2) { format(string, sizeof(string), "Директор ФБР %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), "Зам.Директора %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), "Спец. Агент %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), "Старший агент %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), "Агент %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), "Стажер %s[%d]: %s", sendername, playerid, result); } else {
 					format(string, sizeof(string), "Стажер %s[%d]: %s", sendername, playerid, result);
@@ -26351,7 +25631,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				printf("%s", string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 3 || PlayerInfo[playerid][pLeader] == 3) {
 				if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), "Рядовой %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), "Сержант %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), "Лейтенант  %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), "Капитан %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), "Майор %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 3) { format(string, sizeof(string), "Генерал %s: %s", sendername, result); } else {
 					format(string, sizeof(string), "Рядовой %s[%d]: %s", sendername, playerid, result);
@@ -26366,7 +25645,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				printf("%s", string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else if (PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) {
 				if (PlayerInfo[playerid][pRank] == 6 || PlayerInfo[playerid][pLeader] == 4) { format(string, sizeof(string), "Министр здравоохранения %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 5) { format(string, sizeof(string), "Зам.Министра здравоохранения %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 4) { format(string, sizeof(string), "Глав.врач %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 3) { format(string, sizeof(string), "Спасатель %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 2) { format(string, sizeof(string), "Реаниматор %s[%d]: %s", sendername, playerid, result); } else if (PlayerInfo[playerid][pRank] == 1) { format(string, sizeof(string), "Фельдшер %s[%d]: %s", sendername, playerid, result); } else {
 					format(string, sizeof(string), "Фельдшер %s[%d]: %s", sendername, playerid, result);
@@ -26381,7 +25659,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				printf("%s", string);
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			else {
 				error(playerid, " Вам не доступна эта команда.");
 				return true;
@@ -26389,7 +25666,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/suspect", true) == 0 || strcmp(cmd, "/su", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -26489,7 +25765,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/open", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			for (new i = 0; i < sizeof(HouseInfo); i++) {
@@ -26594,7 +25869,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			return true;
 		}
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/banks", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (!IsPlayerInRangeOfPoint(playerid, 20.0, 2309.0405, -13.8050, 26.7422)) return error(playerid, " Вы не находитесь в банке");
@@ -26627,7 +25901,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/balance", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (!IsPlayerInRangeOfPoint(playerid, 3.0, 2309.0405, -13.8050, 26.7422)) return SendClientMessage(playerid, COLOR_WHITE, "Вы не находитесь в банке");
@@ -26636,7 +25909,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/dice", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new dice = random(6) + 1;
@@ -26651,7 +25923,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/transf", true) == 0 || strcmp(cmd, "/wiretransf", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pLevel] < 2) return error(playerid, " Вам нужен как минимум 2 уровень для использования терминала.");
@@ -26696,7 +25967,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return 1;
 	}
-	//==============================================================================
 	if (strcmp(cmdtext, "/radio", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			ShowPlayerDialog(playerid, 2112, DIALOG_STYLE_LIST, "Радиоприёмник", "YourWorld-FM\nZaycev-FM [R'n'B]\nZaycev-FM [Club]\nZaycev-FM [Pop]\nRecord\nПиратская Станция\nClub-FM\nDubStep-FM\nGop-FM \nВыключить радиоприёмник", "Выбрать", "Закрыть");
@@ -26710,9 +25980,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			new rand = random(100000);
 			rand += 200000;
 			GetPlayerName(playerid, sendername, sizeof(sendername));
-			//	GivePlayerBablo(playerid,rand);
-			//	format(string, sizeof(string), "Вы вскрыли украденный кейс и получили %d.",rand);
-			//	SendClientMessage(playerid, COLOR_WHITE, string);
 			error(playerid, "Временно не доступно,идет доработка");
 			keyss[playerid] = 0;
 			RemovePlayerAttachedObject(playerid, 1);
@@ -26745,7 +26012,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return 1;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/buy", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (IsPlayerInRangeOfPoint(playerid, 100, -30.875, -88.9609, 1004.53) || IsPlayerInRangeOfPoint(playerid, 100, 6.3856, -28.9698, 1003.5494) || IsPlayerInRangeOfPoint(playerid, 100, -23.4665, -55.6314, 1003.5469) ||
@@ -26774,7 +26040,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/sell", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (!IsPlayerInRangeOfPoint(playerid, 100, -30.875, -88.9609, 1004.53) || !IsPlayerInRangeOfPoint(playerid, 100, 6.3856, -28.9698, 1003.5494)) {
@@ -26787,7 +26052,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/buyhouse", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new Float:oldposx, Float:oldposy, Float:oldposz;
@@ -26831,7 +26095,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//===============================================================================
 	if (strcmp(cmd, "/rentlodka", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPlayerVehicleID(playerid) >= RentLodki[0] && GetPlayerVehicleID(playerid) <= RentLodki[1]) {
@@ -26869,7 +26132,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//===============================================================================
 	if (strcmp(cmd, "/rentmoto", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPlayerVehicleID(playerid) >= RentMoto[0] && GetPlayerVehicleID(playerid) <= RentMoto[1]) {
@@ -26907,7 +26169,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/rentcar", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPlayerVehicleID(playerid) >= Rent[0] && GetPlayerVehicleID(playerid) <= RentSF[1] && GetPlayerVehicleID(playerid) >= Rent[0] && GetPlayerVehicleID(playerid) <= Rent[1]) //все рент тачи
@@ -26950,7 +26211,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/hirecar", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 6) {
@@ -26969,7 +26229,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/give", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new x_nr[256];
@@ -26979,7 +26238,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendClientMessage(playerid, COLOR_GREY, "{33AA33}[Использование]{FFFFFF}: mats, drugs ");
 				return true;
 			}
-			//------------------------------------------------------------------------------
 			if (strcmp(x_nr, "drugs", true) == 0) {
 				tmp = strtok(cmdtext, idx);
 				if (PlayerInfo[playerid][pJob] == 4) return error(playerid, " Не доступно.Вы можете продать наркотики командой /selldrugs..");
@@ -27040,8 +26298,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-
-	//==============================================================================
 	if (strcmp(cmd, "/givekey", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -27098,7 +26354,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/asellbiz", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, playername, sizeof(playername));
@@ -27120,7 +26375,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/asellsbiz", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, playername, sizeof(playername));
@@ -27142,7 +26396,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/asellhouse", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, playername, sizeof(playername));
@@ -27175,7 +26428,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/sellhome", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			for (new i = 0; i < sizeof(HouseInfo); i++) {
@@ -27211,7 +26463,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return 1;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/sellflat", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			for (new i = 0; i < sizeof(FlatsInfo); i++) {
@@ -27267,7 +26518,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/sellhouse", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, playername, sizeof(playername));
@@ -27289,7 +26539,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				HouseInfo[house][hVcol1] = -1;
 				HouseInfo[house][hVcol2] = -1;
 				HouseInfo[house][hKoleso] = 0;
-				//	AddVehicleComponent (hCar[h], HouseInfo[h][hSpoiler]);
 				HouseInfo[house][hBamper] = 0;
 				HouseInfo[house][hBamper2] = 0;
 				HouseInfo[house][hNitro] = 0;
@@ -27319,7 +26568,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/houseupgrade", true) == 0 || strcmp(cmd, "/hu", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new house = PlayerInfo[playerid][pPhousekey];
@@ -27381,7 +26629,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/maskeds", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 2) {
@@ -27400,7 +26647,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/masked", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new member = PlayerInfo[playerid][pMember];
@@ -27411,7 +26657,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 		}
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/mask", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pMember] == 8 || PlayerInfo[playerid][pLeader] == 8 || PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2) {
@@ -27452,7 +26697,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmdtext, "/kpk", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, sendername, sizeof(sendername));
@@ -27487,7 +26731,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SendClientMessage(playerid, COLOR_WHITE, "{ffffff}Неизвестная команда. Возможно вы имели виду - {33aa33}/o{ffffff}.");
 		return 1;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/showpm", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 4) return error(playerid, " Нет прав на использование этой команды.");
@@ -27509,7 +26752,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return 1;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/pm", true) == 0) {
 		tmp = strtok(cmdtext, idx);
 		if (!IsPlayerConnected(playerid)) return true;
@@ -27558,7 +26800,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		printf("PM от %s к %s:", sendername, sendername2, result);
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/time", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pClock] < 1) return error(playerid, " У вас нет наручных часов. Вы можете приобрести их в магазинах 24/7");
@@ -27590,7 +26831,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return 1;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/house", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 4) {
@@ -27609,7 +26849,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/tphouse", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 5) {
@@ -27622,7 +26861,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/tpbiz", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 6) {
@@ -27636,7 +26874,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/tpsbiz", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 6) {
@@ -27650,7 +26887,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/edithousecar", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 4) return error(playerid, " У Вас недостаточно прав для того, чтобы использовать эту команду.");
@@ -27668,7 +26904,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/edit", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 4) return error(playerid, " У Вас недостаточно прав для того, чтобы использовать эту команду.");
@@ -27739,7 +26974,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/load", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (IsPlayerInAnyVehicle(playerid)) {
@@ -27755,7 +26989,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//=====================================================================================
 	if (strcmp(cmd, "/buyprods", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new tmpcar = GetPlayerVehicleID(playerid);
@@ -27803,7 +27036,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/sellprods", true) == 0) {
 		new cashmade;
 		new tmpcar;
@@ -27899,9 +27131,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		GameTextForPlayer(playerid, "~r~To Far From A Business", 5000, 1);
 		return true;
 	}
-
-
-	//==============================================================================
 	if (strcmp(cmd, "/home", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pPhousekey] != 0) {
@@ -27915,7 +27144,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/fixcar", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new house = PlayerInfo[playerid][pPhousekey];
@@ -27944,7 +27172,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/buybiz", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new Float:oldposx, Float:oldposy, Float:oldposz;
@@ -27958,7 +27185,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SendClientMessage(playerid, COLOR_WHITE, string);
 						return true;
 					}
-					//------------------------------------------------------------------------------
 					if (GetPlayerBablo(playerid) > SBizzInfo[h][sbBuyPrice]) {
 						PlayerInfo[playerid][pPbiskey] = h + 100;
 						SBizzInfo[h][sbOwned] = 1;
@@ -27969,7 +27195,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						PlayerPlayMusic(playerid);
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Поздравляем с новой покупкой.");
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Вводите {00C0FF}/help {FFFFFF}чтобы посмотреть справку по бизнесу.");
-						//                DateProp(playerid);
 						OnPropUpdate();
 						SBizzInfo[h][sbTill] = 0;
 						UpdateSBizz(h);
@@ -28004,7 +27229,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						PlayerInfo[playerid][pLocal] = h;
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Поздравляем с новой покупкой.");
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Введите {00C0FF}/help {FFFFFF}чтобы посмотреть справку по бизнесу.");
-						//       DateProp(playerid);
 						OnPropUpdate();
 						UpdateBizz(h);
 						return true;
@@ -28017,7 +27241,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/sellbiz", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, playername, sizeof(playername));
@@ -28062,7 +27285,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/bizinfo", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new bouse = PlayerInfo[playerid][pPbiskey];
@@ -28072,7 +27294,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/prodprice", true) == 0) {
 		new bouse = PlayerInfo[playerid][pPbiskey];
 		if (bouse == 255) return error(playerid, " Вы не владеете бизнесом");
@@ -28092,7 +27313,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SendClientMessage(playerid, COLOR_WHITE, string);
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/bizfee", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new h = PlayerInfo[playerid][pPbiskey];
@@ -28114,7 +27334,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/bizwithdraw", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new bouse = PlayerInfo[playerid][pPbiskey];
@@ -28165,7 +27384,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/bizbank", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			new bouse = PlayerInfo[playerid][pPbiskey];
@@ -28213,7 +27431,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/healme", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (!IsPlayerInRangeOfPoint(playerid, 2.0, 2029.5566, -1404.6027, 17.2508) &&
@@ -28338,7 +27555,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/mole", true) == 0 && PlayerInfo[playerid][pAdmin] >= 5) {
 		if (IsPlayerConnected(playerid)) {
 			GetPlayerName(playerid, sendername, sizeof(sendername));
@@ -28371,7 +27587,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/bigears", true) == 0 && PlayerInfo[playerid][pAdmin] >= 3) {
 		if (IsPlayerConnected(playerid)) {
 			if (!BigEar[playerid]) {
@@ -28384,7 +27599,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/ip", true) == 0) {
 		if (PlayerInfo[playerid][pAdmin] >= 1) {
 			tmp = strtok(cmdtext, idx);
@@ -28398,7 +27612,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/id", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -28418,7 +27631,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/a", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 1) return error(playerid, " Нет прав для использования данной команды");
@@ -28444,8 +27656,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-
-	//==============================================================================
 	if (strcmp(cmd, "/givegunall", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 4) return error(playerid, " У вас недостаточно прав для использования этой команды.");
@@ -28551,7 +27761,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		error(playerid, " У вас недостаточно прав для использования этой команды.");
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/ao", true) == 0) {
 		if (PlayerInfo[playerid][pAdmin] < 1) return SendClientMessage(playerid, COLOR_GRAD2, "У Вас недостаточно прав для того, чтобы использовать эту команду.");
 		GetPlayerName(playerid, sendername, sizeof(sendername));
@@ -28668,7 +27877,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SendClientMessageToAll(COLOR_LIGHTBLUE, string);
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/logout", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 6) {
@@ -28680,7 +27888,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/cnn", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 1) {
@@ -28714,7 +27921,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/cnnn", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] >= 6) {
@@ -28758,7 +27964,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/prison", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 1) return error(playerid, " У вас недостаточно прав, чтобы использовать эту команду.");
@@ -28810,7 +28015,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//============================================================================================
 	if (strcmp(cmd, "/unprison", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 1) return error(playerid, " Ты не авторизован для использования этой команды.");
@@ -28840,7 +28044,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/jail", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -28899,7 +28102,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/unfreeing", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			format(string, 256, " Граждане, которых запрещено выпускать:");
@@ -28917,7 +28119,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/unnofree", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (IsACop(playerid)) {
@@ -28943,7 +28144,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/nofree", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (IsACop(playerid)) {
@@ -28969,7 +28169,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//===============================================================================
 	if (strcmp(cmd, "/unjail", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			if (PlayerInfo[playerid][pAdmin] < 1) return error(playerid, " Ты не авторизован для использования этой команды.");
@@ -29001,7 +28200,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/tod", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -29018,7 +28216,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//------------------------------------------------------------------------------
 	if (strcmp(cmd, "/setstatss", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -29135,7 +28332,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/setint", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -29164,7 +28360,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			SendClientMessage(playerid, COLOR_WHITE, string);
 		}
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/setvw", true) == 0) {
 		if (!IsPlayerConnected(playerid)) return error(playerid, " Ты не авторизован для использования этой команды.");
 		tmp = strtok(cmdtext, idx);
@@ -29188,7 +28383,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/invite", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -29206,7 +28400,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						if (PlayerInfo[playerid][pLeader] == 1 || PlayerInfo[playerid][pLeader] == 2 || PlayerInfo[playerid][pLeader] == 3 || PlayerInfo[playerid][pLeader] == 9 || PlayerInfo[playerid][pLeader] == 4 || PlayerInfo[playerid][pLeader] == 10) {
 							if (PlayerInfo[para1][pLevel] < 2) return error(playerid, " Игрок должен иметь как минимум 2 уровень.");
 						}
-						//						if(PlayerInfo[playerid][pLeader] == 1 || PlayerInfo[playerid][pLeader] == 2 || PlayerInfo[playerid][pLeader] == 3 || PlayerInfo[playerid][pLeader] == 9 || PlayerInfo[playerid][pLeader] == 4 || PlayerInfo[playerid][pLeader] == 10 && PlayerInfo[para1][pLevel] < 2) return error(playerid," Игрок должен иметь как минимум 2lvl для вступления в вашу фракцию.");
 						if (gTeam[para1] == TEAM_GREEN && PlayerInfo[para1][pMember] == 0) {
 							if (PlayerInfo[playerid][pLeader] == 1) ftext = "Полицию LS";
 							else if (PlayerInfo[playerid][pLeader] == 2) ftext = "ФБР";
@@ -29246,7 +28439,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/uninvite", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -29287,7 +28479,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/kickinvite", true) == 0) {
 		if (PlayerInfo[playerid][pAdmin] < 5) return error(playerid, " Вы не Администратор.");
 		tmp = strtok(cmdtext, idx);
@@ -29316,7 +28507,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		SpawnPlayer(playa);
 		return true;
 	}
-	//==============================================================================
 	if (strcmp(cmd, "/setadm1", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
 			tmp = strtok(cmdtext, idx);
@@ -30162,7 +29352,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 		}
 		return true;
-	} //30953
+	}
 
 	if (strcmp(cmd, "/makeleader", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
@@ -34960,7 +34150,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 		}
 		return true;
-	} //515
+	}
 
 	if (strcmp(cmd, "/tie", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
@@ -38715,71 +37905,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 	return true;
 }
 
-HouseLevel(playerid) {
-	if (IsPlayerConnected(playerid)) {
-		new h = PlayerInfo[playerid][pPhousekey];
-		if (h == 255) {
-			return false;
-		}
-		if (h <= 4) {
-			return true;
-		}
-		if (h >= 5 && h <= 9) {
-			return 2;
-		}
-		if (h >= 10 && h <= 18) {
-			return 3;
-		}
-		if (h >= 19 && h <= 22) {
-			return 4;
-		}
-		if (h >= 23 && h <= 25) {
-			return 5;
-		}
-		if (h == 26) {
-			return 6;
-		}
-		if (h == 27) {
-			return 7;
-		}
-		if (h >= 28 && h <= 31) {
-			return 7;
-		}
-	}
-	return false;
-}
-
-CHouseLevel(houseid) {
-	if (houseid <= 4) {
-		return 3;
-	}
-	if (houseid >= 29 && houseid <= 30) {
-		return 4;
-	}
-	if (houseid >= 5 && houseid <= 9) {
-		return 5;
-	}
-	if (houseid >= 10 && houseid <= 18 || houseid == 28) {
-		return 7;
-	}
-	if (houseid >= 19 && houseid <= 22) {
-		return 8;
-	}
-	if (houseid >= 23 && houseid <= 25) {
-		return 9;
-	}
-	if (houseid == 26) {
-		return 10;
-	}
-	if (houseid == 27) {
-		return 11;
-	}
-	if (houseid >= 28 && houseid <= 31) {
-		return 12;
-	}
-	return false;
-}
-
 ProxDetector(Float:radi, playerid, const string[], col1, col2, col3, col4, col5) { //todo
 	if (IsPlayerConnected(playerid)) {
 		new Float:posx, Float:posy, Float:posz;
@@ -39291,7 +38416,6 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
 			PlayerInfo[playerid][pInt] = 0;
 			SetPlayerVirtualWorld(playerid, 0);
 		}
-		//==============================================================================
 		for (new i = 0; i < sizeof(HouseInfo); i++) {
 			if (IsPlayerInRangeOfPoint(playerid, 3, HouseInfo[i][hEntrancex], HouseInfo[i][hEntrancey], HouseInfo[i][hEntrancez])) {
 				if (PlayerInfo[playerid][pPhousekey] == i || HouseInfo[i][hLock] == 0) {
@@ -39306,7 +38430,6 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
 				}
 			}
 		}
-		//==============================================================================
 		if (IsPlayerInRangeOfPoint(playerid, 2, 1615.0161, 1815.7996, 10.8203)) {
 			GameTextForPlayer(playerid, "~w~Clinic", 5000, 1);
 			SetPlayerInterior(playerid, 3);
@@ -39459,7 +38582,6 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys) {
 			SetPlayerPos(playerid, 2245.2778, -1661.1738, 15.4690);
 			PlayerInfo[playerid][pInt] = 0;
 		}
-		//------------------------------------------------------------------------------
 		if (IsPlayerInRangeOfPoint(playerid, 3.0, -2695.6084, 640.1595, 14.4531)) { //корды перед ТП
 			SetPlayerInterior(playerid, 0); //интерьер
 			SetPlayerPos(playerid, -2716.6167, 626.8237, 33.2969); // корды после ТП
@@ -40683,27 +39805,6 @@ public OnPlayerText(playerid, text[]) {
 	return 1;
 }
 
-RemovePlayerWeapon(playerid, weaponid) {
-	new plyWeapons[12] = 0;
-	new plyAmmo[12] = 0;
-	for (new slot = 0; slot != 12; slot++) {
-		new wep, ammo;
-		GetPlayerWeaponData(playerid, slot, wep, ammo);
-
-		if (wep != weaponid && ammo != 0) {
-			GetPlayerWeaponData(playerid, slot, plyWeapons[slot], plyAmmo[slot]);
-		}
-	}
-
-	SafeResetPlayerWeapons(playerid);
-	for (new slot = 0; slot != 12; slot++) {
-		if (plyAmmo[slot] != 0) {
-			SafeGivePlayerWeapon(playerid, plyWeapons[slot], plyAmmo[slot]);
-		}
-	}
-	return true;
-}
-
 TrailerCescerna(vehicleid) {
 	new trailerid = GetVehicleTrailer(vehicleid);
 	new modelid = GetVehicleModel(trailerid);
@@ -40727,11 +39828,6 @@ FixHour(hour) { //todo
 forward AddsOn();
 public AddsOn() {
 	adds = 1;
-	return true;
-}
-
-AddsBank() {
-	adds = -1;
 	return true;
 }
 
@@ -40789,26 +39885,6 @@ public Voyak2GateClose() {
 	return true;
 }
 
-GateCloseSchool() {
-	MoveDynamicObject(pdgateSchool, -2052.77, -91.8869, 35.8375, 2.5);
-	MoveDynamicObject(pdngateSchool, -2052.77, -96.9865, 35.8375, 2.5);
-	return true;
-}
-
-BGate() {
-	for (new i = 0; i < GetMaxPlayers(); i++) {
-		if (IsPlayerConnected(i)) {
-			if (PlayerInfo[i][pLeader] == 19 || PlayerInfo[i][pMember] == 19) {
-				if (IsPlayerInRangeOfPoint(i, 10.0, -2180.671, -210.277, 37.337)) {
-					MoveDynamicObject(Bgate, -2180.688, -209.398, 40.887, 5.0);
-					SetTimer("BGateClose", 5000, 0);
-				}
-			}
-		}
-	}
-	return true;
-}
-
 forward BGateClose();
 public BGateClose() {
 	MoveDynamicObject(Bgate, -2180.671, -210.277, 37.337, 5.0);
@@ -40827,40 +39903,10 @@ public LizClose() {
 	return true;
 }
 
-LoadHQLocks() {
-	new arrCoords[4][64];
-	new strFromFile2[256];
-	new File: file = fopen("[Other]/hq_locks.ini", io_read);
-	if (file) {
-		fread(file, strFromFile2);
-		split(strFromFile2, arrCoords, ',');
-		hqlock[surlock] = strval(arrCoords[0]);
-		hqlock[luclock] = strval(arrCoords[1]);
-		hqlock[stlock] = strval(arrCoords[2]);
-		hqlock[iolock] = strval(arrCoords[3]);
-		fclose(file);
-	}
-	return true;
-}
-
-SaveHQLocks() {
-	new coordsstring[256];
-	format(coordsstring, sizeof(coordsstring), "%d,%d,%d,%d", hqlock[surlock], hqlock[luclock], hqlock[stlock], hqlock[iolock]);
-	new File: file2 = fopen("[Other]/hq_locks.ini", io_write);
-	fwrite(file2, coordsstring);
-	fclose(file2);
-	return true;
-}
-
 PlayerMuteMessage(playerid) {
 	new string[255];
 	format(string, sizeof(string), "{FF0000}[Ошибка]{FFFFFF} : Вы не можете говорить, у вас бан чата %d секунд.", PlayerInfo[playerid][pMutedTime]);
 	SendClientMessage(playerid, COLOR_WHITE, string);
-	return true;
-}
-
-SafeGivePlayerWeapon(playerid, weaponid, ammo) {
-	ServerGivePlayerWeapons(playerid, weaponid, ammo);
 	return true;
 }
 
@@ -40886,12 +39932,6 @@ public OnVehicleMod(playerid, vehicleid, componentid) {
 		Kick(playerid);
 		TogglePlayerControllable(playerid, 0);
 	}
-	return true;
-}
-
-antSetPlayerPos(playerid, Float:x, Float:y, Float:z) {
-	AnticheatCinfo[playerid][tspawnfix] = 255;
-	SetPlayerPos(playerid, x, y, z);
 	return true;
 }
 
@@ -40958,11 +39998,6 @@ DeleteFromTimeBanList(const ip[16]) {
 	fclose(file);
 	fclose(tempFile);
 	fremove("[logs]/temp_TimeBanList.temp");
-}
-
-ClearAnim(playerid) {
-	ClearAnimations(playerid);
-	return true;
 }
 
 UpdateHouse(idx) {
@@ -41105,31 +40140,6 @@ UpdateFlat(idx) {
 	}
 }
 
-SaveProperty() {
-	new i;
-	new File:houses;
-	while (i < Property) {
-		new string[288];
-		format(string, sizeof(string), "%d,%f,%f,%f,%f,%f,%f,%d,%d,%s,%d,%d,%d\r\n", HouseInfo[i][hId], HouseInfo[i][hEntrancex], HouseInfo[i][hEntrancey], HouseInfo[i][hEntrancez], HouseInfo[i][hExitx], HouseInfo[i][hExity], HouseInfo[i][hExitz], HouseInfo[i][hInt], HouseInfo[i][hOwned], HouseInfo[i][hOwner], HouseInfo[i][hValue], HouseInfo[i][hLock], HouseInfo[i][hLevel]);
-		if (i == 0) {
-			houses = fopen("House/property.cfg", io_write);
-		} else {
-			houses = fopen("House/property.cfg", io_append);
-		}
-		fwrite(houses, string);
-		i++;
-		fclose(houses);
-	}
-	i = 0;
-	return true;
-}
-
-GetPName(playerid) { //todo
-	new ses[24];
-	GetPlayerName(playerid, ses, sizeof(ses));
-	return ses;
-}
-
 GetBan(playerid) {
 	new PlayerNick[MAX_PLAYER_NAME], string[255];
 	GetPlayerName(playerid, PlayerNick, MAX_PLAYER_NAME);
@@ -41187,7 +40197,7 @@ AddBan(player, const playerid[], const giveplayerid[], type = 1, chislo = 0, con
 	ini_setInteger(OpenBan, "BanTime", gettime());
 	ini_setInteger(OpenBan, "UnBanTime", gettime() + totalban);
 	ini_setString(OpenBan, "PlayerBan", giveplayerid);
-	ini_setString(OpenBan, "Reason", reason); //
+	ini_setString(OpenBan, "Reason", reason);
 	ini_closeFile(OpenBan); // Закрываем файл.
 	return Kick(player);
 }
@@ -41219,14 +40229,6 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid) {
 		CarEngine[playerid] = 0;
 	}
 	return true;
-}
-
-zweapons(playerid) {
-	new w = GetPlayerWeapon(playerid);
-	if (w == 24 || 33) {
-		return true;
-	}
-	return false;
 }
 
 forward UnDrink(playerid);
@@ -41555,69 +40557,6 @@ SendDalnMessage(color, const string[]) {
 	}
 }
 
-GetPlayerNameEx(playerid) { //todo
-	new name[MAX_PLAYER_NAME];
-	if (IsPlayerConnected(playerid)) {
-		GetPlayerName(playerid, name, sizeof(name));
-	}
-	else {
-		name = "Unknown";
-	}
-	return name;
-}
-
-IsACarB(carid) { //Легковые автомобили //todo
-	new m = GetVehicleModel(carid);
-	if ((m >= 400 && m <= 405) || ((m >= 409 && m <= 426) && m != 414 && m != 417 && m != 425) || m == 429 || m == 434 || m == 436 || m == 438 || m == 439 || m == 440 || m == 442 || m == 445 || m == 451 || m == 458 || m == 459 || m == 466 || m == 467 || m == 468 || m == 470 || m == 474 || m == 475) {
-		return 1;
-	}
-	else if (m == 477 || m == 478 || m == 479 || m == 480 || m == 482 || m == 483 || m == 485 || ((m >= 489 && m <= 496) && m != 493) || m == 500 || (m >= 502 && m <= 507) || m == 516 || m == 517 || m == 518 || (m >= 526 && m <= 530) || (m >= 533 && m <= 536) || ((m >= 540 && m <= 551) && m != 544 && m != 548) || m == 554 || m == 555 || (m >= 558 && m <= 562) || (m >= 565 && m <= 568)) {
-		return 1;
-	}
-	else if (m == 572 || m == 574 || m == 575 || m == 576 || m == 579 || m == 580 || m == 582 || m == 585 || m == 587 || m == 589 || m == 596 || m == 597 || m == 598 || m == 599 || m == 601 || m == 432 || m == 427 || m == 514 || (m >= 602 && m <= 605)) {
-		return 1;
-	}
-	return 0;
-}
-
-LoadNumbers() {
-	new File = ini_openFile("num.ini");
-	new Str[10], Str2[25];
-	for (new i = 0; i < VEHICLES; i++) {
-		format(Str, 10, "%d", i);
-		ini_getString(File, Str, Str2);
-		SetVehicleNumberPlate(i, Str2);
-	}
-	ini_closeFile(File);
-	new File1 = ini_openFile("num(3d).ini");
-	new Str3[10], Str4[25];
-	for (new i = 0; i < VEHICLES; i++) {
-		format(Str3, 10, "%d", i);
-		ini_getString(File1, Str3, Str4);
-		dt[i] = Create3DTextLabel(Str4, 0xFFFFFFFF, 0.0, 0.0, 0.0, 50.0, 0, 1);
-		Attach3DTextLabelToVehicle(dt[i], i, 0.0, 0.0, 1.0);
-	}
-	ini_closeFile(File1);
-}
-
-GetLeader(playerid) {
-	new p = PlayerInfo[playerid][pLeader];
-	if (p >= 1 || p <= 20) {}
-	return p;
-}
-
-GetML(playerid) {
-	new l = PlayerInfo[playerid][pLeader];
-	new m = PlayerInfo[playerid][pMember];
-	if (l >= 1 || l <= 20) {}
-	if (m >= 1 || m <= 20) {}
-	if (!l) {
-		return m;
-	} else {
-		return l;
-	}
-}
-
 forward settime(playerid);
 public settime(playerid) { //todo
 	new string[256], year, month, day, hours, minutes, seconds;
@@ -41627,46 +40566,6 @@ public settime(playerid) { //todo
 	format(string, sizeof string, "%s%d:%s%d:%s%d", (hours < 10) ? ("0") : (""), hours, (minutes < 10) ? ("0") : (""), minutes, (seconds < 10) ? ("0") : (""), seconds);
 	TextDrawSetString(Times, string);
 	return true;
-}
-
-HasStraight(straight) {
-	switch (straight) {
-		case 31, 62, 124, 248, 496, 992, 1984, 3968, 7936, 4111 : {
-			return true;
-		}
-	}
-	return false;
-}
-
-PlaySound(playerid, sound) {
-	new Float:X, Float:Y, Float:Z;
-	GetPlayerPos(playerid, X, Y, Z);
-	PlayerPlaySound(playerid, sound, X, Y, Z);
-	return sound;
-}
-
-HasDuplicateValues(const array[], size = sizeof array) {
-	for (new f = 0; f < size - 1; ++f) {
-		for (new c = f + 1; c < size; ++c) {
-			if (array[f] == array[c]) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-RandomNumber(value, array[], size = sizeof array) {
-	for (new p = 0; p < size; p++) {
-		array[p] = random(value);
-	}
-}
-
-Swap( & a, & b) {
-	new s;
-	s = a;
-	a = b;
-	b = s;
 }
 
 forward PredAvtoRestart();
