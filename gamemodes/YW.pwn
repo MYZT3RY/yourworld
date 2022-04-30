@@ -5,25 +5,55 @@
 #include <mxINI05>
 #include <mxdate>
 #include <objects>
-#define RADIO 2655
-#undef MAX_PLAYERS
-#define MAX_PLAYERS 150
+#include <a_mysql>
+#define MDIALOG_DISABLE_TAGS
+#include <mdialog>
+#include <sscanf2>
+#include <Pawn.Regex>
 
-new lcnkamera, russiankamera, triadkamera, yakuzakamera, ballaskamera, grovekamera, koronoskamera, rifakamera, vagoskamera, streetkamera, opros[MAX_PLAYERS];
-new keys, bankotkat, keyss[MAX_PLAYERS], bombb, togdep[MAX_PLAYERS], banksistem, bankpasword[MAX_PLAYERS], virtik[MAX_PLAYERS], MurderStartGonka1;
-new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[MAX_PLAYERS], statt[MAX_PLAYERS], Float: xf, Float: yf, Float: zf, RegistrationStep[MAX_PLAYERS];
+// настройки подключения к базе данных
+#define MYSQL_HOST "localhost" // хост
+#define MYSQL_USER "root" // пользователь
+#define MYSQL_DATABASE "yourworld" // база данных
+#define MYSQL_PASSWORD "" // пароль
+new mysql_connection;
+
+// настройки сервера
+
+#define DEBUG_MODE // режим отладки сервера
+
+// лимиты
+
+#undef MAX_PLAYERS
+#define MAX_PLAYERS 100 // максимальное количество игроков на сервере
+
+#define MAX_PASSWORD_LEN (24) // максимальная длина пароля
+#define MIN_PASSWORD_LEN (4) // минимальная длина пароля
+
+#define MAX_OTHER_PASS_LEN (32) // максимальная длина дополнительного пароля
+
+#define MAX_ATTEMPS_TO_LOGIN (3) // максимальное количество попыток для авторизации
+
+// значения по умолчанию
+
+#define NULL ("NULL") // пустое значение
+
+#define DEFAULT_TIME_FOR_KICK (250) // значение по умолчанию для таймера кика
+
+//
+
+new lcnkamera, russiankamera, triadkamera, yakuzakamera, ballaskamera, grovekamera, koronoskamera, rifakamera, vagoskamera, streetkamera;
+new keys, bankotkat, keyss[MAX_PLAYERS], bombb, togdep[MAX_PLAYERS], banksistem, bankpasword, virtik[MAX_PLAYERS], MurderStartGonka1;
+new vzlomvopros[MAX_PLAYERS], door, door1, door2, kusachki[MAX_PLAYERS], Float: xf, Float: yf, Float: zf;
 
 #define DIA_SET 1669
 #define VEHICLES 1700
-#define DIALOGUNBAN 162
-#define Player PlayerInfo
 #define CHECKPOINT_JOBS 20
 #define COLOR_YEL 0xEEAB00AA
 #define COLOR_RED 0xFFD9D991
 #define COLOR_AOCHAT 0xB41E20AA
 #define TEAM_RADIO_COLOR 0xF2D068FF
 #define COLOR_ORANGE 0xFF9900AA
-#define COLOR_GREEN1 0x33AA33AA
 #define COLOR_GRAD1 0xB4B5B7FF
 #define COLOR_GRAD2 0xBFC0C2FF
 #define COLOR_GRAD3 0xCBCCCEFF
@@ -38,7 +68,6 @@ new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[M
 #define COLOR_LIGHTGREEN 0x9ACD32AA
 #define COLOR_YELLOW 0xFFFF00AA
 #define COLOR_YELLOW2 0xF5DEB3AA
-#define COLOR_YELLOW23d 0xF5DEB3FF
 #define COLOR_WHITE 0xFFFFFFAA
 #define COLOR_FADE1 0xE6E6E6E6
 #define COLOR_FADE2 0xC8C8C8C8
@@ -47,21 +76,16 @@ new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[M
 #define COLOR_FADE5 0x6E6E6E6E
 #define COLOR_PURPLE 0xC2A2DAAA
 #define COLOR_DBLUE 0x2641FEAA
-#define COLOR_ALLDEPT 0xFF8282AA
 #define COLOR_ORANGERED 0xFF600AA
 #define COLOR_GREEN 0x33AA33AA
-#define COLOR_WHITE 0xFFFFFFAA
 #define COLOR_GREY 0xAFAFAFAA
 #define COLOR_BLACK 0x000000AA
 #define TEAM_GREEN 3
-#define TEAM_ADMIN 11
 #define TEAM_GREEN_COLOR 0xFFFFFFAA
-#define TEAM_JOB_COLOR 0xFFB6C1AA
 #define TEAM_BLUE_COLOR 0x8D8DFF00
 #define TEAM_GROVE_COLOR 0x00D900C8
 #define TEAM_VAGOS_COLOR 0xFFC801C8
 #define TEAM_AZTECAS_COLOR 0x01FCFFC8
-#define Grov 0x00E500AA
 #define BANK_SYSTEM 5209
 #define BANK_VZNOS 3490
 #define BANK_VZ    3491
@@ -69,7 +93,6 @@ new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[M
 #define BANK_TR2   3493
 
 #define timerspeed  500                 //Speed of the timer in milliseconds (1000 = 1 second)
-#define blinkerduration 10				//Length of the duration that the blinker will stay on in seconds.
 #define rightkey	KEY_LOOK_RIGHT      //The key you press to turn the right blinker on
 #define leftkey		KEY_LOOK_LEFT		//The key you press to turn the left blinker on
 #define PRESSED(%0,%1,%2) ((((%0) & (%2)) == (%2)) && (((%1) & (%2)) != (%2)))
@@ -78,8 +101,6 @@ new vzlomvopros[MAX_PLAYERS], door, door1, door2, nabor[MAX_PLAYERS], kusachki[M
 #define MAX_STRING 255
 #define CHECKPOINT_NONE 0
 #define CHECKPOINT_HOME 12
-#define red 0xAA3333AA
-#define MAX_NICK_ALLOWED_CHARS 65
 static gTeam[MAX_PLAYERS];
 
 #define RC_BANDIT	441
@@ -90,9 +111,115 @@ static gTeam[MAX_PLAYERS];
 #define D_POEZDSF   537
 #define RC_TANK     564
 #define RC_CAM      594
-#define ADMIN_SPEC_TYPE_NONE 0
-#define ADMIN_SPEC_TYPE_PLAYER 1
-#define ADMIN_SPEC_TYPE_VEHICLE 2
+
+// переменные
+
+enum pInfo {
+	pID,
+	pName[MAX_PLAYER_NAME],
+	pNoFree,
+	pZapret,
+	pVorSkill,
+	pBancka,
+	pFBancka,
+	pFlatKey,
+	pDalnoboiSkill,
+	pBlockeds,
+	pLevel,
+	pWarns,
+	pWanted,
+	pAdmin,
+	pDonateRank,
+	gPupgrade,
+	pConnectTime,
+	pSex,
+	pOrigin,
+	pMuted,
+	pExp,
+	pCash,
+	pAccount,
+	pCrimes,
+	pKills,
+	pDeaths,
+	pWantedDeaths,
+	pLottoNr,
+	pFishes,
+	pBiggestFish,
+	pJob,
+	pPayCheck,
+	pHeadValue,
+	pJailed,
+	pJailTime,
+	pMats,
+	pDrugs,
+	pLeader,
+	pMember,
+	pRank,
+	pChar,
+	pDetSkill,
+	pDrochSkill,
+	pLawSkill,
+	pMechSkill,
+	pJackSkill,
+	pGromilaSkill,
+	pCarSkill,
+	pNewsSkill,
+	pDrugsSkill,
+	pFishSkill,
+	Float:pSHealth,
+	pInt,
+	pLocal,
+	pTeam,
+	pPhousekey,
+	pPbiskey,
+	pVirWorld,
+	pCarLic,
+	pMotoLic,
+	pFlyLic,
+	pBoatLic,
+	pFishLic,
+	pGunLic,
+	pMusorTime,
+	pCleanTime,
+	pTruckTime,
+	pPayDay,
+	pPayDayHad,
+	pMiserPerk,
+	pPainPerk,
+	pTraderPerk,
+	pTut,
+	pFWarns,
+	pFuel,
+	pMarried,
+	pMarriedTo[MAX_PLAYER_NAME],
+	pMask,
+	pClock,
+	pDice,
+	pRope,
+	pGunSkill,
+	pCard,
+	pMutedTime,
+	pRobTime,
+	ptDrugs,
+	ptMats,
+	pHelper,
+	pHmed,
+	pTkMats,
+	pTkDrugs,
+	pRobKey,
+	pOtherPass[MAX_OTHER_PASS_LEN],
+	pFs,
+
+	bool:Logged
+};
+
+new PlayerInfo[MAX_PLAYERS][pInfo];
+
+// переменные regex
+
+static Regex:regexPassword;
+
+//
 new Rekl[MAX_PLAYERS];
 new Text:SM_HA[MAX_PLAYERS];
 new SpecHATimer[MAX_PLAYERS], UnfreezePlayer[MAX_PLAYERS];
@@ -132,10 +259,10 @@ new LawyerOffer[MAX_PLAYER_NAME], LawyerPrice[MAX_PLAYER_NAME], ranlotto, ugonsh
 new medwarehouse = 500, gmedicines, PicCP[MAX_PLAYERS], ZonaKill[MAX_PLAYERS], Nazone[MAX_PLAYERS], Ograblen[MAX_PLAYERS];
 new Float:VehPos[MAX_VEHICLES][4], bool: BanCar[MAX_VEHICLES], TimeUpdate[MAX_PLAYERS], TimerGiveMiner[MAX_PLAYERS], TimerGiveMinerEx[MAX_PLAYERS];
 //===========================[Общаки]===========================================
-new NormMoney[MAX_PLAYERS], Text:Times, Text:Date;
+new Text:Times, Text:Date;
 //=========================[Гока для стритов]==================================
 new murder[MAX_PLAYERS], Murderchet[MAX_PLAYERS], MurderPlayers = 0, MedicCP[MAX_PLAYERS], AnimationOn[MAX_PLAYERS], MuteHelpTime[MAX_PLAYERS], KartingCar[MAX_PLAYERS], DmZona[MAX_PLAYERS];
-new Spawned[MAX_PLAYERS], WrongPassword[MAX_PLAYERS], MuteFamily[MAX_PLAYERS], RaceCP[MAX_PLAYERS], prodid[MAX_PLAYERS], prodidf[MAX_PLAYERS], AntiMoney[MAX_PLAYERS], AntiMoney2[MAX_PLAYERS];
+new WrongPassword[MAX_PLAYERS], MuteFamily[MAX_PLAYERS], RaceCP[MAX_PLAYERS], prodid[MAX_PLAYERS], prodidf[MAX_PLAYERS];
 new prodhouse[MAX_PLAYERS], prodhousef[MAX_PLAYERS], prodmoney[MAX_PLAYERS], prodmoneyf[MAX_PLAYERS], FirstMurderWinner = 999, PlayerMurder[MAX_PLAYERS], SecondMurderWinner = 999, ThirdMurderWinner = 999;
 new Float:murderace[61][3] = {
 	{ 1078.36, -867.87, 42.99 },
@@ -242,27 +369,26 @@ new gryz1, gryz2, LottoStart, LottoStart2;
 new PlayerMayNarco[MAX_PLAYERS], PlayerMayAlco[MAX_PLAYERS], uTarget[MAX_PLAYERS], tietime[MAX_PLAYERS], ChangeCost[MAX_PLAYERS], ChangeNumber[MAX_PLAYERS];
 new checkk[MAX_PLAYERS], dalnoboishikauto[2], AdminPm[MAX_PLAYERS], Gotos[MAX_PLAYERS], GM[MAX_PLAYERS], CreatedCars[100], PlayerFoodSlot[MAX_PLAYERS];
 new CreatedCar = 0, Tax = 0, TaxValue = 0, Jackpot = 0, JobDuty[MAX_PLAYERS];
-new gPlayerLogged[MAX_PLAYERS];
 new Medics = 0, MedicCall = 999, MedicCallTime[MAX_PLAYERS];
 new Mechanics = 0, MechanicCall = 999, MechanicCallTime[MAX_PLAYERS], TaxiDrivers = 0, TaxiCall = 999, TaxiCallTime[MAX_PLAYERS], TaxiAccepted[MAX_PLAYERS], TramDrivers = 0;
 new TransportDuty[MAX_PLAYERS], TransportValue[MAX_PLAYERS], TransportMoney[MAX_PLAYERS], TransportTime[MAX_PLAYERS], TransportCost[MAX_PLAYERS], bool:yak;
-new TransportDriver[MAX_PLAYERS], MapIconsShown[MAX_PLAYERS], OnCK[MAX_PLAYERS], An[MAX_PLAYERS], GettingCK[MAX_PLAYERS];
+new TransportDriver[MAX_PLAYERS], MapIconsShown[MAX_PLAYERS], An[MAX_PLAYERS];
 new SchoolSpawn[MAX_PLAYERS], TakingLesson[MAX_PLAYERS], UsedFind[MAX_PLAYERS], MissionCheckpoint[MAX_PLAYERS], NoFuel[MAX_PLAYERS];
 new MatsHolding[MAX_PLAYERS], DivorceOffer[MAX_PLAYERS], MarriageCeremoney[MAX_PLAYERS], ProposeOffer[MAX_PLAYERS], ProposedTo[MAX_PLAYERS], GotProposedBy[MAX_PLAYERS], MarryWitness[MAX_PLAYERS];
-new MarryWitnessOffer[MAX_PLAYERS], TicketOffer[MAX_PLAYERS], TicketMoney[MAX_PLAYERS], PlayerStoned[MAX_PLAYERS], ConsumingMoney[MAX_PLAYERS], BringingPaper[MAX_PLAYERS];
-new GotPaper[MAX_PLAYERS], WritingPaper[MAX_PLAYERS], WritingPaperNumber[MAX_PLAYERS], WritingLine[MAX_PLAYERS], FishCount[MAX_PLAYERS], SpawnChange[MAX_PLAYERS], TutTime[MAX_PLAYERS];
+new MarryWitnessOffer[MAX_PLAYERS], TicketOffer[MAX_PLAYERS], TicketMoney[MAX_PLAYERS], PlayerStoned[MAX_PLAYERS], BringingPaper[MAX_PLAYERS];
+new GotPaper[MAX_PLAYERS], WritingPaper[MAX_PLAYERS], WritingPaperNumber[MAX_PLAYERS], WritingLine[MAX_PLAYERS], SpawnChange[MAX_PLAYERS];
 new firstname[MAX_PLAYERS], secondname[MAX_PLAYERS], PlayerDrunk[MAX_PLAYERS], PlayerDrunkTime[MAX_PLAYERS], PlayerTazeTime[MAX_PLAYERS], FindTimePoints[MAX_PLAYERS], FindTime[MAX_PLAYERS];
 new PaperOffer[MAX_PLAYERS], CarOffer[MAX_PLAYERS], CarPrice[MAX_PLAYERS], PlayerSpectateID[MAX_PLAYERS], PlayerSpec[MAX_PLAYERS], CarID[MAX_PLAYERS];
 new CarCalls[MAX_PLAYERS], GotHit[MAX_PLAYERS], GoChase[MAX_PLAYERS], GetChased[MAX_PLAYERS], OrderReady[MAX_PLAYERS], ConnectedToPC[MAX_PLAYERS], MedicTime[MAX_PLAYERS];
-new MedicBill[MAX_PLAYERS], PlayerTied[MAX_PLAYERS], PlayerCuffed[MAX_PLAYERS], PlayerCuffedTime[MAX_PLAYERS], LiveOffer[MAX_PLAYERS], TalkingLive[MAX_PLAYERS];
-new ChosenSkin[MAX_PLAYERS], GettingJob[MAX_PLAYERS], ApprovedLawyer[MAX_PLAYERS], CallLawyer[MAX_PLAYERS], WantLawyer[MAX_PLAYERS], CurrentMoney[MAX_PLAYERS], KickPlayer[MAX_PLAYERS];
+new PlayerTied[MAX_PLAYERS], PlayerCuffed[MAX_PLAYERS], PlayerCuffedTime[MAX_PLAYERS], LiveOffer[MAX_PLAYERS], TalkingLive[MAX_PLAYERS];
+new ChosenSkin[MAX_PLAYERS], GettingJob[MAX_PLAYERS], ApprovedLawyer[MAX_PLAYERS], CallLawyer[MAX_PLAYERS], WantLawyer[MAX_PLAYERS], KickPlayer[MAX_PLAYERS];
 new Robbed[MAX_PLAYERS], RobbedTime[MAX_PLAYERS], CP[MAX_PLAYERS], MoneyMessage[MAX_PLAYERS], Condom[MAX_PLAYERS];
 new STDPlayer[MAX_PLAYERS], RepairOffer[MAX_PLAYERS], RepairPrice[MAX_PLAYERS], RefillOffer[MAX_PLAYERS], RefillPrice[MAX_PLAYERS], RepairCar[MAX_PLAYERS];
 new UsingDrugs[MAX_PLAYERS], DrugOffer[MAX_PLAYERS], DrugPrice[MAX_PLAYERS], DrugGram[MAX_PLAYERS], JailPrice[MAX_PLAYERS], OnDuty[MAX_PLAYERS];
 new gPlayerCheckpointStatus[MAX_PLAYERS], gPlayerLogTries[MAX_PLAYERS], gPlayerSpawned[MAX_PLAYERS], gActivePlayers[MAX_PLAYERS], gLastCar[685], gOoc[MAX_PLAYERS];
-new gNews[MAX_PLAYERS], gFam[MAX_PLAYERS], BigEar[MAX_PLAYERS], Spectate[MAX_PLAYERS], HireCar[MAX_PLAYERS], SafeTime[MAX_PLAYERS], HidePM[MAX_PLAYERS];
+new gNews[MAX_PLAYERS], gFam[MAX_PLAYERS], BigEar[MAX_PLAYERS], Spectate[MAX_PLAYERS], HireCar[MAX_PLAYERS], HidePM[MAX_PLAYERS];
 new gGas[MAX_PLAYERS], gSpeedo[MAX_PLAYERS], gSpentCash[MAX_PLAYERS], FirstSpawn[MAX_PLAYERS], SwitchKey[MAX_PLAYERS], RingTone[MAX_PLAYERS];
-new gPlayerAccount[MAX_PLAYERS], GunOffer[MAX_PLAYERS], GunDPrice[MAX_PLAYERS], GunType[MAX_PLAYERS], GunAmmo[MAX_PLAYERS], gLastDriver[800];
+new GunOffer[MAX_PLAYERS], GunDPrice[MAX_PLAYERS], GunType[MAX_PLAYERS], GunAmmo[MAX_PLAYERS], gLastDriver[800];
 new gCarLock[800], noooc = 0, adds = 1, addtimer = 60000, carselect[15], objstore[128], cbjstore[128], ghour = 0, gminute = 0, gsecond = 0;
 new numplayers = 0, realtime = 1, wtime = 15, realchat = 1, timeshift = -1, Security = 0;
 new levelcost = 15000;
@@ -876,161 +1002,6 @@ new FlatsInfo[27][fInfo];
 new FlatPickup[sizeof(FlatsInfo)];
 new Text3D: Flat3D[sizeof(FlatsInfo)];
 new HelperDuty[MAX_PLAYERS];
-enum pInfo {
-	pKey[32],
-		pNoFree,
-		pZapret,
-		pVorSkill,
-		pBancka,
-		pFBancka,
-		pFlatKey,
-		pDalnoboiSkill,
-		pBlockeds,
-		pLevel,
-		pWarns,
-		pWanted,
-		pNarcoZavisimost,
-		pNarcoLomka,
-		pForce,
-		pAdmin,
-		pDonateRank,
-		gPupgrade,
-		pConnectTime,
-		pReg,
-		pSex,
-		pAge,
-		pOrigin,
-		pCK,
-		pMuted,
-		pExp,
-		pCash,
-		pAccount,
-		pCrimes,
-		pKills,
-		pDeaths,
-		pWantedDeaths,
-		pLottoNr,
-		pFishes,
-		pBiggestFish,
-		pJob,
-		pPayCheck,
-		pHeadValue,
-		pJailed,
-		pJailTime,
-		pMats,
-		pDrugs,
-		pLeader,
-		pMember,
-		pFMember,
-		pRank,
-		pChar,
-		pCar,
-		pContractTime,
-		pDetSkill,
-		pDrochSkill,
-		pLawSkill,
-		pMechSkill,
-		pJackSkill,
-		pGromilaSkill,
-		pCarSkill,
-		pNewsSkill,
-		pDrugsSkill,
-		pCookSkill,
-		pFishSkill,
-		Float:pHealth,
-		Float:pSHealth,
-		pInt,
-		pLocal,
-		pTeam,
-		pPhousekey,
-		pPbiskey,
-		Float:pPos_x,
-		Float:pPos_y,
-		Float:pPos_z,
-		pVirWorld,
-		pCarLic,
-		pMotoLic,
-		pFlyLic,
-		pBoatLic,
-		pFishLic,
-		pGunLic,
-		pGun0,
-		pGun1,
-		pGun2,
-		pGun3,
-		pGun4,
-		pGun5,
-		pGun6,
-		pGun7,
-		pGun8,
-		pGun9,
-		pGun10,
-		pGun11,
-		pAmmo0,
-		pAmmo1,
-		pAmmo2,
-		pAmmo3,
-		pAmmo4,
-		pAmmo5,
-		pAmmo6,
-		pAmmo7,
-		pAmmo8,
-		pAmmo9,
-		pAmmo10,
-		pAmmo11,
-		pCarTime,
-		pMusorTime,
-		pCleanTime,
-		pTruckTime,
-		pPayDay,
-		pPayDayHad,
-		pLoses,
-		pAlcoholPerk,
-		pDrugPerk,
-		pMiserPerk,
-		pPainPerk,
-		pTraderPerk,
-		pTut,
-		pFWarns,
-		pAdjustable,
-		pFuel,
-		pMarried,
-		pMarriedTo[128],
-		pVirtualWorld,
-		pMask,
-		pClock,
-		pDice,
-		pRope,
-		pGunSkill,
-		pCard,
-		pMutedTime,
-		pRadio,
-		pNeSdal,
-		pLivingAt[128],
-		pFirstName[128],
-		pLastName[128],
-		pBornAt[128],
-		Text3D:pAdmText,
-		pRobTime,
-		pDuty,
-		pLocked,
-		ptMoney,
-		ptDrugs,
-		ptMats,
-		pHelper,
-		pHmed,
-		pVipTime,
-		pRefText, //СИСТЕМА СВОБОДНА
-		pReferal[MAX_PLAYER_NAME],
-		pRefMoney,
-		pTkMats,
-		pTkDrugs,
-		pRobKey,
-		pMail[32],
-		pOtherPass[32],
-		pIP[16],
-		pFs
-};
 
 GetTimeStamp() {
 	new hour, minute, second, year, month, day;
@@ -1062,8 +1033,6 @@ GetTimeStamp() {
 	}
 	return timestamp;
 }
-
-new PlayerInfo[MAX_PLAYERS][pInfo];
 
 timeconvert(Time, & Minutes, & Seconds, & MSeconds) {
 	new Float:fTime = floatdiv(Time, 60000);
@@ -1760,6 +1729,9 @@ TryFish(playerid) {
 	else if (PlayerInfo[playerid][pFishSkill] == 1000) {
 		SendClientMessage(playerid, COLOR_YELLOW, " Ваш навык рыболовства = 5, Теперь вы можете ловить рыбку покрупнее.");
 	}
+	new query[80 - (2 *4) + (4 * 3) + 10];
+	mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fishes`='%i',`biggestfish`='%i',`fishskill`='%i'where`id`='%i'", PlayerInfo[playerid][pFishes], PlayerInfo[playerid][pBiggestFish], PlayerInfo[playerid][pFishSkill], PlayerInfo[playerid][pID]);
+	mysql_query(mysql_connection, query, false);
 	return true;
 }
 
@@ -2023,7 +1995,6 @@ public Spectator() {
 				SetSpawnInfo(i, PlayerInfo[i][pTeam], PlayerInfo[i][pChar], Unspec[i][sPx], Unspec[i][sPy], Unspec[i][sPz] - 1.0, 1.0, -1, -1, -1, -1, -1, -1);
 				gTeam[i] = PlayerInfo[i][pTeam];
 				SetPlayerToTeamColor(i);
-				MedicBill[i] = 0;
 				if (PlayerInfo[i][pDonateRank] > 0) {
 					SetSpawnInfo(i, PlayerInfo[i][pTeam], PlayerInfo[i][pChar], Unspec[i][Coords][0], Unspec[i][Coords][1], Unspec[i][Coords][2], 10.0, -1, -1, -1, -1, -1, -1);
 					SpawnPlayer(i);
@@ -2085,7 +2056,6 @@ public OnPlayerEnterVehicle(playerid, vehicleid, ispassenger) {
 	new model = GetVehicleModel(vehicleid);
 	RaceCP[playerid] = 0;
 	GunCheckTime[playerid] = 5;
-	PlayerInfo[playerid][pCar] = 1;
 	if (MnePizda[playerid] == 1) {
 		new Float:cx, Float:cy, Float:cz;
 		GetPlayerPos(playerid, cx, cy, cz);
@@ -2787,9 +2757,7 @@ public OnPlayerConnect(playerid) {
 	PlayAudioStreamForPlayer(playerid, "http://cs6295.userapi.com/u123463111/docs/6eb5c31dea7d/by_nikitqa.mp3?dl=1");
 	DmZona[playerid] = 0;
 	MedicCP[playerid] = 0;
-	gPlayerAccount[playerid] = 0;
 	WrongPassword[playerid] = 0;
-	Spawned[playerid] = 0;
 	GunCheckTime[playerid] = 0;
 	new PlName[MAX_PLAYER_NAME], count;
 	GetPlayerName(playerid, PlName, sizeof(PlName));
@@ -2898,6 +2866,7 @@ public OnPlayerConnect(playerid) {
 	gettime(hour, minute);
 	SetPlayerTime(playerid, hour, minute);
 	if (Security != 0){
+		GetPlayerName(playerid,PlayerInfo[playerid][pName],MAX_PLAYER_NAME);
 		gActivePlayers[playerid]++;
 		numplayers++;
 		PlayerAFKtime[playerid] = 0;
@@ -2910,7 +2879,6 @@ public OnPlayerConnect(playerid) {
 		CallLawyer[playerid] = 0;
 		WantLawyer[playerid] = 0;
 		KickPlayer[playerid] = 0;
-		CurrentMoney[playerid] = 0;
 		UsedFind[playerid] = 0;
 		CP[playerid] = 0;
 		Robbed[playerid] = 0;
@@ -2925,9 +2893,7 @@ public OnPlayerConnect(playerid) {
 		Rope[playerid] = 0;
 		STDPlayer[playerid] = 0;
 		An[playerid] = 0;
-		statt[playerid] = 0;
-		gPlayerLogged[playerid] = 0;
-		opros[playerid] = 0;
+		PlayerInfo[playerid][Logged] = false;
 		RepairOffer[playerid] = 999;
 		RepairPrice[playerid] = 0;
 		RepairCar[playerid] = 0;
@@ -2941,15 +2907,12 @@ public OnPlayerConnect(playerid) {
 		PlayerCuffed[playerid] = 0;
 		PlayerCuffedTime[playerid] = 0;
 		DrugPrice[playerid] = 0;
-		OnCK[playerid] = 999;
-		GettingCK[playerid] = 999;
 		Playerderbi[playerid] = 0;
 		DrugGram[playerid] = 0;
 		ConnectedToPC[playerid] = 0;
 		OrderReady[playerid] = 0;
 		JailPrice[playerid] = 0;
 		MedicTime[playerid] = 0;
-		MedicBill[playerid] = 0;
 		GotHit[playerid] = 0;
 		GoChase[playerid] = 999;
 		GetChased[playerid] = 999;
@@ -2957,8 +2920,6 @@ public OnPlayerConnect(playerid) {
 		OnDuty[playerid] = 0;
 		SchoolSpawn[playerid] = 0;
 		kusachki[playerid] = 0;
-		nabor[playerid] = 0;
-		SafeTime[playerid] = 60;
 		TransportDuty[playerid] = 0;
 		PlayerTied[playerid] = 0;
 		TaxiCallTime[playerid] = 0;
@@ -2975,7 +2936,6 @@ public OnPlayerConnect(playerid) {
 		PlayerDrunk[playerid] = 0;
 		PlayerDrunkTime[playerid] = 0;
 		Unspec[playerid][sLocal] = 255;
-		FishCount[playerid] = 0;
 		WireTransferId[playerid] = 0;
 		WritingPaper[playerid] = 0;
 		WritingPaperNumber[playerid] = 999;
@@ -2983,7 +2943,6 @@ public OnPlayerConnect(playerid) {
 		BringingPaper[playerid] = 0;
 		GotPaper[playerid] = 0;
 		PaperOffer[playerid] = 999;
-		ConsumingMoney[playerid] = 0;
 		gLastCar[playerid] = 0;
 		FirstSpawn[playerid] = 0;
 		gOoc[playerid] = 0;
@@ -3000,9 +2959,7 @@ public OnPlayerConnect(playerid) {
 		TicketOffer[playerid] = 999;
 		TicketMoney[playerid] = 0;
 		MatsHolding[playerid] = 0;
-		TutTime[playerid] = 0;
 		TaxiAccepted[playerid] = 999;
-		PlayerInfo[playerid][pCash] = 0;
 		NoFuel[playerid] = 0;
 		HireCar[playerid] = 299;
 		TransportValue[playerid] = 0;
@@ -3012,7 +2969,6 @@ public OnPlayerConnect(playerid) {
 		TransportDriver[playerid] = 999;
 		MissionCheckpoint[playerid] = 0;
 		togdep[playerid] = 0;
-		RegistrationStep[playerid] = 0;
 		Fishes[playerid][pLastFish] = 0;
 		Fishes[playerid][pFishID] = 0;
 		ProposeOffer[playerid] = 999;
@@ -3032,117 +2988,14 @@ public OnPlayerConnect(playerid) {
 		GunAmmo[playerid] = 0;
 		tazer[playerid] = 0;
 		PlayerFishTimer[playerid] = 0;
-		PlayerInfo[playerid][pNarcoLomka] = 0;
-		PlayerInfo[playerid][pNarcoZavisimost] = 0;
 		PlayerLomkaTime[playerid] = 0;
 		PlayerMayNarco[playerid] = 0;
 		ZonaKill[playerid] = 0;
-		PlayerInfo[playerid][pBlockeds] = 0;
-		PlayerInfo[playerid][pLevel] = 0;
-		PlayerInfo[playerid][pWarns] = 0;
-		PlayerInfo[playerid][pWanted] = 0;
-		PlayerInfo[playerid][pAdmin] = 0;
-		PlayerInfo[playerid][pDonateRank] = 0;
-		PlayerInfo[playerid][pFlatKey] = 0;
-		PlayerInfo[playerid][gPupgrade] = 0;
-		PlayerInfo[playerid][pConnectTime] = 0;
-		PlayerInfo[playerid][pReg] = 0;
-		PlayerInfo[playerid][pSex] = 0;
-		PlayerInfo[playerid][pAge] = 0;
-		PlayerInfo[playerid][pNoFree] = 0;
-		PlayerInfo[playerid][pOrigin] = 0;
-		PlayerInfo[playerid][pExp] = 0;
-		PlayerInfo[playerid][pAccount] = 0;
-		PlayerInfo[playerid][pClock] = 0;
-		PlayerInfo[playerid][pCrimes] = 0;
-		PlayerInfo[playerid][pDeaths] = 0;
-		PlayerInfo[playerid][pWantedDeaths] = 0;
-		PlayerInfo[playerid][pLottoNr] = 0;
-		PlayerInfo[playerid][pFishes] = 0;
-		PlayerInfo[playerid][pBiggestFish] = 0;
-		PlayerInfo[playerid][pJob] = 0;
-		PlayerInfo[playerid][pDice] = 0;
-		PlayerInfo[playerid][pPayCheck] = 0;
-		PlayerInfo[playerid][pHeadValue] = 0;
-		PlayerInfo[playerid][pJailed] = 0;
-		PlayerInfo[playerid][pZapret] = 0;
-		PlayerInfo[playerid][pJailTime] = 0;
-		PlayerInfo[playerid][pMats] = 0;
-		PlayerInfo[playerid][pDrugs] = 0;
-		PlayerInfo[playerid][pLeader] = 0;
-		PlayerInfo[playerid][pMember] = 0;
-		PlayerInfo[playerid][pFMember] = 255;
-		PlayerInfo[playerid][pRank] = 0;
-		PlayerInfo[playerid][pChar] = 0;
-		PlayerInfo[playerid][pContractTime] = 0;
-		PlayerInfo[playerid][pDetSkill] = 0;
-		PlayerInfo[playerid][pDrochSkill] = 0;
-		PlayerInfo[playerid][pGunSkill] = 0;
-		PlayerInfo[playerid][pDalnoboiSkill] = 0;
-		PlayerInfo[playerid][pLawSkill] = 0;
-		PlayerInfo[playerid][pMechSkill] = 0;
-		PlayerInfo[playerid][pJackSkill] = 0;
-		PlayerInfo[playerid][pFs] = 0;
-		PlayerInfo[playerid][pGromilaSkill] = 0;
-		PlayerInfo[playerid][pCarSkill] = 0;
-		PlayerInfo[playerid][pNewsSkill] = 0;
-		PlayerInfo[playerid][pDrugsSkill] = 0;
-		PlayerInfo[playerid][pCookSkill] = 0;
-		PlayerInfo[playerid][pFishSkill] = 0;
-		PlayerInfo[playerid][pSHealth] = 0.0;
-		PlayerInfo[playerid][pHealth] = 50.0;
-		PlayerInfo[playerid][pForce] = 0;
 		HouseEntered[playerid] = 255;
-		PlayerInfo[playerid][pPos_x] = 2246.6;
-		PlayerInfo[playerid][pPos_y] = -1161.9;
-		PlayerInfo[playerid][pPos_z] = 1029.7;
-		PlayerInfo[playerid][pVirWorld] = 0;
-		PlayerInfo[playerid][pInt] = 15;
-		PlayerInfo[playerid][pLocal] = 255;
-		PlayerInfo[playerid][pHelper] = 0;
-		PlayerInfo[playerid][pVipTime] = 0;
-		PlayerInfo[playerid][pRobKey] = 0;
-		PlayerInfo[playerid][pTeam] = 3;
-		PlayerInfo[playerid][pPhousekey] = 0;
-		PlayerInfo[playerid][pPbiskey] = 255;
-		PlayerInfo[playerid][pCarLic] = 0;
-		PlayerInfo[playerid][pMotoLic] = 0;
-		PlayerInfo[playerid][pFlyLic] = 0;
-		PlayerInfo[playerid][pBoatLic] = 0;
-		PlayerInfo[playerid][pFishLic] = 0;
-		PlayerInfo[playerid][pGunLic] = 0;
-		PlayerInfo[playerid][pCarTime] = 0;
-		PlayerInfo[playerid][pMusorTime] = 0;
-		PlayerInfo[playerid][pRobTime] = 0;
-		PlayerInfo[playerid][pCleanTime] = 0;
-		PlayerInfo[playerid][pTruckTime] = 0;
-		PlayerInfo[playerid][pPayDay] = 0;
-		PlayerInfo[playerid][pPayDayHad] = 0;
-		PlayerInfo[playerid][pLoses] = 0;
-		PlayerInfo[playerid][pAlcoholPerk] = 0;
-		PlayerInfo[playerid][pDrugPerk] = 0;
-		PlayerInfo[playerid][pMiserPerk] = 0;
-		PlayerInfo[playerid][pPainPerk] = 0;
-		PlayerInfo[playerid][pTraderPerk] = 0;
-		PlayerInfo[playerid][pTut] = 0;
-		PlayerInfo[playerid][pFuel] = 0;
-		PlayerInfo[playerid][pAdjustable] = 0;
-		PlayerInfo[playerid][pVirtualWorld] = 0;
 		PlayerMayAlco[playerid] = 0;
 		uTarget[playerid] = 999;
 		tietime[playerid] = 0;
-		PlayerInfo[playerid][pMutedTime] = 0;
-		PlayerInfo[playerid][pCard] = 0;
-		PlayerInfo[playerid][pRadio] = 0;
-		PlayerInfo[playerid][pRope] = 0;
-		PlayerInfo[playerid][pNeSdal] = 0;
-		PlayerInfo[playerid][ptMoney] = 0;
-		PlayerInfo[playerid][ptDrugs] = 0;
-		PlayerInfo[playerid][pTkDrugs] = 0;
-		PlayerInfo[playerid][ptMats] = 0;
-		PlayerInfo[playerid][pTkMats] = 0;
 		PlayerInfo[playerid][pMask] = 0;
-		PlayerInfo[playerid][pHmed] = 0;
 		Medicines[playerid] = 0;
 		JobCis[playerid] = 0;
 		PlayerFoodSlot[playerid] = 0;
@@ -3199,16 +3052,6 @@ public OnPlayerConnect(playerid) {
 			TogglePlayerControllable(playerid, 0);
 			return true;
 		}
-		new plname[MAX_PLAYER_NAME];
-		new string[256];
-		GetPlayerName(playerid, plname, sizeof(plname));
-		format(string, sizeof(string), "players/%s.ini", plname);
-		if (fexist(string)) {
-			gPlayerAccount[playerid] = 1; //авториз.
-		}
-		else {
-			gPlayerAccount[playerid] = 0;
-		}
 	}
 	return true;
 }
@@ -3221,26 +3064,11 @@ public bax(playerid) {
 	CreateExplosion(xf + 5, yf + 7, zf, 10, 10.0);
 	CreateExplosion(xf - 8, yf + 3, zf, 10, 10.0);
 	SetPVarInt(playerid, "Use", 0);
-	statt[playerid] = 0;
 	return 0;
 }
 
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
-	new vasya = dialogid;
 	new string[255];
-	if (strfind(inputtext, "|0", true) != -1) {
-		Kick(playerid);
-		return true;
-	}
-	for (new i; i < strlen(inputtext); i++) {
-		if (inputtext[i] == 34 || inputtext[i] == 92) {
-			Kick(playerid);
-			return true;
-		}
-	}
-	while (strfind(inputtext, "%", true) != -1) {
-		inputtext[strfind(inputtext, "%", true)] = '#';
-	}
 	if (IsPlayerNPC(playerid)) {
 		return true;
 	}
@@ -3275,6 +3103,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 1;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу детектива.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='1'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 1) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3291,6 +3122,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 2;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу адвоката.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='2'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 2) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3303,6 +3137,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 3;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу дальнобойщика.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='3'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 3) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3319,6 +3156,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 4;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу наркодиллера.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='4'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 4) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3335,6 +3175,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 5;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу угонщика автомобилей.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='5'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 5) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3351,6 +3194,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 6;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу карманника.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='6'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 6) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3363,6 +3209,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 7;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу автомеханика.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='7'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 7) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3379,6 +3228,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 9;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу продавца оружия.");
+				new query[40 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='9'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 8) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3391,6 +3243,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 10;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу продавца автомобилей.");
+				new query[41 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='10'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 9) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3407,6 +3262,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 15;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу разнощика газет.");
+				new query[41 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='15'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 10) {
 				if (PlayerInfo[playerid][pJob] > 0) {
@@ -3415,13 +3273,22 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerInfo[playerid][pJob] = 12;
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Поздравляем! Вы устроились на работу вышибалы.");
+				new query[41 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='12'where`id`='%i'", PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
+			new query[40 - 2 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='1'where`id`='%i'", PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 	}
 	if (dialogid == 2416) {
 		if (response) {
 			PlayerInfo[playerid][pJob] = 0;
 			SendClientMessage(playerid, -1, "Вы уволились с работы.");
+			new query[40 - 2 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 	}
 	if (dialogid == DIALOG_STARTJOB && response) {
@@ -3468,8 +3335,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 				return true;
 			}
-			NormMoney[playerid] = 2;
-			AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 			GivePlayerBablo(playerid, -cashdeposit);
 			format(string, sizeof(string), "%s положил(а) %d$ в общак вашей банды.", team, cashdeposit);
 			SendRadioMessage(12, COLOR_LIGHTBLUE, string);
@@ -3484,8 +3349,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					SendClientMessage(playerid, COLOR_GRAD2, "В общаке банды нет столько денег.");
 					return true;
 				}
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 				GivePlayerBablo(playerid, cashdeposit);
 				format(string, sizeof(string), "Вы взяли %d$ с общака банды StreetRacers.", cashdeposit);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -3520,6 +3383,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			PlayerInfo[playerid][pDrugs] -= dr;
 			format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей банды.", team, dr);
 			SendRadioMessage(12, COLOR_LIGHTBLUE, string);
+			new query[45 - (2 * 2) + (10 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			ObwyakInfo[12][oGangDrugs] += dr;
 		}
 	}
@@ -3534,6 +3400,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] += dr;
 				format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака StreetRacers.", dr);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[12][oGangDrugs] -= dr;
 			}
 			else {
@@ -3581,6 +3450,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака StreetRacers.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[12][oGangMats] -= mt;
 				}
 			}
@@ -3623,8 +3495,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			}
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей мафии.", team, cashdeposit);
 				SendRadioMessage(18, COLOR_LIGHTBLUE, string);
@@ -3640,8 +3510,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					SendClientMessage(playerid, COLOR_GRAD2, "В общаке мафии нет столько денег.");
 				}
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака The Triads Mafia.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -3677,6 +3545,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей мафии.", team, dr);
 				SendRadioMessage(18, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[18][oGangDrugs] += dr;
 			}
 		}
@@ -3692,6 +3563,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака The Triads Mafia.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[18][oGangDrugs] -= dr;
 				}
 			}
@@ -3724,6 +3598,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), "%s положил(а)и %d материал(ов) в общак вашей мафии.", team, mt);
 				SendRadioMessage(18, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[18][oGangMats] += mt;
 			}
 		}
@@ -3739,6 +3616,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака The Triads Mafia.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[18][oGangMats] -= mt;
 				}
 			}
@@ -3781,8 +3661,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			}
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей мафии.", team, cashdeposit);
 				SendRadioMessage(20, COLOR_LIGHTBLUE, string);
@@ -3798,8 +3676,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					SendClientMessage(playerid, COLOR_GRAD2, "В общаке мафии нет столько денег.");
 				}
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d $ с общака Rusian Mafia.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -3835,6 +3711,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей мафии.", team, dr);
 				SendRadioMessage(20, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[20][oGangDrugs] += dr;
 			}
 		}
@@ -3848,6 +3727,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака Rusian Mafia.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[20][oGangDrugs] -= dr;
 					return 1;
 				}
@@ -3872,6 +3754,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак вашей мафии.", team, mt);
 				SendRadioMessage(20, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[20][oGangMats] += mt;
 				return 1;
 			}
@@ -3886,6 +3771,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака Russian Mafia.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[20][oGangMats] -= mt;
 					return 1;
 				}
@@ -3914,8 +3802,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак мафии.", team, cashdeposit);
 				SendRadioMessage(5, COLOR_LIGHTBLUE, string);
@@ -3930,8 +3816,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (PlayerInfo[playerid][pLeader] == 5) {
 				if (cashdeposit > ObwyakInfo[5][oGangMoney] || ObwyakInfo[5][oGangMoney] < 1) SendClientMessage(playerid, COLOR_GRAD2, "В общаке мафии нет столько денег.");
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака мафии La Cosa Nostra.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -3959,6 +3843,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей мафии.", team, dr);
 				SendRadioMessage(5, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[5][oGangDrugs] += dr;
 				return 1;
 			}
@@ -3973,6 +3860,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака La Cosa Nostra.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[5][oGangDrugs] -= dr;
 					return 1;
 				}
@@ -3997,6 +3887,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак вашей мафии.", team, mt);
 				SendRadioMessage(5, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[5][oGangMats] += mt;
 				return 1;
 			}
@@ -4011,6 +3904,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака La Cosa Nostra.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[5][oGangMats] -= mt;
 					return 1;
 				}
@@ -4039,8 +3935,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей мафии.", team, cashdeposit);
 				SendRadioMessage(6, COLOR_LIGHTBLUE, string);
@@ -4055,8 +3949,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (PlayerInfo[playerid][pLeader] == 6) {
 				if (cashdeposit > ObwyakInfo[6][oGangMoney] || ObwyakInfo[6][oGangMoney] < 1) SendClientMessage(playerid, COLOR_GRAD2, "В общаке мафии нет столько денег.");
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака мафии Yakuza.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -4084,6 +3976,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей мафии.", team, dr);
 				SendRadioMessage(6, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[6][oGangDrugs] += dr;
 				return 1;
 			}
@@ -4098,6 +3993,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d с общака Yakuza.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[6][oGangDrugs] -= dr;
 					return 1;
 				}
@@ -4122,6 +4020,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак вашей мафии.", team, mt);
 				SendRadioMessage(6, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[6][oGangMats] += mt;
 				return 1;
 			}
@@ -4136,6 +4037,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака Yakuza.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[6][oGangMats] -= mt;
 					return 1;
 				}
@@ -4164,8 +4068,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей банды.", team, cashdeposit);
 				SendRadioMessage(13, COLOR_LIGHTBLUE, string);
@@ -4180,8 +4082,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (PlayerInfo[playerid][pLeader] == 13) {
 				if (cashdeposit > ObwyakInfo[13][oGangMoney] || ObwyakInfo[13][oGangMoney] < 1) SendClientMessage(playerid, COLOR_GRAD2, "В общаке банды нет столько денег.");
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака банды Grove Street.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -4209,6 +4109,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей банды.", team, dr);
 				SendRadioMessage(13, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[13][oGangDrugs] += dr;
 				return 1;
 			}
@@ -4223,6 +4126,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака Grove Street.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[13][oGangDrugs] -= dr;
 					return 1;
 				}
@@ -4247,6 +4153,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак вашей банды.", team, mt);
 				SendRadioMessage(13, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[13][oGangMats] += mt;
 				return 1;
 			}
@@ -4261,6 +4170,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), " Вы взяли %d материал(ов) с общака Grove Street.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[13][oGangMats] -= mt;
 					return 1;
 				}
@@ -4290,8 +4202,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей банды.", team, cashdeposit);
 				SendRadioMessage(16, COLOR_LIGHTBLUE, string);
@@ -4306,8 +4216,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (PlayerInfo[playerid][pLeader] == 16) {
 				if (cashdeposit > ObwyakInfo[16][oGangMoney] || ObwyakInfo[16][oGangMoney] < 1) SendClientMessage(playerid, COLOR_GRAD2, "В общаке банды нет столько денег.");
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака банды Ballas.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -4335,6 +4243,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей банды.", team, dr);
 				SendRadioMessage(16, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[16][oGangDrugs] += dr;
 				return 1;
 			}
@@ -4349,6 +4260,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака Ballas.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[16][oGangDrugs] -= dr;
 					return 1;
 				}
@@ -4373,6 +4287,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), " %s положил(а) %d материал(ов) в общак вашей банды.", team, mt);
 				SendRadioMessage(16, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[16][oGangMats] += mt;
 				return 1;
 			}
@@ -4387,6 +4304,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака Ballas.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[16][oGangMats] -= mt;
 					return 1;
 				}
@@ -4415,8 +4335,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей банды.", team, cashdeposit);
 				SendRadioMessage(14, COLOR_LIGHTBLUE, string);
@@ -4431,8 +4349,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (PlayerInfo[playerid][pLeader] == 14) {
 				if (cashdeposit > ObwyakInfo[14][oGangMoney] || ObwyakInfo[14][oGangMoney] < 1) SendClientMessage(playerid, COLOR_GRAD2, "В общаке банды нет столько денег.");
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака банды El Coronos.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -4460,6 +4376,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей банды.", team, dr);
 				SendRadioMessage(14, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[14][oGangDrugs] += dr;
 				return 1;
 			}
@@ -4474,6 +4393,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pDrugs] += dr;
 					format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака El Coronos.", dr);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[45 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[14][oGangDrugs] -= dr;
 					return 1;
 				}
@@ -4498,6 +4420,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] -= mt;
 				format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак	вашей банды.", team, mt);
 				SendRadioMessage(14, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[14][oGangMats] += mt;
 				return 1;
 			}
@@ -4512,6 +4437,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					PlayerInfo[playerid][pMats] += mt;
 					format(string, sizeof(string), "Вы взяли %d материал(ов) с общака El Coronos.", mt);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+					new query[42 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ObwyakInfo[14][oGangMats] -= mt;
 					return 1;
 				}
@@ -4540,8 +4468,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
 			else {
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 				GivePlayerBablo(playerid, -cashdeposit);
 				format(string, sizeof(string), "%s положил(а) %d$ в общак вашей банды.", team, cashdeposit);
 				SendRadioMessage(19, COLOR_LIGHTBLUE, string);
@@ -4556,8 +4482,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			if (PlayerInfo[playerid][pLeader] == 19) {
 				if (cashdeposit > ObwyakInfo[19][oGangMoney] || ObwyakInfo[19][oGangMoney] < 1) SendClientMessage(playerid, COLOR_GRAD2, "В общаке банды нет столько денег.");
 				else {
-					NormMoney[playerid] = 2;
-					AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 					GivePlayerBablo(playerid, cashdeposit);
 					format(string, sizeof(string), "Вы взяли %d$ с общака банды Rifa.", cashdeposit);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -4585,6 +4509,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] -= dr;
 				format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей банды.", team, dr);
 				SendRadioMessage(19, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[19][oGangMoney] += dr;
 				return 1;
 			}
@@ -4598,6 +4525,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] += dr;
 				format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака The Rifa Gang.", dr);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[19][oGangMoney] -= dr;
 				return 1;
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
@@ -4620,6 +4550,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			PlayerInfo[playerid][pMats] -= mt;
 			format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак вашей банды.", team, mt);
 			SendRadioMessage(19, COLOR_LIGHTBLUE, string);
+			new query[42 - (2 * 2) + (10 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			ObwyakInfo[19][oGangMats] += mt;
 			return 1;
 		}
@@ -4632,6 +4565,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] += mt;
 				format(string, sizeof(string), "Вы взяли %d материал(ов) с общака The Rifa Gang", mt);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[19][oGangMats] -= mt;
 				return 1;
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
@@ -4658,8 +4594,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		if (response) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > GetPlayerBablo(playerid) || cashdeposit < 100) return SendClientMessage(playerid, COLOR_GRAD2, "У вас нет данной сумы,либо вы пытаетесь положить меньше 100$.");
-			NormMoney[playerid] = 2;
-			AntiMoney2[playerid] = AntiMoney2[playerid] - cashdeposit;
 			GivePlayerBablo(playerid, -cashdeposit);
 			format(string, sizeof(string), "%s положил(а) %d$ в общак вашей банды.", team, cashdeposit);
 			SendRadioMessage(15, COLOR_LIGHTBLUE, string);
@@ -4672,8 +4606,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new cashdeposit = strval(inputtext);
 			if (PlayerInfo[playerid][pLeader] == 15) {
 				if (cashdeposit > ObwyakInfo[15][oGangMoney] || ObwyakInfo[15][oGangMoney] < 1) return SendClientMessage(playerid, COLOR_GRAD2, "В общаке банды нет столько денег.");
-				NormMoney[playerid] = 2;
-				AntiMoney2[playerid] = AntiMoney2[playerid] + cashdeposit;
 				GivePlayerBablo(playerid, cashdeposit);
 				format(string, sizeof(string), "Вы взяли %d$ с общака банды Los Santos Vagos.", cashdeposit);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -4699,6 +4631,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			PlayerInfo[playerid][pDrugs] -= dr;
 			format(string, sizeof(string), "%s положил(а) %d грамм(ов) в общак вашей банды.", team, dr);
 			SendRadioMessage(15, COLOR_LIGHTBLUE, string);
+			new query[45 - (2 * 2) + (10 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			ObwyakInfo[15][oGangDrugs] += dr;
 			return 1;
 		}
@@ -4711,6 +4646,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pDrugs] += dr;
 				format(string, sizeof(string), "Вы взяли %d грамм наркотиков с общака Los Santos Vagos.", dr);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[15][oGangDrugs] -= dr;
 				return 1;
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
@@ -4733,6 +4671,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			PlayerInfo[playerid][pMats] -= mt;
 			format(string, sizeof(string), "%s положил(а) %d материал(ов) в общак вашей банды.", team, mt);
 			SendRadioMessage(15, COLOR_LIGHTBLUE, string);
+			new query[42 - (2 * 2) + (10 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			ObwyakInfo[15][oGangMats] += mt;
 			return 1;
 		}
@@ -4745,6 +4686,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pMats] += mt;
 				format(string, sizeof(string), " Вы взяли %d материал(ов) с общака Vagos.", mt);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+				new query[42 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				ObwyakInfo[15][oGangMats] -= mt;
 				return 1;
 			} else return SendClientMessage(playerid, COLOR_RED, "Вы не лидер.");
@@ -5645,7 +5589,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 	if (dialogid == 9957) {
 		if (response) {
 			if (PlayerInfo[playerid][pCash] < 5000) return error(playerid, " Недостаточно денег.");
-			if (PlayerInfo[playerid][pCar] == 0) return SendClientMessage(playerid, COLOR_GRAD1, "У вас нет машины.");
 			if (PlayerMurder[playerid] == 1) return SendClientMessage(playerid, COLOR_WHITE, "Вы уже зарегистрированы на гонку.");
 			PlayerInfo[playerid][pCash] -= 5000;
 			MurderPlayers += 1;
@@ -5821,6 +5764,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				ShowPlayerDialog(playerid, 334, DIALOG_STYLE_LIST, "YourWorld : Одежда", "Модель 1\nМодель 2\nМодель 3\nМодель 4\nМодель 5\nМодель 6\nМодель 7\nМодель 8\nМодель 9\nМодель 10\nМодель 11\nМодель 12\nМодель 13\nМодель 14\nМодель 15\nМодель 16\nМодель 17\nМодель 18\nМодель 19\nМодель 20", "Показать", "Выйти");
 				return true;
 			}
+			new query[42 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		} else return ShowPlayerDialog(playerid, 455, DIALOG_STYLE_MSGBOX, "Магазин Binco", "Вы хотите приобрести выбранную вами одежду.Cтоимость - 1000$?", "Да", "Нет");
 	}
 	if (dialogid == 455) {
@@ -5840,6 +5786,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		} else {
 			SetPlayerSkin(playerid, skin[playerid]);
 			PlayerInfo[playerid][pChar] = skin[playerid];
+			new query[42 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			SetCameraBehindPlayer(playerid);
 			TogglePlayerControllable(playerid, 1);
 		}
@@ -5926,6 +5875,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				ShowPlayerDialog(playerid, 336, DIALOG_STYLE_LIST, "YourWorld : Одежда", "Модель 1\nМодель 2\nМодель 3\nМодель 4\nМодель 5\nМодель 6\nМодель 7\nМодель 8\nМодель 9", "Показать", "Выйти");
 				return true;
 			}
+			new query[42 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		} else return ShowPlayerDialog(playerid, 457, DIALOG_STYLE_MSGBOX, "Магазин Zip", "Вы хотите приобрести выбранную вами одежду?Cтоимость - 1000$.", "Да", "Нет");
 	}
 	if (dialogid == 457) {
@@ -5945,6 +5897,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		} else {
 			SetPlayerSkin(playerid, skin[playerid]);
 			PlayerInfo[playerid][pChar] = skin[playerid];
+			new query[42 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			SetCameraBehindPlayer(playerid);
 			TogglePlayerControllable(playerid, 1);
 		}
@@ -6041,6 +5996,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				ShowPlayerDialog(playerid, 335, DIALOG_STYLE_LIST, "YourWorld : Одежда", "Модель 1\nМодель 2\nМодель 3\nМодель 4\nМодель 5\nМодель 6\nМодель 7\nМодель 8\nМодель 9\nМодель 10\nМодель 11\nМодель 12\nМодель 13\nМодель 14\nМодель 15", "Показать", "Выйти");
 				return true;
 			}
+			new query[42 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		} else return ShowPlayerDialog(playerid, 456, DIALOG_STYLE_MSGBOX, "Магазин Victim", "Вы хотите приобрести выбранную вами одежду?Cтоимость - 1000$", "Да", "Нет");
 	}
 	if (dialogid == 456) {
@@ -6060,6 +6018,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		} else {
 			SetPlayerSkin(playerid, skin[playerid]);
 			PlayerInfo[playerid][pChar] = skin[playerid];
+			new query[42 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			SetCameraBehindPlayer(playerid);
 			TogglePlayerControllable(playerid, 1);
 		}
@@ -6351,6 +6312,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			SetPlayerHealth(playerid, 0);
 			format(string, sizeof(string), "Приветствуем новичка %s. Принят(а) лидером: %s", sendername, giveplayer);
 			SendRadioMessage(PlayerInfo[pla][pLeader], TEAM_AZTECAS_COLOR, string);
+			new query[79 - (2 * 4) + 10 + 3 + (2 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i',`member`='%i',`rank`='1',`team`='%i'where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pMember], PlayerInfo[playerid][pTeam], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 	}
 	if (dialogid == 671) {
@@ -8005,6 +7969,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			SendClientMessage(idd, 0x6495EDFF, string);
 			SendClientMessage(idd, COLOR_WHITE, " (( Чтобы использовать аптечку, Введите /mheal ))");
 			PlayerInfo[idd][pHmed] = 2;
+			new query[41 - 2 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`hmed`='2'where`id`='%i'", PlayerInfo[idd][pID]);
+			mysql_query(mysql_connection, query, false);
 			SetPVarInt(idd, "Hmed", gettime() + 180);
 			medwarehouse -= 1;
 			SaveMaterials();
@@ -8024,6 +7991,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					if (PlayerInfo[playerid][pFlyLic] == 1) return error(playerid, " У вас уже есть данная лицензия");
 					GivePlayerBablo(playerid, -40000);
 					PlayerInfo[playerid][pFlyLic] = 1;
+					new query[55 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flylic`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					SendClientMessage(playerid, COLOR_WHITE, "Вы приобрели лицензию на управление воздушным транспортом");
 				}
 				case 1 :  {
@@ -8032,6 +8002,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					if (PlayerInfo[playerid][pFishLic] == 1) return error(playerid, " У вас уже есть данная лицензия");
 					GivePlayerBablo(playerid, -10000);
 					PlayerInfo[playerid][pFishLic] = 1;
+					new query[56 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fishlic`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					SendClientMessage(playerid, COLOR_WHITE, "Вы приобрели лицензию на ловлю рыбы");
 				}
 				case 2 :  {
@@ -8040,6 +8013,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					if (PlayerInfo[playerid][pBoatLic] == 1) return error(playerid, " У вас уже есть данная лицензия");
 					GivePlayerBablo(playerid, -30000);
 					PlayerInfo[playerid][pBoatLic] = 1;
+					new query[56 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`boatlic`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					SendClientMessage(playerid, COLOR_WHITE, "Вы приобрели лицензию на управление водным транспортом");
 				}
 				case 3 :  {
@@ -8048,6 +8024,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					if (PlayerInfo[playerid][pGunLic] == 1) return error(playerid, " У вас уже есть данная лицензия");
 					GivePlayerBablo(playerid, -100000);
 					PlayerInfo[playerid][pGunLic] = 1;
+					new query[55 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gunlic`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					SendClientMessage(playerid, COLOR_WHITE, "Вы приобрели лицензию на ношение огнестрельного оружия");
 				}
 				case 4 :  {
@@ -8056,6 +8035,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					if (PlayerInfo[playerid][pMotoLic] == 1) return error(playerid, " У вас уже есть данная лицензия");
 					GivePlayerBablo(playerid, -40000);
 					PlayerInfo[playerid][pMotoLic] = 1;
+					new query[55 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`motolic`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					SendClientMessage(playerid, COLOR_WHITE, "Вы приобрели лицензию на управление мото транспортом");
 				}
 			}
@@ -8072,11 +8054,13 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 		if (response) {
 			new cashdeposit = strval(inputtext);
 			if (cashdeposit > PlayerInfo[playerid][pAccount] || cashdeposit < 1) return error(playerid, " Данная сумма привышает лимит вашего счета.");
-			ConsumingMoney[playerid] = 1;
 			GivePlayerBablo(playerid, cashdeposit);
 			PlayerInfo[playerid][pAccount] = PlayerInfo[playerid][pAccount] - cashdeposit;
 			format(string, sizeof(string), "Вы сняли %d$ с вашего счета. Остаток: %d$ ", cashdeposit, PlayerInfo[playerid][pAccount]);
 			SendClientMessage(playerid, COLOR_YELLOW, string);
+			new query[57 - (2 * 3) + (10 * 3)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i',`account`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 		format(string, sizeof(string), "{ffdb58}Баланс\n{ffdb58}Снять с счета\n{ffdb58}Перевод средств");
 		ShowPlayerDialog(playerid, 700, 2, "Банкомат", string, "Дальше", "Отмена");
@@ -8091,6 +8075,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					format(string, sizeof(string), " %s выкинул(а) в сторону все наркотики.", sendername);
 					ProxDetector(30.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 					PlayerInfo[playerid][pDrugs] = 0;
+					new query[45 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			}
 			if (listitem == 1) {
@@ -8118,6 +8105,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 						format(string, sizeof(string), " %s выкинул(а) в сторону все материалы.", sendername);
 						ProxDetector(30.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 						PlayerInfo[playerid][pMats] = 0;
+						new query[41 - 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 					} else {
 						error(playerid, " У вас нет материалов.");
 					}
@@ -8172,71 +8162,19 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 	} else if (dialogid == 348) {
 		if (!response) return 1;
 		if (listitem == 0) {
-			if (strcmp(PlayerInfo[playerid][pOtherPass], "None", true)) return SendClientMessage(playerid, COLOR_GREY, "Дополнительный пароль уже установлен!");
+			if (strcmp(PlayerInfo[playerid][pOtherPass], NULL, true)) return SendClientMessage(playerid, COLOR_GREY, "Дополнительный пароль уже установлен!");
 			ShowPlayerDialog(playerid, 350, 1, "Доп. пароль", "{ff3300}Внимание! Дополнительный пароль должен состоять только\n{ff3300}Из английских букв, либо простых цыфр\n{ff3300}Если вы поставите доп. пароль с русскими буквами, то вместо русских букв, будет -{33aa33} ???\n\n{ffdb58}Введите ваш дополнительный пароль:", "Принять", "Отмена");
 		}
-	} else if (dialogid == 349) {
-		if (!response) return 1;
-		if (strlen(inputtext) < 1 || strlen(inputtext) > 32) return ShowPlayerDialog(playerid, 349, 1, "Электронный адрес!", "Введите ваш электронный адрес:", "Принять", "Отмена");
-		if (strfind(inputtext, "@", true) == -1 || strfind(inputtext, ".", true) == -1) {
-			SendClientMessage(playerid, COLOR_GREY, "Неверный формат электронного адреса!");
-			return ShowPlayerDialog(playerid, 349, 1, "Электронный адрес!", "Введите ваш электронный адрес:", "Принять", "Отмена");
-		}
-		new strs[32 + 32];
-		strmid(PlayerInfo[playerid][pMail], inputtext, 0, strlen(inputtext), 32);
-		format(strs, sizeof(strs), "Ваш электронный адрес: {ffff00}%s", PlayerInfo[playerid][pMail]);
-		SendClientMessage(playerid, COLOR_WHITE, strs);
 	} else if (dialogid == 350) {
 		if (!response) return 1;
 		if (strlen(inputtext) < 1 || strlen(inputtext) > 32) return ShowPlayerDialog(playerid, 350, 1, "Доп. пароль", "{ff3300}Внимание! Дополнительный пароль должен состоять только\n{ff3300}Из английских букв, либо простых цыфр\n{ff3300}Если вы поставите доп. пароль с русскими буквами, то вместо русских букв, будет -{33aa33} ???\n\n{ffdb58}Введите ваш дополнительный пароль:", "Принять", "Отмена");
 		new strd[100];
-		strmid(PlayerInfo[playerid][pOtherPass], inputtext, 0, strlen(inputtext), 32);
+		strmid(PlayerInfo[playerid][pOtherPass], inputtext, 0, strlen(inputtext), MAX_OTHER_PASS_LEN);
+		new query[46 - (2 * 2) + 10 + MAX_OTHER_PASS_LEN];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`otherpass`='%e'where`id`='%i'", PlayerInfo[playerid][pOtherPass], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		format(strd, sizeof(strd), "Ваш дополнительный пароль: {ffff00}%s", inputtext);
 		SendClientMessage(playerid, COLOR_WHITE, strd);
-	} else if (dialogid == 351) {
-		new string2[128], tmp2[128];
-		if (!response) return Kick(playerid);
-		if (strlen(inputtext) < 1 || strlen(inputtext) > 32) return ShowPlayerDialog(playerid, 351, 1, "Безопасность", "{ffdb58}Введите ваш дополнительный пароль:", "Принять", "Отмена");
-		if (!strcmp(PlayerInfo[playerid][pOtherPass], inputtext, true)) {
-			new playername2[MAX_PLAYER_NAME];
-			GetPlayerName(playerid, playername2, sizeof(playername2));
-			PlayerInfo[playerid][pAdjustable] = 0;
-			ConsumingMoney[playerid] = 1;
-			CurrentMoney[playerid] = PlayerInfo[playerid][pCash];
-			PlayerInfo[playerid][pReg] = 1;
-			gPlayerLogged[playerid] = 1;
-			if (PlayerInfo[playerid][pBlockeds] >= 3) {
-				SendClientMessage(playerid, COLOR_WHITE, "Ваш аккаунт {ff0000}заблокирован{ffffff}. Так как уже у вас 3 блокировки.");
-				Kick(playerid);
-				return 0;
-			}
-			SendClientMessage(playerid, COLOR_WHITE, "Добро пожаловать на сервер {00C0FF}YourWorld [RPG].{ffffff}Приятной вам игры.");
-			printf("%s has logged in.", playername2);
-			if (PlayerInfo[playerid][pDonateRank] == 1) SendClientMessage(playerid, COLOR_WHITE, "У тебя {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}");
-			if (PlayerInfo[playerid][pDonateRank] == 2) SendClientMessage(playerid, COLOR_WHITE, "У тебя {F5DEB3}VIP Аккаунт 2 уровня{FFFFFF}");
-			if (PlayerInfo[playerid][pHelper] >= 1 || PlayerInfo[playerid][pAdmin] > 0) {
-				if (PlayerInfo[playerid][pHelper] >= 1) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Хелпер %d-го уровня.", PlayerInfo[playerid][pHelper]);
-				if (PlayerInfo[playerid][pAdmin] == 1) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор %d-го уровня", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 2) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор %d-го уровня", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 3) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор %d-го уровня", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 4) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор 4-го уровня", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 5) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Гл.Модератор", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 6) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Гл. Администратор", PlayerInfo[playerid][pAdmin]);
-				SendClientMessage(playerid, COLOR_WHITE, string2);
-			}
-			SetSpawnInfo(playerid, PlayerInfo[playerid][pTeam], PlayerInfo[playerid][pChar], PlayerInfo[playerid][pPos_x], PlayerInfo[playerid][pPos_y], PlayerInfo[playerid][pPos_z], 1.0, -1, -1, -1, -1, -1, -1);
-			if (gTeam[playerid] == 0) gTeam[playerid] = 3;
-			else gTeam[playerid] = PlayerInfo[playerid][pTeam];
-			format(tmp2, sizeof(tmp2), "~w~ѓO—PO ЊO„A‡O‹A¦’ ~n~~y~   %s", playername2);
-			GameTextForPlayer(playerid, tmp2, 5000, 1);
-			for (new i = GetMaxPlayers() - 1; i != -1; i--) {
-				if (!IsPlayerConnected(i)) continue;
-				if (PlayerInfo[i][pMask] == 1) ShowPlayerNameTagForPlayer(playerid, i, 0);
-			}
-			Spawned[playerid] = 1;
-			SpawnPlayer(playerid);
-			SetCameraBehindPlayer(playerid);
-		} else Kick(playerid);
 	} else if (dialogid == 3000) {
 		if (response) {
 			if (listitem == 6) {
@@ -8571,6 +8509,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			SendClientMessage(playerid, COLOR_GRAD6, "|-----------------------------------------|");
 			format(string, sizeof(string), "  Новый баланс: %d$", PlayerInfo[playerid][pAccount]);
 			SendClientMessage(playerid, COLOR_WHITE, string);
+			new query[57 - (2 * 3) + (10 * 3)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i',`account`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 		ShowPlayerDialog(playerid, 700, 2, "Банкомат", "{ffdb58}Баланс\n{ffdb58}Снять с счета\n{ffdb58}Перевод средств ", "Дальше", "Отмена");
 	}
@@ -11485,12 +11426,18 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerInfo[playerid][pTkMats] = 0;
 				format(string, sizeof(string), "Вы сдали отобранные материалы на сумму %d$.", mat);
 				SendClientMessage(playerid, COLOR_WHITE, string);
+				new query[55 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`tkmats`='0',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 			if (listitem == 1) {
 				if (PlayerInfo[playerid][pTkDrugs] <= 0) return error(playerid, " У вас нет конфискованых наркотических веществ.");
 				new drug = PlayerInfo[playerid][pTkDrugs] * 20;
 				GivePlayerBablo(playerid, drug);
 				PlayerInfo[playerid][pTkDrugs] = 0;
+				new query[56 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`tkdrugs`='0',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				format(string, sizeof(string), "Вы сдали отобранные наркотики  на сумму %d$.", drug);
 				SendClientMessage(playerid, COLOR_WHITE, string);
 			}
@@ -11576,6 +11523,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /time.");
 				PlayerInfo[playerid][pClock]++;
+				new query[54 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`clock`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				if (SBizzInfo[12][sbMafia] > 0) {
 					SBizzInfo[12][sbTill] += 162;
 					SBizzInfo[12][sbProducts]--;
@@ -11602,6 +11552,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /tie-связать, /untie - развязать.");
 				SendClientMessage(playerid, COLOR_GRAD4, string);
 				PlayerInfo[playerid][pRope]++;
+				new query[53 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`rope`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				if (SBizzInfo[12][sbMafia] > 0) {
 					SBizzInfo[12][sbTill] += 54;
 					SBizzInfo[12][sbProducts]--;
@@ -11629,6 +11582,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				GameTextForPlayer(playerid, "New Card Level is Gold", 3000, 3);
 				PlayerInfo[playerid][pCard] = 1;
+				new query[53 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`card`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				return true;
 			}
 			else if (listitem == 3 && GetPlayerBablo(playerid) > 260) {
@@ -11642,6 +11598,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 					SBizzInfo[12][sbTill] += 200;
 					SBizzInfo[12][sbProducts]--;
 				}
+				new query[54 - (2 * 3) + (10 * 2) + 2];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fuel`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pFuel], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /fillcar - заправить автомобиль.");
 				GameTextForPlayer(playerid, "~r~-260$", 5000, 1);
@@ -11672,6 +11631,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				}
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				PlayerInfo[playerid][pDice] = 1;
+				new query[53 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`dice`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}[Используйте]{FFFFFF} : /dice-играть в кости.");
 				return true;
 			}
@@ -11809,6 +11771,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				GameTextForPlayer(playerid, string, 5000, 1);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				PlayerInfo[playerid][pBancka]++;
+				new query[55 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`bancka`='1',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				if (SBizzInfo[12][sbMafia] > 0) {
 					SBizzInfo[12][sbTill] += 90;
 					SBizzInfo[12][sbProducts]--;
@@ -11856,7 +11821,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				GivePlayerBablo(playerid, -5000);
 				GameTextForPlayer(playerid, "~r~-5000$", 5000, 1);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
-				nabor[playerid]++;
 				if (SBizzInfo[12][sbMafia] > 0) {
 					SBizzInfo[12][sbTill] += 4500;
 					SBizzInfo[12][sbProducts]--;
@@ -11885,7 +11849,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			new price;
 			new fishid = strval(inputtext);
 			if (fishid < 1 || fishid > 5) { SendClientMessage(playerid, COLOR_GREY, "От 1 до 5."); return true; } else if (fishid == 1 && Fishes[playerid][pWeight1] < 1) { error(playerid, " Вы еще не поймали рыбу(1)."); return true; } else if (fishid == 2 && Fishes[playerid][pWeight2] < 1) { error(playerid, " Вы еще не поймали рыбу(2)."); return true; } else if (fishid == 3 && Fishes[playerid][pWeight3] < 1) { error(playerid, " Вы еще не поймали рыбу(3)."); return true; } else if (fishid == 4 && Fishes[playerid][pWeight4] < 1) { error(playerid, " Вы еще не поймали рыбу(4)."); return true; } else if (fishid == 5 && Fishes[playerid][pWeight5] < 1) { error(playerid, " Вы еще не поймали рыбу(5)."); return true; }
-			ConsumingMoney[playerid] = 1;
 			switch (fishid) {
 				case 1 :  {
 					if (Fishes[playerid][pWeight1] < 1) {
@@ -13496,53 +13459,6 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 			}
 		}
 	}
-	if (dialogid == 3) {
-		if (response) {
-			PlayerInfo[playerid][pSex] = 1;
-			SendClientMessage(playerid, COLOR_LIGHTBLUE, "Хорошо, вы Мужчина.");
-		} else {
-			PlayerInfo[playerid][pSex] = 2;
-			SendClientMessage(playerid, COLOR_LIGHTBLUE, "Хорошо, вы Девушка.");
-		}
-		new listitems[] = "Los-Santos\nSan-Fierro\nLas-Venturas";
-		ShowPlayerDialog(playerid, 4, DIALOG_STYLE_LIST, "Выберите свой город", listitems, "Ок", "Назад");
-	}
-	else if (dialogid == 4) {
-		if (response) {
-			if (listitem == 0) {
-				SendClientMessage(playerid, COLOR_LIGHTBLUE, "{FFFFFF}Теперь вы будете появляться в городе {00C0FF}Los-Santos.");
-				PlayerInfo[playerid][pOrigin] = 1;
-				TutTime[playerid] = 1;
-			} else if (listitem == 1) {
-				SendClientMessage(playerid, COLOR_LIGHTBLUE, "{FFFFFF}Теперь вы будете появляться в городе {00C0FF}San-Fierro.");
-				PlayerInfo[playerid][pOrigin] = 2;
-				TutTime[playerid] = 1;
-			} else if (listitem == 2) {
-				SendClientMessage(playerid, COLOR_LIGHTBLUE, "{FFFFFF}Теперь вы будете появляться в городе {00C0FF}Las-Venturas.");
-				PlayerInfo[playerid][pOrigin] = 3;
-				TutTime[playerid] = 1;
-			}
-		} else {
-			ShowPlayerDialog(playerid, 3, DIALOG_STYLE_MSGBOX, "Укажите ваш пол", "Ваш пол Мужской или Женский?", "Мужской", "Женский");
-		}
-	}
-	if (dialogid == 1) {
-		if (response) {
-			OnPlayerLogin(playerid, inputtext);
-		} else {
-			Kick(playerid);
-		}
-	}
-	if (dialogid == 2) {
-		if (response) {
-			if (!strlen(inputtext) || !OnPlayerRegister(playerid, inputtext)) return ShowPlayerDialog(playerid, 2, DIALOG_STYLE_INPUT, "Регистрация на YourWorld", "Зарегистрируйтесь\nВведите свой пароль", " Далее ", " Отмена ");
-			return ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация на YourWorld", "Авторизируйтесь, введите свой пароль.", " Далее ", " Отмена ");
-
-		} else {
-			Kick(playerid);
-		}
-	}
-	printf("диалог %d", vasya);
 	return true;
 }
 
@@ -13641,7 +13557,7 @@ public OnPlayerUpdate(playerid) {
 ClearMarriage(playerid) {
 	if (IsPlayerConnected(playerid)) {
 		new string[MAX_PLAYER_NAME];
-		strmid(PlayerInfo[playerid][pMarriedTo], "None", 0, strlen(string), 255);
+		strmid(PlayerInfo[playerid][pMarriedTo], NULL, 0, strlen(string), 255);
 		PlayerInfo[playerid][pMarried] = 0;
 	}
 	return true;
@@ -13872,12 +13788,10 @@ public OnPlayerDisconnect(playerid, reason) {
 	UnLockCar(fura[playerid]);
 	PlayerInfo[playerid][pNoFree] = 0;
 	PlayerMurder[playerid] = 0;
-	PlayerInfo[playerid][pCar] = 0;
 	Ograblen[playerid] = 0;
 	if (IsPlayerConnected(playerid) && !IsPlayerNPC(playerid)) {
 		gActivePlayers[playerid]--;
 		numplayers--;
-		PlayerInfo[playerid][pAdjustable] = 1;
 		for (new i = 0; i < GetMaxPlayers(); i++) {
 			if (IsPlayerConnected(i) && !IsPlayerNPC(i)) {
 				if (TaxiAccepted[i] < 999) {
@@ -13908,12 +13822,6 @@ public OnPlayerDisconnect(playerid, reason) {
 					format(str, 256, "{FF3300}« {FFFFFF}Покинул сервер игрок: {FF3300}%s{FFFFFF}. Причина:{FF3300} Вылет/Кик/Бан{FFFFFF}.", PlayerNam);
 					ABroadCast(COLOR_WHITE, str, 1);
 				}
-			}
-		}
-		if (GettingCK[playerid] < 999) {
-			if (IsPlayerConnected(GettingCK[playerid])) {
-				SendClientMessage(GettingCK[playerid], COLOR_YELLOW, "Ваша цель покинула сервер, попробуйте позже.");
-				OnCK[GettingCK[playerid]] = 999;
 			}
 		}
 		if (TransportCost[playerid] > 0 && TransportDriver[playerid] < 999) {
@@ -14135,8 +14043,8 @@ SetPlayerSpawn(playerid) {
 			gOoc[playerid] = 1;
 			gNews[playerid] = 1;
 			gFam[playerid] = 1;
-			TogglePlayerControllable(playerid, 0);
-			ShowPlayerDialog(playerid, 3, DIALOG_STYLE_MSGBOX, "Укажите ваш пол", "{ffdb58}Добро пожаловать на наш сервер, Укажи свой пол.", "Мужской", "Женский");
+			TogglePlayerControllable(playerid, false);
+			Dialog_Show(playerid, Dialog:SelectGender);
 		}
 		if (PlayerInfo[playerid][pJailed] == 2) {
 			SetPlayerInterior(playerid, 0);
@@ -14532,10 +14440,12 @@ public OnPlayerDeath(playerid, killerid, reason) {
 					GivePlayerBablo(playerid, -2000);
 				}
 				DropPlayerMoney(playerid);
+				new query[61 - (2 * 3) + (10 * 2) + 3];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gromilaskill`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pGromilaSkill], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 		}
 	}
-	Spawned[playerid] = 0;
 	GunCheckTime[playerid] = 5;
 	TextDrawHideForPlayer(playerid, txtTimeDisp); // часы
 	TextDrawHideForPlayer(playerid, lvledit);
@@ -14603,29 +14513,10 @@ public OnPlayerDeath(playerid, killerid, reason) {
 		gPlayerCheckpointStatus[playerid] = CHECKPOINT_NONE;
 	}
 	ClearCrime(playerid);
-	if (GettingCK[playerid] < 999 || OnCK[playerid] < 999) {
-		if (IsPlayerConnected(killerid)) {
-			if (GettingCK[killerid] < 999 || OnCK[playerid] < 999) {
-				new killer[MAX_PLAYER_NAME];
-				new dier[MAX_PLAYER_NAME];
-				GetPlayerName(playerid, dier, sizeof(dier));
-				GetPlayerName(killerid, killer, sizeof(killer));
-				format(string, sizeof(string), "%s Убийство героя, вы несможете больше играть под этим героем.", killer);
-				SendClientMessage(playerid, COLOR_LIGHTRED, string);
-				format(string, sizeof(string), " %s был убит %s **", killer, dier);
-				CKLog(string);
-				PlayerInfo[playerid][pCK] = 1;
-				if (GettingCK[playerid] < 999) { GettingCK[playerid] = 999; } else if (OnCK[playerid] < 999) { OnCK[playerid] = 999; }
-				if (GettingCK[killerid] < 999) { GettingCK[killerid] = 999; } else if (OnCK[killerid] < 999) { OnCK[killerid] = 999; }
-				KickPlayer[playerid] = 1;
-			}
-		}
-	}
 	if (PlayerInfo[playerid][pHeadValue] > 0) {
 		if (IsPlayerConnected(killerid)) {
 			if (gTeam[killerid] == 10 || PlayerInfo[killerid][pLeader] == 8) {
 				if (GoChase[killerid] == playerid) {
-					ConsumingMoney[killerid] = 1;
 					new killer[MAX_PLAYER_NAME];
 					GetPlayerName(killerid, killer, sizeof(killer));
 					GivePlayerBablo(killerid, PlayerInfo[playerid][pHeadValue]);
@@ -14635,6 +14526,11 @@ public OnPlayerDeath(playerid, killerid, reason) {
 					GotHit[playerid] = 0;
 					GetChased[playerid] = 999;
 					GoChase[killerid] = 999;
+					new query[59 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[killerid][pCash], PlayerInfo[killerid][pID]);
+					mysql_query(mysql_connection, query, false);
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`headvalue`='%i'where`id`='%i'", PlayerInfo[playerid][pHeadValue], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			}
 		}
@@ -14652,7 +14548,6 @@ public OnPlayerSpawn(playerid) {
 	gCarLock[fura[playerid]] = 0;
 	UnLockCar(fura[playerid]);
 	StopAudioStreamForPlayer(playerid);
-	Spawned[playerid] = 1;
 	OnDuty[playerid] = 0;
 	ZonaKill[playerid] = 0;
 	RaceCP[playerid] = 0;
@@ -14694,47 +14589,49 @@ public OnPlayerSpawn(playerid) {
 		return true;
 	}
 	if (gTeam[playerid] == 11 && PlayerInfo[playerid][pLeader] < 1) {
-		MedicBill[playerid] = 0;
 		new rand = random(sizeof(CIV));
 		PlayerInfo[playerid][pTeam] = 3;
 		gTeam[playerid] = 3;
 		SetSpawnInfo(playerid, gTeam[playerid], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 		PlayerInfo[playerid][pChar] = CIV[rand];
+		new query[58 - (2 * 2) + 3 + 10];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i',`team`=default where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		SpawnPlayer(playerid);
 		SetCameraBehindPlayer(playerid);
 	}
 	if (gTeam[playerid] == 5) {
 		if (PlayerInfo[playerid][pMember] < 1) {
-			MedicBill[playerid] = 0;
 			new rand = random(sizeof(CIV));
 			SendClientMessage(playerid, COLOR_LIGHTRED, "Вы больше не член семьи, Вы - теперь Гражданское лицо.");
 			PlayerInfo[playerid][pTeam] = 3;
 			gTeam[playerid] = 3;
 			SetSpawnInfo(playerid, gTeam[playerid], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 			PlayerInfo[playerid][pChar] = CIV[rand];
+			new query[58 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i',`team`=default where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			SpawnPlayer(playerid);
 			SetCameraBehindPlayer(playerid);
 		}
 	}
 	if (gTeam[playerid] == 10) {
 		if (PlayerInfo[playerid][pMember] != 8) {
-			MedicBill[playerid] = 0;
 			new rand = random(sizeof(CIV));
 			SendClientMessage(playerid, COLOR_LIGHTRED, "Вы не Участник этого Агентства, Вы - теперь Гражданское лицо.");
 			PlayerInfo[playerid][pTeam] = 3;
 			gTeam[playerid] = 3;
 			SetSpawnInfo(playerid, gTeam[playerid], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 			PlayerInfo[playerid][pChar] = CIV[rand];
+			new query[58 - (2 * 2) + 3 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i',`team`=default where`id`='%i'", PlayerInfo[playerid][pChar], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			SpawnPlayer(playerid);
 			SetCameraBehindPlayer(playerid);
 		}
 	}
 	if (gTeam[playerid] == 4) {
 		gTeam[playerid] = 3;
-	}
-	if (PlayerInfo[playerid][pReg] == 0) {
-		error(playerid, " Этот сервер требует регистрации! (Kicked)");
-		Kick(playerid);
 	}
 	if (PlayerInfo[playerid][pJailed] == 2) {
 		SetPlayerInterior(playerid, 0);
@@ -14786,15 +14683,6 @@ public OnPlayerSpawn(playerid) {
 		}
 	}
 	return true;
-}
-
-CKLog(string[]) {
-	new entry[256];
-	format(entry, sizeof(entry), "%s\n", string);
-	new File:hFile;
-	hFile = fopen("[logs]/ck.log", io_append);
-	fwrite(hFile, entry);
-	fclose(hFile);
 }
 
 PayLog(string[]) {
@@ -14993,6 +14881,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 		GameTextForPlayer(playerid, "~G~+50000$", 3000, 5); //Текст на икране
 		GivePlayerBablo(playerid, 50000); //Сколько даётся при завершение
 		PlayerInfo[playerid][pMusorTime] = 3600;
+		new query[59 - (2 * 3) + (10 * 2) + 4];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`musortime`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pMusorTime], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		return true;
 	}
 	//===========================[Работа Уборщика улиц]=============================
@@ -15185,6 +15076,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 		GameTextForPlayer(playerid, "~G~+30000$", 3000, 5); //Текст на икране
 		GivePlayerBablo(playerid, 30000); //Сколько даётся при завершение
 		PlayerInfo[playerid][pCleanTime] = 3000;
+		new query[59 - (2 * 2) + (10 * 2) + 4];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cleantime`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCleanTime], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		return true;
 	}
 	if (IsPlayerInRangeOfPoint(playerid, 2.0, 2230.8132324219, -2285.7043457031, 13.531787872314)) {
@@ -15425,6 +15319,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 			SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Поздравляем!{FFFFFF}Вы успешно сдали на права.");
 			SetVehicleToRespawn(GetPlayerVehicleID(playerid));
 			PlayerInfo[playerid][pCarLic] = 1;
+			new query[43 - 2 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`carlic`='1'where`id`='%i'", PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			Practice[playerid] = 0;
 		} else {
 			error(playerid, " Вы не в школьном авто.");
@@ -15504,6 +15401,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 			DisablePlayerCheckpoint(playerid);
 			zakaz[playerid] = 0;
 			SetVehicleToRespawn(GetPlayerVehicleID(playerid));
+			new query[59 - (2 * 3) + (10 * 3)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`jackskill`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pJackSkill], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		} else GameTextForPlayer(playerid, "Не в автомобиле", 5000, 1);
 	}
 	if (CP[playerid] == 5) {
@@ -15549,6 +15449,9 @@ public OnPlayerEnterCheckpoint(playerid) {
 			CP[playerid] = 0;
 			DisablePlayerCheckpoint(playerid);
 			SetVehicleToRespawn(GetVehicleTrailer(GetPlayerVehicleID(playerid)));
+			new query[63 - (2 * 3) + (10 * 3)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`dalnoboiskill`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pDalnoboiSkill], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		} else {
 			error(playerid, " Вы должны быть в грузовике.");
 		}
@@ -17110,7 +17013,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 			format(string, sizeof(string), "Вы теперь не на дежурстве и заработали %d$.", TransportMoney[playerid]);
 			SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 			GivePlayerBablo(playerid, TransportMoney[playerid]);
-			ConsumingMoney[playerid] = 1;
 			TransportValue[playerid] = 0;
 			TransportMoney[playerid] = 0;
 		}
@@ -17177,7 +17079,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 					if (IsACop(i)) {
 						if (CrimInRange(20.0, playerid, i)) {
 							count = 1;
-							ConsumingMoney[i] = 1;
 							GivePlayerBablo(i, price);
 							format(string, sizeof(string), "~g~Bonus~n~~r~%d$", price);
 							GameTextForPlayer(i, string, 5000, 1);
@@ -17197,12 +17098,14 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				format(string, sizeof(string), "Вы были посаженны за решетку на %d секунд и потеряли %d$.", PlayerInfo[playerid][pJailTime], price);
 				SendClientMessage(playerid, COLOR_LIGHTRED, string);
 				PlayerInfo[playerid][pWanted] = 0;
+				new query[76 - (2 * 4) + 1 + 10 + 10 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='%i',`wanteddeaths`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pWanted], PlayerInfo[playerid][pWantedDeaths], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
 			}
 		}
 	}
 	if (newstate == PLAYER_STATE_DRIVER) {
-		new model = GetVehicleModel(newcar);
 		new oldcar = gLastCar[playerid];
 		new housecar = PlayerInfo[playerid][pPhousekey] + 1;
 		TelePos[playerid][0] = 0.0;
@@ -17236,14 +17139,6 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 				CarEngine[carid] = 1;
 			}
 		}
-		if (model >= 596 && model <= 599) {
-			new gun, ammo;
-			GetPlayerWeaponData(playerid, 3, gun, ammo);
-			if (PlayerInfo[playerid][pGun3] == 0 && gun == 0)
-				PlayerInfo[playerid][pGun3] = 25;
-			PlayerInfo[playerid][pAmmo3] += 5;
-		}
-
 		if (IsABoat(newcar)) {
 			if (PlayerInfo[playerid][pBoatLic] < 1) {
 				RemovePlayerFromVehicle(playerid);
@@ -17558,11 +17453,9 @@ public OnPlayerStateChange(playerid, newstate, oldstate) {
 			SetPlayerSpawn(playerid);
 		}
 		if (PlayerInfo[playerid][pDonateRank] > 0) { SetPlayerHealth(playerid, 100.0); } else { SetPlayerHealth(playerid, 50.0 + PlayerInfo[playerid][pSHealth]); }
-		MedicBill[playerid] = 1;
 		TelePos[playerid][0] = 0.0;
 		TelePos[playerid][1] = 0.0;
 		gPlayerSpawned[playerid] = 1;
-		SafeTime[playerid] = 60;
 	}
 	return true;
 }
@@ -17701,7 +17594,6 @@ public OnPlayerExitVehicle(playerid, vehicleid) {
 	GunCheckTime[playerid] = 5;
 	if (IsPlayerNPC(playerid)) return true; // Подключение Ботов
 	new vehicle = GetPlayerVehicleID(playerid);
-	PlayerInfo[playerid][pCar] = 0;
 	if (Playerderbi[playerid] != 0 && startgonka == 1 && GetPlayerInterior(playerid) == 15) {
 		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были дисквалифицированы!");
 		DisablePlayerRaceCheckpoint(playerid);
@@ -17762,21 +17654,28 @@ public OnPlayerExitVehicle(playerid, vehicleid) {
 }
 
 public OnPlayerRequestClass(playerid, classid) {
-	if (IsPlayerNPC(playerid)) return true; // Подключение Ботов
+	if (IsPlayerNPC(playerid)) {
+		return true; // Подключение Ботов
+	}
+
+	TogglePlayerSpectating(playerid, true);
 	SetPlayerInterior(playerid, 0);
 	SetPlayerCameraPos(playerid, 1521.4435, -1636.1875, 24.5469); //камера при входе
 	SetPlayerCameraLookAt(playerid, 1452.7257, -1644.5986, 14.0469); //камера при входе
-	new loginmsg[400], loginname[MAX_PLAYER_NAME];
-	GetPlayerName(playerid, loginname, MAX_PLAYER_NAME);
-	if (gPlayerAccount[playerid] != 0) {
-		format(loginmsg, sizeof(loginmsg), "{FFFFFF}   \n  Добро пожаловать на сервер YourWorld [RPG] [RUS/By/UA]\n\nНа сервере:\n» {ffdb58}183 {ffffff}дома\n» {ffdb58}23 {ffffff}бизнесов\n» {ffdb58}18 {ffffff}сбизнесов\n» {ffdb58}3 {ffffff}квартирных дома\n » {ffdb58}15 {ffffff}различных работ\n{ffffff}И многое другое!\n\n\tЭтот аккаунт {00C0FF}зарегестрирован{ffffff}!\n\nЛогин: {00C0FF}%s\n{ffffff}Введи пароль:", loginname);
-		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация на YourWorld ", loginmsg, " Войти ", " Отмена ");
-		return 1;
-	} else {
-		format(loginmsg, sizeof(loginmsg), "{FFFFFF}   \n  Добро пожаловать на сервер YourWorld [RPG] [RUS/By/UA]\n\nНа сервере:\n» {ffdb58}183 {ffffff}дома\n» {ffdb58}23 {ffffff}бизнесов\n» {ffdb58}18 {ffffff}сбизнесов\n» {ffdb58}3 {ffffff}квартирных дома\n » {ffdb58}15 {ffffff}различных работ\n{ffffff}И многое другое!\n\n\tЭтот аккаунт {FF0000}не зарегестрирован{ffffff}!\n\nЛогин: {e3be88}%s\n{ffffff}Придумай себе пароль:", loginname);
-		ShowPlayerDialog(playerid, 2, DIALOG_STYLE_INPUT, "Регистрация на YourWorld ", loginmsg, "Регистрация", "Отмена");
+
+
+	new query[38 - 2 + MAX_PLAYER_NAME];
+	mysql_format(mysql_connection, query, sizeof(query), "select`id`from`users`where`name`='%e'", PlayerInfo[playerid][pName]);
+	new Cache:cache_users = mysql_query(mysql_connection, query, true);
+	new temp_rows = cache_get_row_count(mysql_connection);
+	if (temp_rows) {
+		cache_delete(cache_users, mysql_connection);
+		Dialog_Show(playerid, Dialog:Authorization);
 	}
-	return 1;
+	else {
+		Dialog_Show(playerid, Dialog:Register);
+	}
+	return true;
 }
 
 SetPlayerCriminal(playerid, declare, const reason[]) {
@@ -17804,6 +17703,9 @@ SetPlayerCriminal(playerid, declare, const reason[]) {
 			format(wantedmes, sizeof(wantedmes), "Текущий уровень розыска: %d. Повышен законником: %s. Причина: %s.", points, turner, reason);
 			SendClientMessage(playerid, COLOR_YELLOW, wantedmes);
 		}
+		new query[44 - (2 * 2) + (10 * 2)];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`crimes`='%i'where`id`='%i'", PlayerInfo[playerid][pCrimes], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
 	}
 }
@@ -17827,12 +17729,6 @@ public OtherTimer() {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i) && !IsPlayerNPC(i)) {
 			if (GetPlayerState(i) == 1) CheckForWalkingTeleport(i);
-			if (SafeTime[i] > 0) {
-				SafeTime[i]--;
-			}
-			if (SafeTime[i] == 1) {
-				if (gPlayerAccount[i] == 1) {}
-			}
 			if (GetPlayerState(i) == 2) {
 				GetPlayerPos(i, TelePos[i][3], TelePos[i][4], TelePos[i][5]);
 				if (TelePos[i][5] > 550.0) {
@@ -18163,6 +18059,9 @@ public SetPlayerUnjail() {
 			} else if (level >= 21) {
 				PlayerInfo[i][pPayCheck] += 11;
 			}
+			new query[46 - (2 * 2) + (10 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`paycheck`='%i'where`id`='%i'", PlayerInfo[i][pPayCheck], PlayerInfo[i][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 	}
 	if (GoLotto == 10) {
@@ -18185,6 +18084,9 @@ public SetPlayerUnjail() {
 					SendClientMessage(l, COLOR_LIGHTBLUE, "Вы не выйграли сейчас, может повезёт потом.");
 					PlayerInfo[l][pLottoNr] = 0;
 				}
+				new query[57 - (2 * 3) + (10 * 2) + 3];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`lottonr`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[l][pLottoNr], PlayerInfo[l][pCash], PlayerInfo[l][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 		}
 		if (JackpotFallen == 1) {
@@ -18363,10 +18265,10 @@ public SetPlayerUnjail() {
 			if (vzlomvopros[i] > 0) {
 				if (IsPlayerInRangeOfPoint(i, 2.0, 1413.36, -1012.90, 0.78)) {
 					new ranvzlomr = 99 + random(200);
-					bankpasword[i] = 212;
+					bankpasword = 212;
 					format(string, sizeof(string), "Автоматический подбор пароля: {FFFFFF}%d.", ranvzlomr);
 					SendClientMessage(i, COLOR_LIGHTBLUE, string);
-					if (ranvzlomr == bankpasword[i]) {
+					if (ranvzlomr == bankpasword) {
 						SendClientMessage(i, COLOR_GREEN, "Совпадение паролей. Дверь открыта!");
 						MoveDynamicObject(hrandver, 1412.6999511719, -1010.5, 1.2999999523163, 4.0);
 						door1 = 120;
@@ -18386,9 +18288,7 @@ public SetPlayerUnjail() {
 					ABroadCast(COLOR_YELLOW, string, 1);
 				}
 			}
-			new newcar = GetPlayerVehicleID(i); {
-				PlayerInfo[i][pForce] = PlayerInfo[i][pForce] + 1;
-			}
+			new newcar = GetPlayerVehicleID(i);
 			//--------------------------[Анти-АФК]------------------------------------------
 			new sendername[MAX_PLAYER_NAME];
 			GetPlayerPos(i, AntiAFK[i][3], AntiAFK[i][4], AntiAFK[i][5]);
@@ -18400,7 +18300,7 @@ public SetPlayerUnjail() {
 			}
 			if (AntiAFK[i][0] == AntiAFK[i][3] && AntiAFK[i][1] == AntiAFK[i][4] && AntiAFK[i][2] == AntiAFK[i][5]) {
 				PlayerAFKtime[i]++;
-				if (PlayerAFKtime[i] == 10800 && PlayerInfo[i][pLevel] < 5 && PlayerInfo[i][pVipTime] != 1) {
+				if (PlayerAFKtime[i] == 10800 && PlayerInfo[i][pLevel] < 5) {
 					for (new a; a < 54; a++) {
 						SendClientMessage(i, 0xFFFFFFFF, "");
 					}
@@ -18410,7 +18310,7 @@ public SetPlayerUnjail() {
 					Kick(i);
 					TogglePlayerControllable(i, 0);
 				}
-				if (PlayerAFKtime[i] == 10800 && PlayerInfo[i][pLevel] < 10 && PlayerInfo[i][pVipTime] != 1) {
+				if (PlayerAFKtime[i] == 10800 && PlayerInfo[i][pLevel] < 10) {
 					for (new a; a < 54; a++) {
 						SendClientMessage(i, 0xFFFFFFFF, "");
 					}
@@ -18527,17 +18427,6 @@ public SetPlayerUnjail() {
 					ProxDetector(30.0, i, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 				}
 			}
-			if (PlayerInfo[i][pNarcoLomka] > 0) {
-				PlayerInfo[i][pNarcoLomka]--;
-				if (PlayerLomkaTime[i] == 0) {
-					GetPlayerName(i, sendername, sizeof(sendername));
-					format(string, sizeof(string), "У %s Началась ломка", sendername);
-					ProxDetector(30.0, i, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
-					SendClientMessage(i, COLOR_LIGHTBLUE, "У тебя началась ломка, тебе нужно принять дозу");
-					SetPlayerWeather(i, -68);
-					PlayerInfo[i][pNarcoLomka] = 400;
-				}
-			}
 			new dl = GetPlayerDrunkLevel(i);
 			if (dl >= 30000) {
 				new v = random(100);
@@ -18584,29 +18473,6 @@ public SetPlayerUnjail() {
 					SendClientMessage(i, COLOR_LIGHTRED, "На месте нет адвокатов, возврощайтесь в камеру.");
 					WantLawyer[i] = 0;
 					CallLawyer[i] = 0;
-				}
-			}
-			if (TutTime[i] >= 1) {
-				TutTime[i] += 1;
-				if (TutTime[i] == 2) {
-					SetCameraBehindPlayer(i);
-					PlayerInfo[i][pBoatLic] = 1;
-					PlayerInfo[i][pFishLic] = 1;
-					PlayerInfo[i][pCarLic] = 1;
-					PlayerInfo[i][pFlyLic] = 1;
-					PlayerInfo[i][pMotoLic] = 1;
-					PlayerInfo[i][pGunLic] = 1;
-					OnPlayerCommandText(i, "/rules");
-					SetPlayerFightingStyle(i, FIGHT_STYLE_NORMAL);
-					TutTime[i] = 0;
-					PlayerInfo[i][pTut] = 1;
-					gOoc[i] = 0;
-					gNews[i] = 0;
-					gFam[i] = 0;
-					TogglePlayerControllable(i, 1);
-					MedicBill[i] = 0;
-					SavePlayer(i);
-					SetPlayerSpawn(i);
 				}
 			}
 			if (PlayerTazeTime[i] >= 1) {
@@ -18678,13 +18544,6 @@ public SetPlayerUnjail() {
 					PlayerInfo[i][pCleanTime] -= 1;
 				}
 			}
-			if (PlayerInfo[i][pCarTime] > 0) {
-				if (PlayerInfo[i][pCarTime] <= 0) {
-					PlayerInfo[i][pCarTime] = 0;
-				} else {
-					PlayerInfo[i][pCarTime] -= 1;
-				}
-			}
 			if (PlayerInfo[i][pTruckTime] > 0) {
 				if (PlayerInfo[i][pTruckTime] <= 0) {
 					PlayerInfo[i][pTruckTime] = 0;
@@ -18736,6 +18595,9 @@ public SetPlayerUnjail() {
 							uTarget[i] = 999;
 							tietime[i] = 0;
 							PlayerInfo[i][pRope]--;
+							new query[41 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`rope`='0'where`id`='%i'", PlayerInfo[i][pID]);
+							mysql_query(mysql_connection, query, false);
 						} else {
 							error(i, " Вы не можете cвязывать.");
 						}
@@ -19546,6 +19408,27 @@ LoadSBizz() {
 }
 
 public OnGameModeInit() {
+	// подключение к базе данных
+	mysql_connection=mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_DATABASE,MYSQL_PASSWORD);
+	switch(mysql_errno(mysql_connection)){
+		case 0:{
+			printf(""MYSQL_DATABASE": connected to database!");
+		}
+		default:{
+			printf(""MYSQL_DATABASE": cant connect to database (error %i)",mysql_errno(mysql_connection));
+		}
+	}
+	#if defined DEBUG_MODE
+		mysql_log(LOG_ALL);
+	#endif
+
+	// шаблоны regex
+	if (!regexPassword) {
+		new temp[51 - (2 * 2) + MIN_PASSWORD_LEN + MAX_PASSWORD_LEN];
+		format(temp, sizeof(temp), "^[-A-Za-z0-9!@#$^&*()_+[\\];\\\\<>,.\\/?~]{%i,%i}$", MIN_PASSWORD_LEN, MAX_PASSWORD_LEN);
+		regexPassword = Regex_New(temp);
+	}
+
 	LoadProperty();
 	LoadFlats();
 	LoadObwyak();
@@ -21136,7 +21019,6 @@ forward Production();
 public Production() {
 	for (new i = 0; i < GetMaxPlayers(); i++) {
 		if (IsPlayerConnected(i)) {
-			if (PlayerInfo[i][pFishes] >= 5) { if (FishCount[i] >= 3) { PlayerInfo[i][pFishes] = 0; } else { FishCount[i] += 1; } }
 			if (PlayerDrunk[i] > 0) {
 				PlayerDrunk[i] = 0;
 				PlayerDrunkTime[i] = 0;
@@ -21171,6 +21053,9 @@ PayDay() {
 					SetPlayerWantedLevel(i, PlayerInfo[i][pWanted]);
 					format(string, sizeof(string), "Вас посадили в КПЗ на %d секунд. Выплата: Невозможна.", PlayerInfo[i][pJailTime]);
 					SendClientMessage(i, COLOR_LIGHTBLUE, string);
+					new query[43 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0'where`id`='%i'", PlayerInfo[i][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					SendClientMessage(i, COLOR_LIGHTRED, "Вы были не в состоянии оплатить свой долг, отправляйтесь в тюрьму.");
 					GameTextForPlayer(i, "~r~Busted.", 2000, 1);
@@ -21185,6 +21070,9 @@ PayDay() {
 					SetPlayerWantedLevel(i, PlayerInfo[i][pWanted]);
 					format(string, sizeof(string), "Вас посадили в КПЗ на %d секунд. Выплата: Невозможна.", PlayerInfo[i][pJailTime]);
 					SendClientMessage(i, COLOR_LIGHTBLUE, string);
+					new query[43 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0'where`id`='%i'", PlayerInfo[i][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			}
 			new playername2[MAX_PLAYER_NAME];
@@ -21197,6 +21085,9 @@ PayDay() {
 					rent = 0;
 				} else if (rent > GetPlayerBablo(i)) {
 					PlayerInfo[i][pPhousekey] = 0;
+					new query[46 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`phousekey`='0'where`id`='%i'", PlayerInfo[i][pID]);
+					mysql_query(mysql_connection, query, false);
 					SendClientMessage(i, COLOR_WHITE, "Вы не можете оплатить арендную плату, потому Вы выселены.");
 					rent = 0;
 				}
@@ -21240,7 +21131,6 @@ PayDay() {
 				PlayerInfo[i][pAccount] -= TaxValue;
 				new checks = PlayerInfo[i][pPayCheck];
 				new ebill = (PlayerInfo[i][pAccount] / 1000000) * (PlayerInfo[i][pLevel]);
-				ConsumingMoney[i] = 1;
 				GivePlayerBablo(i, checks);
 				PlayerInfo[i][pExp]++;
 				new exp = PlayerInfo[i][pExp];
@@ -21292,9 +21182,6 @@ PayDay() {
 				PlayerInfo[i][pPayDay] = 0;
 				PlayerInfo[i][pPayCheck] = 0;
 				PlayerInfo[i][pConnectTime] += 1;
-				if (PlayerInfo[i][pNeSdal] == 1) {
-					PlayerInfo[i][pNeSdal] = 0;
-				}
 				if (PlayerInfo[i][pDonateRank] > 0) {
 					PlayerInfo[i][pPayDayHad] += 1;
 					if (PlayerInfo[i][pPayDayHad] >= 5) {
@@ -21302,6 +21189,9 @@ PayDay() {
 						PlayerInfo[i][pPayDayHad] = 0;
 					}
 				}
+				new query[120 - (2 * 5) + (10 * 5)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`connecttime`='%i',`exp`='%i',`paydayhad`='%i',`paycheck`='0',`payday`='0',`account`='%i'where`id`='%i'", PlayerInfo[i][pConnectTime], PlayerInfo[i][pExp], PlayerInfo[i][pPayDayHad], PlayerInfo[i][pAccount], PlayerInfo[i][pID]);
+				mysql_query(mysql_connection, query, false);
 			} else {
 				SendClientMessage(i, COLOR_WHITE, "{00C0FF}YourWorld{ffffff} : Из-за малого времени пребывания на сервере, вы не получили зарплату.");
 			}
@@ -21311,368 +21201,10 @@ PayDay() {
 	return true;
 }
 
-OnPlayerRegister(playerid, const password[]) {
-	new string[64]; // Масив с путём для файла
-	new playername[MAX_PLAYER_NAME]; // Масив для получения имени игрока
-	GetPlayerName(playerid, playername, sizeof(playername)); // Получаем Имя игрока
-	format(string, sizeof(string), "players/%s.ini", playername); // Добавляем имя игрока, в путь для сохранения
-	new iniFile = ini_createFile(string); // Создаём файл с именем игрока в папке players
-	if (iniFile < 0) // Если Файла нет
-	{
-		iniFile = ini_openFile(string); // Открываем
-	}
-	if (iniFile >= 0) // Если файл есть
-	{
-		strmid(PlayerInfo[playerid][pKey], password, 0, strlen(password), 255); // Присваиваем масиву pPass, значение password[]
-		ini_setString(iniFile, "Key", PlayerInfo[playerid][pKey]); // Записываем пароль игрока в файл
-		ini_closeFile(iniFile); // Закрываем файл
-
-	}
-	if (IsPlayerConnected(playerid)) {
-		PlayerInfo[playerid][pFMember] = 255;
-		PlayerInfo[playerid][pMember] = 0;
-		PlayerInfo[playerid][pLevel] = 1;
-		PlayerInfo[playerid][pChar] = 23;
-		PlayerInfo[playerid][pSHealth] = 0.0;
-		PlayerInfo[playerid][pHealth] = 50.0;
-		PlayerInfo[playerid][pPos_x] = 806.0165;
-		PlayerInfo[playerid][pPos_y] = -1343.5483;
-		PlayerInfo[playerid][pPos_z] = -0.5078;
-		SetPlayerFacingAngle(playerid, 139.2263);
-		PlayerInfo[playerid][pInt] = 0;
-		PlayerInfo[playerid][pRadio] = 1;
-		PlayerInfo[playerid][pLocal] = 255;
-		PlayerInfo[playerid][pTeam] = 3;
-		PlayerInfo[playerid][pCash] = 15000;
-		PlayerInfo[playerid][pFlatKey] = 0;
-		PlayerInfo[playerid][pPhousekey] = 0;
-		PlayerInfo[playerid][pPbiskey] = 255;
-		PlayerInfo[playerid][pAccount] = 50000;
-		PlayerInfo[playerid][pReg] = 1;
-		SetPlayerSkin(playerid, PlayerInfo[playerid][pChar]);
-		strmid(PlayerInfo[playerid][pMail], "None", 0, strlen("None"), 32);
-		strmid(PlayerInfo[playerid][pOtherPass], "None", 0, strlen("None"), 32);
-		SavePlayer(playerid);
-	}
-	return 1;
-}
-
 SavePlayer(playerid) {
-	new string[64]; // Масив с путём для файла
-	new playername[MAX_PLAYER_NAME]; // Масив для получения имени игрока
-	GetPlayerName(playerid, playername, sizeof(playername)); // Получаем Имя игрока
-	format(string, sizeof(string), "players/%s.ini", playername); // Добавляем имя игрока, в путь для сохранения
-	new File = ini_openFile(string); // Открываем файл по тому пути который указали.
-	ini_setString(File, "Key", PlayerInfo[playerid][pKey]); // Записываем пароль игрока в файл
-	ini_setInteger(File, "pLevel", PlayerInfo[playerid][pLevel]);
-	ini_setInteger(File, "pBlockeds", PlayerInfo[playerid][pBlockeds]);
-	ini_setInteger(File, "pWarns", PlayerInfo[playerid][pWarns]);
-	ini_setInteger(File, "pAdmin", PlayerInfo[playerid][pAdmin]);
-	ini_setInteger(File, "pWanted", PlayerInfo[playerid][pWanted]);
-	ini_setInteger(File, "pVirWorld", PlayerInfo[playerid][pVirWorld]);
-	ini_setInteger(File, "pFlatKey", PlayerInfo[playerid][pFlatKey]);
-	ini_setInteger(File, "pForce", PlayerInfo[playerid][pForce]);
-	ini_setInteger(File, "pDonateRank", PlayerInfo[playerid][pDonateRank]);
-	ini_setInteger(File, "gPupgrade", PlayerInfo[playerid][gPupgrade]);
-	ini_setInteger(File, "pConnectTime", PlayerInfo[playerid][pConnectTime]);
-	ini_setInteger(File, "pReg", PlayerInfo[playerid][pReg]);
-	ini_setInteger(File, "pSex", PlayerInfo[playerid][pSex]);
-	ini_setInteger(File, "pAge", PlayerInfo[playerid][pAge]);
-	ini_setInteger(File, "pOrigin", PlayerInfo[playerid][pOrigin]);
-	ini_setInteger(File, "pNarcoZavisimost", PlayerInfo[playerid][pNarcoZavisimost]);
-	ini_setInteger(File, "pNarcoLomka", PlayerInfo[playerid][pNarcoLomka]);
-	ini_setInteger(File, "pCK", PlayerInfo[playerid][pCK]);
-	ini_setInteger(File, "pPbiskey", PlayerInfo[playerid][pPbiskey]);
-	ini_setInteger(File, "pMuted", PlayerInfo[playerid][pMuted]);
-	ini_setInteger(File, "pExp", PlayerInfo[playerid][pExp]);
-	ini_setInteger(File, "pCash", PlayerInfo[playerid][pCash]);
-	ini_setInteger(File, "pAccount", PlayerInfo[playerid][pAccount]);
-	ini_setInteger(File, "pCrimes", PlayerInfo[playerid][pCrimes]);
-	ini_setInteger(File, "pKills", PlayerInfo[playerid][pKills]);
-	ini_setInteger(File, "pDeaths", PlayerInfo[playerid][pDeaths]);
-	ini_setInteger(File, "pWantedDeaths", PlayerInfo[playerid][pWantedDeaths]);
-	ini_setInteger(File, "pLottoNr", PlayerInfo[playerid][pLottoNr]);
-	ini_setInteger(File, "pFishes", PlayerInfo[playerid][pFishes]);
-	ini_setInteger(File, "pBiggestFish", PlayerInfo[playerid][pBiggestFish]);
-	ini_setInteger(File, "pJob", PlayerInfo[playerid][pJob]);
-	ini_setInteger(File, "pPayCheck", PlayerInfo[playerid][pPayCheck]);
-	ini_setInteger(File, "pHeadValue", PlayerInfo[playerid][pHeadValue]);
-	ini_setInteger(File, "pJailed", PlayerInfo[playerid][pJailed]);
-	ini_setInteger(File, "pZapret", PlayerInfo[playerid][pZapret]);
-	ini_setInteger(File, "pJailTime", PlayerInfo[playerid][pJailTime]);
-	ini_setInteger(File, "pVorSkill", PlayerInfo[playerid][pVorSkill]);
-	ini_setInteger(File, "pMats", PlayerInfo[playerid][pMats]);
-	ini_setInteger(File, "pDrugs", PlayerInfo[playerid][pDrugs]);
-	ini_setInteger(File, "ptMoney", PlayerInfo[playerid][ptMoney]);
-	ini_setInteger(File, "ptDrugs", PlayerInfo[playerid][ptDrugs]);
-	ini_setInteger(File, "ptMats", PlayerInfo[playerid][ptMats]);
-	ini_setInteger(File, "pLeader", PlayerInfo[playerid][pLeader]);
-	ini_setInteger(File, "pMember", PlayerInfo[playerid][pMember]);
-	ini_setInteger(File, "pFMember", PlayerInfo[playerid][pFMember]);
-	ini_setInteger(File, "pRank", PlayerInfo[playerid][pRank]);
-	ini_setInteger(File, "pChar", PlayerInfo[playerid][pChar]);
-	ini_setInteger(File, "pContractTime", PlayerInfo[playerid][pContractTime]);
-	ini_setInteger(File, "pDetSkill", PlayerInfo[playerid][pDetSkill]);
-	ini_setInteger(File, "pDrochSkill", PlayerInfo[playerid][pDrochSkill]);
-	ini_setInteger(File, "pLawSkill", PlayerInfo[playerid][pLawSkill]);
-	ini_setInteger(File, "pMechSkill", PlayerInfo[playerid][pMechSkill]);
-	ini_setInteger(File, "pGunSkill", PlayerInfo[playerid][pGunSkill]);
-	ini_setInteger(File, "pDalnoboiSkill", PlayerInfo[playerid][pDalnoboiSkill]);
-	ini_setInteger(File, "pJackSkill", PlayerInfo[playerid][pJackSkill]);
-	ini_setInteger(File, "pCarSkill", PlayerInfo[playerid][pCarSkill]);
-	ini_setInteger(File, "pNewsSkill", PlayerInfo[playerid][pNewsSkill]);
-	ini_setInteger(File, "pDrugsSkill", PlayerInfo[playerid][pDrugsSkill]);
-	ini_setInteger(File, "pCookSkill", PlayerInfo[playerid][pCookSkill]);
-	ini_setInteger(File, "pFishSkill", PlayerInfo[playerid][pFishSkill]);
-	ini_setFloat(File, "pSHealth", PlayerInfo[playerid][pSHealth]);
-	ini_setFloat(File, "pHealth", PlayerInfo[playerid][pHealth]);
-	ini_setInteger(File, "pInt", PlayerInfo[playerid][pInt]);
-	ini_setInteger(File, "pLocal", PlayerInfo[playerid][pLocal]);
-	ini_setInteger(File, "pTeam", PlayerInfo[playerid][pTeam]);
-	ini_setInteger(File, "pPhousekey", PlayerInfo[playerid][pPhousekey]);
-	ini_setInteger(File, "pPbiskey", PlayerInfo[playerid][pPbiskey]);
-	ini_setFloat(File, "pPos_x", PlayerInfo[playerid][pPos_x]);
-	ini_setFloat(File, "pPos_y", PlayerInfo[playerid][pPos_y]);
-	ini_setFloat(File, "pPos_z", PlayerInfo[playerid][pPos_z]);
-	ini_setInteger(File, "pCarLic", PlayerInfo[playerid][pCarLic]);
-	ini_setInteger(File, "pMotoLic", PlayerInfo[playerid][pMotoLic]);
-	ini_setInteger(File, "pCar", PlayerInfo[playerid][pCar]);
-	ini_setInteger(File, "pBancka", PlayerInfo[playerid][pBancka]);
-	ini_setInteger(File, "pFBancka", PlayerInfo[playerid][pFBancka]);
-	ini_setInteger(File, "pFlyLic", PlayerInfo[playerid][pFlyLic]);
-	ini_setInteger(File, "pBoatLic", PlayerInfo[playerid][pBoatLic]);
-	ini_setInteger(File, "pFishLic", PlayerInfo[playerid][pFishLic]);
-	ini_setInteger(File, "pGunLic", PlayerInfo[playerid][pGunLic]);
-	ini_setInteger(File, "pCarTime", PlayerInfo[playerid][pCarTime]);
-	ini_setInteger(File, "pMusorTime", PlayerInfo[playerid][pMusorTime]);
-	ini_setInteger(File, "pCleanTime", PlayerInfo[playerid][pCleanTime]);
-	ini_setInteger(File, "pTruckTime", PlayerInfo[playerid][pTruckTime]);
-	ini_setInteger(File, "pPayDayHad", PlayerInfo[playerid][pPayDay]);
-	ini_setInteger(File, "pPayDayHad", PlayerInfo[playerid][pPayDayHad]);
-	ini_setInteger(File, "pLoses", PlayerInfo[playerid][pLoses]);
-	ini_setInteger(File, "pAlcoholPerk", PlayerInfo[playerid][pAlcoholPerk]);
-	ini_setInteger(File, "pAlcoholPerk", PlayerInfo[playerid][pAlcoholPerk]);
-	ini_setInteger(File, "pDrugPerk", PlayerInfo[playerid][pDrugPerk]);
-	ini_setInteger(File, "pMiserPerk", PlayerInfo[playerid][pMiserPerk]);
-	ini_setInteger(File, "pPainPerk", PlayerInfo[playerid][pPainPerk]);
-	ini_setInteger(File, "pTraderPerk", PlayerInfo[playerid][pTraderPerk]);
-	ini_setInteger(File, "pTut", PlayerInfo[playerid][pTut]);
-	ini_setInteger(File, "pAdjustable", PlayerInfo[playerid][pAdjustable]);
-	ini_setInteger(File, "pFuel", PlayerInfo[playerid][pFuel]);
-	ini_setInteger(File, "pMarried", PlayerInfo[playerid][pMarried]);
-	ini_setInteger(File, "pMarriedTo", PlayerInfo[playerid][pMarriedTo]);
-	ini_setInteger(File, "pCard", PlayerInfo[playerid][pCard]);
-	ini_setInteger(File, "pClock", PlayerInfo[playerid][pClock]);
-	ini_setInteger(File, "pDice", PlayerInfo[playerid][pDice]);
-	ini_setInteger(File, "pMutedTime", PlayerInfo[playerid][pMutedTime]);
-	ini_setInteger(File, "pRadio", PlayerInfo[playerid][pRadio]);
-	ini_setInteger(File, "pRope", PlayerInfo[playerid][pRope]);
-	ini_setInteger(File, "pNeSdal", PlayerInfo[playerid][pNeSdal]);
-	ini_setInteger(File, "pHelper", PlayerInfo[playerid][pHelper]);
-	ini_setInteger(File, "pRobTime", PlayerInfo[playerid][pRobTime]);
-	ini_setInteger(File, "pHmed", PlayerInfo[playerid][pHmed]);
-	ini_setInteger(File, "pVipTime", PlayerInfo[playerid][pVipTime]);
-	ini_setInteger(File, "pRefMoney", PlayerInfo[playerid][pRefMoney]);
-	ini_setInteger(File, "pReferal", PlayerInfo[playerid][pReferal]);
-	ini_setInteger(File, "pRefText", PlayerInfo[playerid][pRefText]);
-	ini_setInteger(File, "pTkMats", PlayerInfo[playerid][pTkMats]);
-	ini_setInteger(File, "pTkMats", PlayerInfo[playerid][pTkMats]);
-	ini_setInteger(File, "pTkDrugs", PlayerInfo[playerid][pTkDrugs]);
-	ini_setInteger(File, "pGromilaSkill", PlayerInfo[playerid][pGromilaSkill]);
-	ini_setInteger(File, "pRobKey", PlayerInfo[playerid][pRobKey]);
-	ini_setInteger(File, "pMail", PlayerInfo[playerid][pMail]);
-	ini_setInteger(File, "pIP", PlayerInfo[playerid][pIP]);
-	ini_setString(File, "pOtherPass", PlayerInfo[playerid][pOtherPass]);
-	ini_setInteger(File, "pFs", PlayerInfo[playerid][pFs]);
-	ini_closeFile(File); // Закрываем файл
-}
-
-OnPlayerLogin(playerid, password[]) {
-	if (IsPlayerNPC(playerid)) return 1; // Подключение Ботов
-	new string[64]; // Масив с путём для файла
-	new pass[32]; // Масив с паролем
-	new playername[MAX_PLAYER_NAME]; // Масив для получения имени игрока
-	GetPlayerName(playerid, playername, sizeof(playername)); // Получаем Имя игрока
-	format(string, sizeof(string), "players/%s.ini", playername); // Добавляем имя игрока, в путь для загрузки
-	new File = ini_openFile(string); // Открываем файл
-	ini_getString(File, "Key", pass, 32); // Загружаем пароль
-	if (!strcmp(pass, password, true)) {
-		WrongPassword[playerid]++;
-		SendClientMessage(playerid, COLOR_WHITE, "{ffdb58}Пароль неверен! После третьей попытки вы будете кикнуты.");
-		if (WrongPassword[playerid] == 3) return SendClientMessage(playerid, COLOR_WHITE, "{ffdb58}Вы были кикнуты. Причина:{ffffff} Не правильный ввод пароля с 3-го раза."), Kick(playerid);
-		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация на YourWorld", "{ffdb58}Авторизируйтесь, введите свой пароль", " Далее ", " Отмена ");
-		return true;
-	} else {
-		ini_getInteger(File, "pLevel", PlayerInfo[playerid][pLevel]);
-		ini_getInteger(File, "pBlockeds", PlayerInfo[playerid][pBlockeds]);
-		ini_getInteger(File, "pWarns", PlayerInfo[playerid][pWarns]);
-		ini_getInteger(File, "pAdmin", PlayerInfo[playerid][pAdmin]);
-		ini_getInteger(File, "pWanted", PlayerInfo[playerid][pWanted]);
-		ini_getInteger(File, "pVirWorld", PlayerInfo[playerid][pVirWorld]);
-		ini_getInteger(File, "pFlatKey", PlayerInfo[playerid][pFlatKey]);
-		ini_getInteger(File, "pForce", PlayerInfo[playerid][pForce]);
-		ini_getInteger(File, "pDonateRank", PlayerInfo[playerid][pDonateRank]);
-		ini_getInteger(File, "gPupgrade", PlayerInfo[playerid][gPupgrade]);
-		ini_getInteger(File, "pConnectTime", PlayerInfo[playerid][pConnectTime]);
-		ini_getInteger(File, "pReg", PlayerInfo[playerid][pReg]);
-		ini_getInteger(File, "pSex", PlayerInfo[playerid][pSex]);
-		ini_getInteger(File, "pAge", PlayerInfo[playerid][pAge]);
-		ini_getInteger(File, "pOrigin", PlayerInfo[playerid][pOrigin]);
-		ini_getInteger(File, "pNarcoZavisimost", PlayerInfo[playerid][pNarcoZavisimost]);
-		ini_getInteger(File, "pNarcoLomka", PlayerInfo[playerid][pNarcoLomka]);
-		ini_getInteger(File, "pCK", PlayerInfo[playerid][pCK]);
-		ini_getInteger(File, "Bizz", PlayerInfo[playerid][pPbiskey]);
-		ini_getInteger(File, "AdminLevel", PlayerInfo[playerid][pAdmin]);
-		ini_getInteger(File, "pMuted", PlayerInfo[playerid][pMuted]);
-		ini_getInteger(File, "pExp", PlayerInfo[playerid][pExp]);
-		ini_getInteger(File, "pCash", PlayerInfo[playerid][pCash]);
-		ini_getInteger(File, "pAccount", PlayerInfo[playerid][pAccount]);
-		ini_getInteger(File, "pCrimes", PlayerInfo[playerid][pCrimes]);
-		ini_getInteger(File, "pKills", PlayerInfo[playerid][pKills]);
-		ini_getInteger(File, "pDeaths", PlayerInfo[playerid][pDeaths]);
-		ini_getInteger(File, "pWantedDeaths", PlayerInfo[playerid][pWantedDeaths]);
-		ini_getInteger(File, "pLottoNr", PlayerInfo[playerid][pLottoNr]);
-		ini_getInteger(File, "pFishes", PlayerInfo[playerid][pFishes]);
-		ini_getInteger(File, "pBiggestFish", PlayerInfo[playerid][pBiggestFish]);
-		ini_getInteger(File, "pJob", PlayerInfo[playerid][pJob]);
-		ini_getInteger(File, "pPayCheck", PlayerInfo[playerid][pPayCheck]);
-		ini_getInteger(File, "pHeadValue", PlayerInfo[playerid][pHeadValue]);
-		ini_getInteger(File, "pJailed", PlayerInfo[playerid][pJailed]);
-		ini_getInteger(File, "pZapret", PlayerInfo[playerid][pZapret]);
-		ini_getInteger(File, "pJailTime", PlayerInfo[playerid][pJailTime]);
-		ini_getInteger(File, "pVorSkill", PlayerInfo[playerid][pVorSkill]);
-		ini_getInteger(File, "pMats", PlayerInfo[playerid][pMats]);
-		ini_getInteger(File, "pDrugs", PlayerInfo[playerid][pDrugs]);
-		ini_getInteger(File, "ptMoney", PlayerInfo[playerid][ptMoney]);
-		ini_getInteger(File, "ptDrugs", PlayerInfo[playerid][ptDrugs]);
-		ini_getInteger(File, "ptMats", PlayerInfo[playerid][ptMats]);
-		ini_getInteger(File, "pLeader", PlayerInfo[playerid][pLeader]);
-		ini_getInteger(File, "pMember", PlayerInfo[playerid][pMember]);
-		ini_getInteger(File, "pFMember", PlayerInfo[playerid][pFMember]);
-		ini_getInteger(File, "pRank", PlayerInfo[playerid][pRank]);
-		ini_getInteger(File, "pChar", PlayerInfo[playerid][pChar]);
-		ini_getInteger(File, "pContractTime", PlayerInfo[playerid][pContractTime]);
-		ini_getInteger(File, "pDetSkill", PlayerInfo[playerid][pDetSkill]);
-		ini_getInteger(File, "pDrochSkill", PlayerInfo[playerid][pDrochSkill]);
-		ini_getInteger(File, "pLawSkill", PlayerInfo[playerid][pLawSkill]);
-		ini_getInteger(File, "pMechSkill", PlayerInfo[playerid][pMechSkill]);
-		ini_getInteger(File, "pGunSkill", PlayerInfo[playerid][pGunSkill]);
-		ini_getInteger(File, "pDalnoboiSkill", PlayerInfo[playerid][pDalnoboiSkill]);
-		ini_getInteger(File, "pJackSkill", PlayerInfo[playerid][pJackSkill]);
-		ini_getInteger(File, "pCarSkill", PlayerInfo[playerid][pCarSkill]);
-		ini_getInteger(File, "pNewsSkill", PlayerInfo[playerid][pNewsSkill]);
-		ini_getInteger(File, "pDrugsSkill", PlayerInfo[playerid][pDrugsSkill]);
-		ini_getInteger(File, "pCookSkill", PlayerInfo[playerid][pCookSkill]);
-		ini_getInteger(File, "pFishSkill", PlayerInfo[playerid][pFishSkill]);
-		ini_getFloat(File, "pSHealth", PlayerInfo[playerid][pSHealth]);
-		ini_getFloat(File, "pHealth", PlayerInfo[playerid][pHealth]);
-		ini_getInteger(File, "pInt", PlayerInfo[playerid][pInt]);
-		ini_getInteger(File, "pLocal", PlayerInfo[playerid][pLocal]);
-		ini_getInteger(File, "pTeam", PlayerInfo[playerid][pTeam]);
-		ini_getInteger(File, "pPhousekey", PlayerInfo[playerid][pPhousekey]);
-		ini_getInteger(File, "pPbiskey", PlayerInfo[playerid][pPbiskey]);
-		ini_getFloat(File, "pPos_x", PlayerInfo[playerid][pPos_x]);
-		ini_getFloat(File, "pPos_y", PlayerInfo[playerid][pPos_y]);
-		ini_getFloat(File, "pPos_z", PlayerInfo[playerid][pPos_z]);
-		ini_getInteger(File, "pCarLic", PlayerInfo[playerid][pCarLic]);
-		ini_getInteger(File, "pMotoLic", PlayerInfo[playerid][pMotoLic]);
-		ini_getInteger(File, "pCar", PlayerInfo[playerid][pCar]);
-		ini_getInteger(File, "pBancka", PlayerInfo[playerid][pBancka]);
-		ini_getInteger(File, "pFBancka", PlayerInfo[playerid][pFBancka]);
-		ini_getInteger(File, "pFlyLic", PlayerInfo[playerid][pFlyLic]);
-		ini_getInteger(File, "pBoatLic", PlayerInfo[playerid][pBoatLic]);
-		ini_getInteger(File, "pFishLic", PlayerInfo[playerid][pFishLic]);
-		ini_getInteger(File, "pGunLic", PlayerInfo[playerid][pGunLic]);
-		ini_getInteger(File, "pCarTime", PlayerInfo[playerid][pCarTime]);
-		ini_getInteger(File, "pMusorTime", PlayerInfo[playerid][pMusorTime]);
-		ini_getInteger(File, "pCleanTime", PlayerInfo[playerid][pCleanTime]);
-		ini_getInteger(File, "pTruckTime", PlayerInfo[playerid][pTruckTime]);
-		ini_getInteger(File, "pPayDay", PlayerInfo[playerid][pPayDay]);
-		ini_getInteger(File, "pPayDayHad", PlayerInfo[playerid][pPayDayHad]);
-		ini_getInteger(File, "pLoses", PlayerInfo[playerid][pLoses]);
-		ini_getInteger(File, "pAlcoholPerk", PlayerInfo[playerid][pAlcoholPerk]);
-		ini_getInteger(File, "pDrugPerk", PlayerInfo[playerid][pDrugPerk]);
-		ini_getInteger(File, "pMiserPerk", PlayerInfo[playerid][pMiserPerk]);
-		ini_getInteger(File, "pPainPerk", PlayerInfo[playerid][pPainPerk]);
-		ini_getInteger(File, "pTraderPerk", PlayerInfo[playerid][pTraderPerk]);
-		ini_getInteger(File, "pTut", PlayerInfo[playerid][pTut]);
-		ini_getInteger(File, "pAdjustable", PlayerInfo[playerid][pAdjustable]);
-		ini_getInteger(File, "pFuel", PlayerInfo[playerid][pFuel]);
-		ini_getInteger(File, "pMarried", PlayerInfo[playerid][pMarried]);
-		ini_getInteger(File, "pMarriedTo", PlayerInfo[playerid][pMarriedTo]);
-		ini_getInteger(File, "pCard", PlayerInfo[playerid][pCard]);
-		ini_getInteger(File, "pClock", PlayerInfo[playerid][pClock]);
-		ini_getInteger(File, "pDice", PlayerInfo[playerid][pDice]);
-		ini_getInteger(File, "pMutedTime", PlayerInfo[playerid][pMutedTime]);
-		ini_getInteger(File, "pRadio", PlayerInfo[playerid][pRadio]);
-		ini_getInteger(File, "pRope", PlayerInfo[playerid][pRope]);
-		ini_getInteger(File, "pNeSdal", PlayerInfo[playerid][pNeSdal]);
-		ini_getInteger(File, "pHelper", PlayerInfo[playerid][pHelper]);
-		ini_getInteger(File, "pRobTime", PlayerInfo[playerid][pRobTime]);
-		ini_getInteger(File, "pHmed", PlayerInfo[playerid][pHmed]);
-		ini_getInteger(File, "pVipTime", PlayerInfo[playerid][pVipTime]);
-		ini_getInteger(File, "pRefMoney", PlayerInfo[playerid][pRefMoney]);
-		ini_getInteger(File, "pReferal", PlayerInfo[playerid][pReferal]);
-		ini_getInteger(File, "pRefText", PlayerInfo[playerid][pRefText]);
-		ini_getInteger(File, "pTkMats", PlayerInfo[playerid][pTkMats]);
-		ini_getInteger(File, "pTkDrugs", PlayerInfo[playerid][pTkDrugs]);
-		ini_getInteger(File, "pGromilaSkill", PlayerInfo[playerid][pGromilaSkill]);
-		ini_getInteger(File, "pRobKey", PlayerInfo[playerid][pRobKey]);
-		ini_getInteger(File, "pMail", PlayerInfo[playerid][pMail]);
-		ini_getInteger(File, "pIP", PlayerInfo[playerid][pIP]);
-		ini_getString(File, "pOtherPass", PlayerInfo[playerid][pOtherPass], 32);
-		ini_getInteger(File, "pFs", PlayerInfo[playerid][pFs]);
-		if (!strcmp(PlayerInfo[playerid][pOtherPass], "None", true)) {
-			new playername2[MAX_PLAYER_NAME];
-			GetPlayerName(playerid, playername2, sizeof(playername2));
-			PlayerInfo[playerid][pAdjustable] = 0;
-			ConsumingMoney[playerid] = 1;
-			CurrentMoney[playerid] = PlayerInfo[playerid][pCash];
-			PlayerInfo[playerid][pReg] = 1;
-			if (PlayerInfo[playerid][pBlockeds] >= 3) {
-				SendClientMessage(playerid, COLOR_WHITE, "Ваш аккаунт {ff0000}заблокирован{ffffff}. Так как уже у вас 3 блокировки.");
-				Kick(playerid);
-				return 0;
-			}
-			SendClientMessage(playerid, COLOR_WHITE, "Добро пожаловать на сервер {ffdb58}YourWorld [RPG].{ffffff} Приятной вам игры!");
-			printf("%s has logged in.", playername2);
-			new string2[60], tmp2[50];
-			if (PlayerInfo[playerid][pDonateRank] == 1) SendClientMessage(playerid, COLOR_WHITE, "У тебя {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}");
-			if (PlayerInfo[playerid][pDonateRank] == 2) SendClientMessage(playerid, COLOR_WHITE, "У тебя {F5DEB3}VIP Аккаунт 2 уровня{FFFFFF}");
-			if (PlayerInfo[playerid][pHelper] >= 1 || PlayerInfo[playerid][pAdmin] > 0) {
-				if (PlayerInfo[playerid][pHelper] >= 1) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Хелпер %d-го уровня.", PlayerInfo[playerid][pHelper]);
-				if (PlayerInfo[playerid][pAdmin] == 1) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор %d-го уровня.", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 2) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор %d-го уровня.", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 3) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор %d-го уровня.", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 4) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Модератор 4-го уровня.", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 5) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Гл.Модератор.", PlayerInfo[playerid][pAdmin]);
-				if (PlayerInfo[playerid][pAdmin] == 6) format(string2, sizeof(string2), "Вы вошли как {F5DEB3}Гл. Администратор.", PlayerInfo[playerid][pAdmin]);
-				SendClientMessage(playerid, COLOR_WHITE, string2);
-			}
-			gPlayerLogged[playerid] = 1;
-			SetSpawnInfo(playerid, PlayerInfo[playerid][pTeam], PlayerInfo[playerid][pChar], PlayerInfo[playerid][pPos_x], PlayerInfo[playerid][pPos_y], PlayerInfo[playerid][pPos_z], 1.0, -1, -1, -1, -1, -1, -1);
-			if (gTeam[playerid] == 0) gTeam[playerid] = 3;
-			else gTeam[playerid] = PlayerInfo[playerid][pTeam];
-			format(tmp2, sizeof(tmp2), "~w~ѓO—PO ЊO„A‡O‹A¦’ ~n~~y~   %s", playername2);
-			GameTextForPlayer(playerid, tmp2, 5000, 1);
-			for (new i = GetMaxPlayers() - 1; i != -1; i--) {
-				if (!IsPlayerConnected(i)) continue;
-				if (PlayerInfo[i][pMask] == 1) ShowPlayerNameTagForPlayer(playerid, i, 0);
-			}
-			Spawned[playerid] = 1;
-			SpawnPlayer(playerid);
-			SetCameraBehindPlayer(playerid);
-		} else ShowPlayerDialog(playerid, 351, 1, "Безопасность", "{ffdb58}Введите ваш дополнительный пароль:", "Принять", "Отмена");
-		for (new i = 0; i < sizeof(HouseInfo); i++) {
-			AddVehicleComponent(hCar[i], HouseInfo[i][hKoleso]);
-			AddVehicleComponent(hCar[i], HouseInfo[i][hBamper]);
-			AddVehicleComponent(hCar[i], HouseInfo[i][hBamper2]);
-			ChangeVehiclePaintjob(hCar[i], HouseInfo[i][hPaintjob]);
-			AddVehicleComponent(hCar[i], HouseInfo[i][hNitro]);
-			AddVehicleComponent(hCar[i], HouseInfo[i][hGidravlika]);
-		}
-	}
-	return true;
+	new query[221 - (2 * 14) + (10 * 6) + (3 * 8)];
+	mysql_format(mysql_connection, query, sizeof(query), "update`users`set`muted`='%i',`cash`='%i',`account`='%i',`jailed`='%i',`jailtime`='%i',`int`='%i',`local`='%i',`musortime`='%i',`cleantime`='%i',`trucktime`='%i',`payday`='%i',`mutedtime`='%i',`robtime`='%i'where`id`='%i'", PlayerInfo[playerid][pMuted], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pJailed], PlayerInfo[playerid][pJailTime], PlayerInfo[playerid][pInt], PlayerInfo[playerid][pLocal], PlayerInfo[playerid][pMusorTime], PlayerInfo[playerid][pCleanTime], PlayerInfo[playerid][pTruckTime], PlayerInfo[playerid][pPayDay], PlayerInfo[playerid][pMutedTime], PlayerInfo[playerid][pRobTime], PlayerInfo[playerid][pID]);
+	mysql_query(mysql_connection, query, false);
 }
 
 OnPropUpdate() {
@@ -22011,8 +21543,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		if (PlayerInfo[playerid][pAdmin] >= 6) {
 			for (new i; i < GetMaxPlayers(); i++) {
 				if (!IsPlayerConnected(i)) continue;
-				if (!gPlayerLogged[i]) continue;
+				if (!PlayerInfo[i][Logged]) continue;
 				PlayerInfo[i][pExp]++;
+				new query[41 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`exp`='%i'where`id`='%i'", PlayerInfo[i][pExp], PlayerInfo[i][pID]);
+				mysql_query(mysql_connection, query, false);
 				SendClientMessage(i, 0x33ccffff, "Вы получили 1 респект от администрации.");
 				SavePlayer(i);
 			}
@@ -22233,6 +21768,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				format(string, sizeof(string), "~w~Congratulations~n~ You have sold your property for ~n~~g~%d$", FlatsInfo[flat][fValue]);
 				GameTextForPlayer(playerid, string, 10000, 3);
 				PlayerInfo[playerid][pFlatKey] = 0;
+				new query[60 - (2 * 2) + 10 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flatkey`=default,`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				UpdateFlat(flat);
 				return true;
 			} else {
@@ -22268,6 +21806,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					PlayerInfo[playerid][pInt] = FlatsInfo[h][fInt];
 					SendClientMessage(playerid, COLOR_WHITE, "Поздравляем!Вы купили квартиру.");
 					SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /flat-управления квартирой.");
+					new query[57 - (2 * 3) + 4 + 10 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flatkey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pFlatKey], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					UpdateFlat(h);
 				}
 			}
@@ -22752,6 +22293,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						PlayerInfo[playerid][pRobKey] = 1;
 						format(string, sizeof(string), "Вы украли ключи от двери КПЗ, у законника %s[%d].", sendername, giveplayerid);
 						SendClientMessage(playerid, COLOR_WHITE, string);
+						new query[42 - 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`robkey`='1'where`id`='%i'", PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 					} else {
 						format(string, sizeof(string), "Вы попытались украсть ключ у законника %s[%d], но были замечены.", sendername, giveplayerid);
 						SendClientMessage(playerid, COLOR_WHITE, string);
@@ -22828,6 +22372,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			if (Masked[playerid] == 1) format(string, sizeof(string), "Неизвестный украл из сейфа %d$", lala);
 			else format(string, sizeof(string), "%s украл(а) из сейфа %d$.", sendername, lala);
 			ProxDetector(30.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
+			new query[71 - (2 * 4) + 1 + 10 + 10 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='%i',`robtime`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pWanted], PlayerInfo[playerid][pRobTime], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			return true;
 		}
 	}
@@ -22889,9 +22436,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							new rand = random(sizeof(CIV));
 							SetSpawnInfo(giveplayerid, gTeam[giveplayerid], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 							PlayerInfo[giveplayerid][pChar] = CIV[rand];
-							MedicBill[giveplayerid] = 0;
 							SpawnPlayer(giveplayerid);
 							SetCameraBehindPlayer(giveplayerid);
+							new query[104 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='0',`member`='0',`rank`='0',`fwarns`='0',`char`='0',`team`=default where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 							return true;
 						}
 						format(string, sizeof(string), "Лидер %s дал(а) выговор %s.Причина выговора: %s(%d/3)", sendername, giveplayer, (result), PlayerInfo[giveplayerid][pFWarns]);
@@ -22973,6 +22522,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				if (PlayerToPoint(3, playerid, 245.63941955566, 72.5, 1002.5999755859)) {
 					if (PlayerInfo[playerid][pRobKey] > 0) {
 						PlayerInfo[playerid][pRobKey] = 0;
+						new query[42 - 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`robkey`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						SendClientMessage(playerid, -1, "Вы открыли дверь, но сломали ключ.");
 					}
 					MoveDynamicObject(LSGate, 244.12998962402, 72.5, 1002.5999755859, 2.00);
@@ -23179,7 +22731,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					if (!ProxDetectorS(5.0, playerid, giveplayerid)) return error(playerid, " Вы слишком далеко.");
 					GetPlayerName(giveplayerid, giveplayer, sizeof(giveplayer));
 					GetPlayerName(playerid, sendername, sizeof(sendername)); {
-						ConsumingMoney[giveplayerid] = 1;
 						GivePlayerBablo(playerid, (0 - moneys));
 						GivePlayerBablo(giveplayerid, moneys);
 						format(string, sizeof(string), "Вы передали %s(ID: %d), %d$.", giveplayer, giveplayerid, moneys);
@@ -23359,13 +22910,14 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			if (PlayerInfo[playerid][pLevel] < 2) return error(playerid, " Вы должны иметь как минимум 2 уровень, для использования это команды.");
 			PlayerInfo[playerid][gPupgrade] = (PlayerInfo[playerid][pLevel] - 1) * 2;
 			PlayerInfo[playerid][pSHealth] = 0.0;
-			PlayerInfo[playerid][pAlcoholPerk] = 0;
-			PlayerInfo[playerid][pDrugPerk] = 0;
 			PlayerInfo[playerid][pMiserPerk] = 0;
 			PlayerInfo[playerid][pPainPerk] = 0;
 			PlayerInfo[playerid][pTraderPerk] = 0;
 			GivePlayerBablo(playerid, -100000);
 			PlayerPlaySound(giveplayerid, 1052, 0.0, 0.0, 0.0);
+			new query[137 - (2 * 3) + 4 + 10 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gpupgrade`='%i',`shealth`=default,`miserperk`=default,`painperk`=default,`traderperk`=default,`cash`='%i'where`id`='%i'", PlayerInfo[playerid][gPupgrade], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			format(string, 256, " Вы имеете %d очков улучшений.", PlayerInfo[playerid][gPupgrade]);
 			SendClientMessage(playerid, COLOR_GRAD2, string);
 		}
@@ -23418,6 +22970,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SendClientMessage(playerid, COLOR_WHITE, string);
 					PlayerInfo[playerid][ptDrugs] += kolvo;
 					PlayerInfo[playerid][pDrugs] -= kolvo;
+					new query[58 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',`ptdrugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][ptDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else if (strcmp(x_job, "mats", true) == 0) {
 					if (kolvo > PlayerInfo[playerid][pMats]) return error(playerid, " У вас нет данного количества материалов.");
 					if (strval(tmp) < 1) return error(playerid, " Минимальный количество должно быть не меньше 1.");
@@ -23425,6 +22980,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SendClientMessage(playerid, COLOR_WHITE, string);
 					PlayerInfo[playerid][ptMats] += kolvo;
 					PlayerInfo[playerid][pMats] -= kolvo;
+					new query[56 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i',`ptmats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][ptMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			}
 		}
@@ -23451,6 +23009,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SendClientMessage(playerid, COLOR_WHITE, string);
 					PlayerInfo[playerid][ptDrugs] -= kolvo;
 					PlayerInfo[playerid][pDrugs] += kolvo;
+					new query[58 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',`ptdrugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][ptDrugs], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else if (strcmp(x_job, "mats", true) == 0) {
 					if (kolvo > PlayerInfo[playerid][ptMats]) return error(playerid, " У вас на складе нет столько материалов.");
 					if (strval(tmp) < 1) return error(playerid, " Минимальный количество должно быть не меньше 1.");
@@ -23458,6 +23019,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SendClientMessage(playerid, COLOR_WHITE, string);
 					PlayerInfo[playerid][ptMats] -= kolvo;
 					PlayerInfo[playerid][pMats] += kolvo;
+					new query[56 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i',`ptmats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][ptMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			}
 		}
@@ -23491,6 +23055,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				ProxDetector(30.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Ты использовал 2 грамма наркотиков.");
 				PlayerInfo[playerid][pDrugs] -= 2;
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				SetPVarInt(playerid, "Kruzut", gettime() + 120);
 			} else if (strcmp(xx_job, "pot", true) == 0) {
 				if (PlayerInfo[playerid][pDrugs] < 4) return error(playerid, " У тебя недостаточно наркотиков.");
@@ -23509,6 +23076,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				ProxDetector(30.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Ты использовал 6 грамм наркотиков.");
 				PlayerInfo[playerid][pDrugs] -= 4;
+				new query[45 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				SetPVarInt(playerid, "Kruzut", gettime() + 120);
 			}
 		}
@@ -23679,6 +23249,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					format(infostring, 256, "Улучшение аккаунта: Теперь уровень здоровья при спавне у Вас будет %.2f. (+5)", PlayerInfo[playerid][pSHealth] + 50);
 					PlayerInfo[playerid][gPupgrade] -= 1;
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, infostring);
+					new query[62 - (2 * 3) + 4 + 10 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gpupgrade`='%i',`shealth`='%f'where`id`='%i'", PlayerInfo[playerid][gPupgrade], PlayerInfo[playerid][pSHealth], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					error(playerid, " У вас максимальное количество жизней при рождении.");
 					return 1;
@@ -23690,6 +23263,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					format(infostring, 256, "Новое улучшение: Ваша экономность уже %d уровня .", PlayerInfo[playerid][pMiserPerk]);
 					PlayerInfo[playerid][gPupgrade] -= 1;
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, infostring);
+					new query[64 - (2 * 3) + 4 + 1 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gpupgrade`='%i',`miserperk`='%i'where`id`='%i'", PlayerInfo[playerid][gPupgrade], PlayerInfo[playerid][pMiserPerk], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					SendClientMessage(playerid, COLOR_RED, "У Вас максимально развит этот навык.");
 					return 1;
@@ -23701,6 +23277,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					format(infostring, 256, "Новое улучшение: Ваш навык торговли %d уровня.", PlayerInfo[playerid][pTraderPerk] && PlayerInfo[playerid][gPupgrade] >= 3);
 					PlayerInfo[playerid][gPupgrade] -= 1;
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, infostring);
+					new query[65 - (2 * 3) + 4 + 1 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gpupgrade`='%i',`traderperk`='%i'where`id`='%i'", PlayerInfo[playerid][gPupgrade], PlayerInfo[playerid][pTraderPerk], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					SendClientMessage(playerid, COLOR_RED, "У Вас максимально развит этот навык.");
 					return 1;
@@ -23712,6 +23291,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					format(infostring, 256, "Новое улучшение: Ваш навык -painkillers- теперь %d уровня.", PlayerInfo[playerid][pPainPerk]);
 					PlayerInfo[playerid][gPupgrade] -= 1;
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, infostring);
+					new query[63 - (2 * 3) + 4 + 1 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gpupgrade`='%i',`painperk`='%i'where`id`='%i'", PlayerInfo[playerid][gPupgrade], PlayerInfo[playerid][pPainPerk], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					SendClientMessage(playerid, COLOR_RED, "У Вас максимально развит этот навык.");
 					return 1;
@@ -23722,14 +23304,13 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 	}
 	if (strcmp(cmd, "/buylevel", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
-			if (gPlayerLogged[playerid] != 0) {
-				PlayerInfo[playerid][pCash] = GetPlayerMoney(playerid);
+			if (PlayerInfo[playerid][Logged]) {
 				if (PlayerInfo[playerid][pLevel] >= 0) {
 					new nxtlevel = PlayerInfo[playerid][pLevel] + 1;
 					new costlevel = nxtlevel * levelcost; //10k for testing purposes
 					new expamount = nxtlevel * levelexp;
 					new infostring[256];
-					if (GetPlayerMoney(playerid) < costlevel) {
+					if (PlayerInfo[playerid][pCash] < costlevel) {
 						format(infostring, 256, " У вас нет денег для покупки уровня. ($%d)", costlevel);
 						error(playerid, infostring);
 						return 1;
@@ -23755,6 +23336,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							PlayerInfo[playerid][pExp] = 0;
 						}
 						PlayerInfo[playerid][gPupgrade] = PlayerInfo[playerid][gPupgrade] + 2;
+						new query[83 - (2 * 5) + (10 * 5)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`level`='%i',`exp`='%i',`cash`='%i',`gpupgrade`='%i'where`id`='%i'", PlayerInfo[playerid][pLevel], PlayerInfo[playerid][pExp], PlayerInfo[playerid][pCash], PlayerInfo[playerid][gPupgrade], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						GameTextForPlayer(playerid, string, 5000, 1);
 						format(infostring, 256, "Вы купили %d уровень для ($%d) введите /upgrade.", nxtlevel, costlevel);
 						SendClientMessage(playerid, COLOR_LIGHTBLUE, infostring);
@@ -24001,6 +23585,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 			result[idx - offset] = EOS;
 			PlayerInfo[giveplayerid][pFs] = 1;
+			new query[38 - 2 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fs`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			if (PlayerInfo[playerid][pMember] == 1 || PlayerInfo[playerid][pLeader] == 1 || PlayerInfo[playerid][pMember] == 2 || PlayerInfo[playerid][pLeader] == 2 ||
 				PlayerInfo[playerid][pMember] == 3 || PlayerInfo[playerid][pLeader] == 3 || PlayerInfo[playerid][pMember] == 4 || PlayerInfo[playerid][pLeader] == 4) {
 				SendClientMessageToAll(COLOR_WHITE, "|___________ Государственные новости ___________|");
@@ -24037,6 +23624,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 			result[idx - offset] = EOS;
 			PlayerInfo[giveplayerid][pFs] = 0;
+			new query[38 - 2 + 10];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fs`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			SendClientMessageToAll(COLOR_WHITE, "|___________ Государственные новости ___________|");
 			format(string, sizeof(string), "%s был вычеркнут из списка Федерального Розыска Закона. Вычеркнул: %s. Причина: %s.", giveplayer, sendername, result);
 			SendClientMessageToAll(COLOR_DBLUE, string);
@@ -24845,11 +24435,13 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				return true;
 			}
 			if (cashdeposit > PlayerInfo[playerid][pAccount] || cashdeposit < 1) return SendClientMessage(playerid, COLOR_RED, "У вас нет столько денег.");
-			ConsumingMoney[playerid] = 1;
 			GivePlayerBablo(playerid, cashdeposit);
 			PlayerInfo[playerid][pAccount] = PlayerInfo[playerid][pAccount] - cashdeposit;
 			format(string, sizeof(string), " Вы сняли %d$ с вашего счета в банке, остаток: %d$ ", cashdeposit, PlayerInfo[playerid][pAccount]);
 			SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+			new query[57 - (2 * 3) + (10 * 3)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i',`account`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			return true;
 		}
 		return true;
@@ -24889,6 +24481,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			SendClientMessage(playerid, COLOR_GRAD4, string);
 			format(string, sizeof(string), "Новый баланс: {00C0FF}%d$", PlayerInfo[playerid][pAccount]);
 			SendClientMessage(playerid, COLOR_WHITE, string);
+			new query[57 - (2 * 3) + (10 * 3)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i',`account`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 			return true;
 		}
 		return true;
@@ -24937,6 +24532,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SendClientMessage(playerid, COLOR_GRAD1, string);
 						format(string, sizeof(string), "Вы получили %d$  на свой счет от %s", moneys, sendername, playerid);
 						SendClientMessage(giveplayerid, COLOR_GRAD1, string);
+						new query[57 - (2 * 3) + (10 * 3)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`account`='%i'where`id`='%i'", PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`account`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pAccount], PlayerInfo[giveplayerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						printf("%s", string);
 						PayLog(string);
 						PlayerPlaySound(giveplayerid, 1052, 0.0, 0.0, 0.0);
@@ -25067,13 +24667,15 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SetPlayerVirtualWorld(playerid, i + 250);
 						SetPlayerInterior(playerid, HouseInfo[i][hInt]);
 						SetPlayerPos(playerid, HouseInfo[i][hExitx], HouseInfo[i][hExity], HouseInfo[i][hExitz]);
-						PlayerInfo[playerid][pVirWorld] = i;
 						GameTextForPlayer(playerid, "~w~Welcome to new Home", 5000, 1);
 						PlayerInfo[playerid][pInt] = HouseInfo[i][hInt];
 						PlayerInfo[playerid][pLocal] = i;
 						HouseEntered[playerid] = i;
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Поздравляем с покупкой.");
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Введите {FFFFFF}/help {FFFFFF}для помощи с командами дома.");
+						new query[59 - (2 * 2) + (10 * 2) + 4];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`phousekey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pPhousekey], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						UpdateHouse(i);
 						OnPropUpdate();
 						SavePlayer(playerid);
@@ -25251,6 +24853,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						GetPlayerName(giveplayerid, giveplayer, sizeof(giveplayer));
 						PlayerInfo[playerid][pDrugs] -= dammount;
 						PlayerInfo[giveplayerid][pDrugs] += dammount;
+						new query[58 - (2 * 3) + (10 * 3)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pDrugs], PlayerInfo[giveplayerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						if (PlayerInfo[playerid][pSex] == 1) { format(string, sizeof(string), "* %s достал(a) что-то и передал(a) %s.", sendername, giveplayer); } else { format(string, sizeof(string), "%s достал(а) что-то и передал(а) %s.", sendername, giveplayer); }
 						ProxDetector(10.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 					}
@@ -25281,6 +24888,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					ProxDetector(30.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 					format(string, sizeof(string), "%s передал(а) тебе %d материалов.", sendername, money);
 					SendClientMessage(para1, COLOR_LIGHTBLUE, string);
+					new query[41 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[para1][pMats], PlayerInfo[para1][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			} else {
 				SendClientMessage(playerid, COLOR_WHITE, "{33AA33}[Использование]{FFFFFF}: /give [название] [id игрока] [кол-во]");
@@ -25539,7 +25151,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				hCar[house] = CreateVehicle(HouseInfo[house][hVec], HouseCarSpawns[house][0], HouseCarSpawns[house][1], HouseCarSpawns[house][2], HouseCarSpawns[house][3], HouseInfo[house][hVcol1], HouseInfo[house][hVcol2], 60000);
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				strmid(HouseInfo[house][hOwner], "The State", 0, strlen("The State"), 255);
-				ConsumingMoney[playerid] = 1;
 				GivePlayerBablo(playerid, HouseInfo[house][hValue]);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				format(string, sizeof(string), "~w~Congratulations~n~ You have sold your property for ~n~~g~%d$", HouseInfo[house][hValue]);
@@ -25550,6 +25161,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SetPlayerPos(playerid, HouseInfo[house][hEntrancex], HouseInfo[house][hEntrancey], HouseInfo[house][hEntrancez]);
 					PlayerInfo[playerid][pInt] = 0;
 				}
+				new query[59 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`phousekey`='0',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				OnPropUpdate();
 				UpdateHouse(house);
 				SavePlayer(playerid);
@@ -25834,7 +25448,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				GameTextForPlayer(playerid, "~w~Teleporting", 5000, 1);
 				PlayerInfo[playerid][pInt] = HouseInfo[housenum][hInt];
 				PlayerInfo[playerid][pLocal] = housenum;
-				PlayerInfo[playerid][pVirWorld] = housenum;
 				SetPlayerVirtualWorld(playerid, 250 + housenum);
 				HouseEntered[playerid] = housenum;
 			}
@@ -26064,7 +25677,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						PlayerHaul[tmpcar][pLoad]--;
 						BizzInfo[i][bProducts]++;
 						cashmade = ((PlayerHaul[tmpcar][pCapasity]) - (PlayerHaul[tmpcar][pLoad])) * BizzInfo[i][bPriceProd];
-						ConsumingMoney[playerid] = 1;
 						BizzInfo[i][bTill] -= BizzInfo[i][bPriceProd];
 						if (PlayerHaul[tmpcar][pLoad] == 0) {
 							GameTextForPlayer(playerid, "~r~Truck is empty, return to the house", 5000, 1);
@@ -26104,7 +25716,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					PlayerHaul[tmpcar][pLoad]--;
 					SBizzInfo[i][sbProducts]++;
 					cashmade = (PlayerHaul[tmpcar][pCapasity] - PlayerHaul[tmpcar][pLoad]) * SBizzInfo[i][sbPriceProd];
-					ConsumingMoney[playerid] = 1;
 					SBizzInfo[i][sbTill] -= SBizzInfo[i][sbPriceProd];
 					if (PlayerHaul[tmpcar][pLoad] == 0) {
 						GameTextForPlayer(playerid, "~r~Truck is empty, return to the house", 5000, 1);
@@ -26190,6 +25801,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						OnPropUpdate();
 						SBizzInfo[h][sbTill] = 0;
 						UpdateSBizz(h);
+						new query[57 - (2 * 3) + (10 * 3)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pPbiskey], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						return true;
 					} else {
 						error(playerid, " У Вас нету данной суммы денег для покупки");
@@ -26223,6 +25837,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SendClientMessage(playerid, COLOR_WHITE, "{FFFFFF}Введите {00C0FF}/help {FFFFFF}чтобы посмотреть справку по бизнесу.");
 						OnPropUpdate();
 						UpdateBizz(h);
+						new query[57 - (2 * 3) + (10 * 3)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pPbiskey], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						return true;
 					} else {
 						error(playerid, " У Вас не хватает денег для этого");
@@ -26245,12 +25862,14 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SBizzInfo[h][sbOwned] = 0;
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				strmid(SBizzInfo[h][sbOwner], "The State", 0, strlen("The State"), 255);
-				ConsumingMoney[playerid] = 1;
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				format(string, sizeof(string), "~w~Congratulations~n~ You have sold your property for ~n~~g~%d$", SBizzInfo[h][sbTill] + SBizzInfo[h][sbBuyPrice]);
 				GameTextForPlayer(playerid, string, 10000, 3);
 				SBizzInfo[h][sbTill] = 0;
 				PlayerInfo[playerid][pPbiskey] = 255;
+				new query[60 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`=default,`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				OnPropUpdate();
 				UpdateSBizz(h);
 				return true;
@@ -26261,7 +25880,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				BizzInfo[h][bOwned] = 0;
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				strmid(BizzInfo[h][bOwner], "The State", 0, strlen("The State"), 255);
-				ConsumingMoney[playerid] = 1;
 				GivePlayerBablo(playerid, BizzInfo[h][bTill] + BizzInfo[h][bBuyPrice]);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				format(string, sizeof(string), "~w~Congratulations~n~ You have sold your property for ~n~~g~%d$", BizzInfo[h][bTill] + BizzInfo[h][bBuyPrice]);
@@ -26270,6 +25888,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				PlayerInfo[playerid][pPbiskey] = 255;
 				OnPropUpdate();
 				UpdateBizz(h);
+				new query[60 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`=default,`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				return true;
 			} else {
 				error(playerid, " Вы не владеете бизнесом.");
@@ -26353,7 +25974,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			if (bouse >= 100) {
 				if (!IsPlayerInRangeOfPoint(playerid, 100, SBizzInfo[bouse - 100][sbEntranceX], SBizzInfo[bouse - 100][sbEntranceY], SBizzInfo[bouse - 100][sbEntranceZ])) return error(playerid, " Вы далеко от своего бизнеса");
 				else {
-					ConsumingMoney[playerid] = 1;
 					GivePlayerBablo(playerid, cashdeposit);
 					SBizzInfo[bouse - 100][sbTill] -= cashdeposit;
 					format(string, sizeof(string), "Вы забрали %d$ из вашей корзины Остаток: %d$ ", cashdeposit, SBizzInfo[bouse - 100][sbTill]);
@@ -26364,7 +25984,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			} else {
 				if (!IsPlayerInRangeOfPoint(playerid, 100, BizzInfo[bouse][bExitX], BizzInfo[bouse][bExitY], BizzInfo[bouse][bExitZ])) return error(playerid, " Вы далеко от своего бизнеса");
 				else {
-					ConsumingMoney[playerid] = 1;
 					GivePlayerBablo(playerid, cashdeposit);
 					BizzInfo[bouse][bTill] -= cashdeposit;
 					format(string, sizeof(string), "Вы забрали %d$ из своеой корзины Остаток: %d4 ", cashdeposit, BizzInfo[bouse][bTill]);
@@ -26995,6 +26614,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					PlayerInfo[giveplayerid][pJailed] = 4;
 					SetPlayerSkin(giveplayerid, 268);
 					PlayerInfo[giveplayerid][pJailTime] = 10800;
+					new query[43 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					SetPlayerWantedLevel(giveplayerid, PlayerInfo[giveplayerid][pWanted]);
 					SetPlayerPos(giveplayerid, 107.2300, 1920.6311, 18.5208);
 					SetPlayerWorldBounds(giveplayerid, 337.5694, 101.5826, 1940.9759, 1798.7453);
@@ -27085,6 +26707,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						format(string, sizeof(string), "Ты был(а) посажен(а) в тюрьму %s %s.", arank, sendername);
 						SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 						format(string, sizeof(string), "YourWorld : %s был(а) посажен(а) в тюрьму %sом %s на %d минут(ы).Причина: %s.", giveplayer, arank, sendername, money, (result));
+						new query[56 - 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0',`zapret`='1'where`id`='%i'", PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						printf("%s", string);
 					}
 				} else {
@@ -27185,6 +26810,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SetPlayerInterior(giveplayerid, 6);
 					PlayerInfo[giveplayerid][pZapret] = 0;
 					PlayerInfo[giveplayerid][pNoFree] = 0;
+					new query[69 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0',`zapret`='0',`nofree`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					format(string, 256, "YourWorld : %s был(а) освобождён(а) из тюрьмы  %s %s.", giveplayer, arank, sendername);
 					SendClientMessageToAll(COLOR_LIGHTRED, string);
 				}
@@ -27245,70 +26873,87 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					new amount;
 					amount = strval(tmp);
 					if (PlayerInfo[playerid][pAdmin] >= 6) {
+						new query[48 - 2 + 10];
 						switch (stat) {
 							case 1 :  {
 								PlayerInfo[giveplayerid][pLevel] = amount;
 								format(string, sizeof(string), "Игрок стал уровня - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`level`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pLevel], PlayerInfo[giveplayerid][pID]);
 							}
 							case 2 :  {
 								PlayerInfo[giveplayerid][pExp] = amount;
 								format(string, sizeof(string), "Очки уважения игрока установлены - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`exp`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pExp], PlayerInfo[giveplayerid][pID]);
 							}
 							case 3 :  {
 								PlayerInfo[giveplayerid][gPupgrade] = amount;
 								format(string, sizeof(string), "Игрок получил - %d очков улучшений.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gpupgrade`='%i'where`id`='%i'", PlayerInfo[giveplayerid][gPupgrade], PlayerInfo[giveplayerid][pID]);
 							}
 							case 5 :  {
 								PlayerInfo[giveplayerid][pPhousekey] = amount;
 								format(string, sizeof(string), "Ключей от дома у игрока теперь - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`phousekey`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pPhousekey], PlayerInfo[giveplayerid][pID]);
 							}
 							case 6 :  {
 								PlayerInfo[giveplayerid][pPbiskey] = amount;
 								format(string, sizeof(string), "Ключей от бизнеса у игрока теперь - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pPbiskey], PlayerInfo[giveplayerid][pID]);
 							}
 							case 8 :  {
 								PlayerInfo[giveplayerid][pChar] = amount;
 								format(string, sizeof(string), "Модель игрока установлена - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pChar], PlayerInfo[giveplayerid][pID]);
 							}
 							case 9 :  {
 								PlayerInfo[giveplayerid][pSHealth] = amount;
 								format(string, sizeof(string), "У игрока теперь - %d начального здоровья. ", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`shealth`='%f'where`id`='%i'", PlayerInfo[giveplayerid][pSHealth], PlayerInfo[giveplayerid][pID]);
 							}
 							case 10 :  {
 								PlayerInfo[giveplayerid][pDetSkill] = amount;
 								format(string, sizeof(string), "Детективный навык игрока установлен - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`detskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pDetSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 11 :  {
 								PlayerInfo[giveplayerid][pLawSkill] = amount;
 								format(string, sizeof(string), "Скилл адвоката игрока установлен - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`lawskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pLawSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 12 :  {
 								PlayerInfo[giveplayerid][pMechSkill] = amount;
 								format(string, sizeof(string), "Скилл механика игрока установлен - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mechskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pMechSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 13 :  {
 								PlayerInfo[giveplayerid][pNewsSkill] = amount;
 								format(string, sizeof(string), "Скилл репортера игрока установлен - %d", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`newsskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pNewsSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 14 :  {
 								PlayerInfo[giveplayerid][pJackSkill] = amount;
 								format(string, sizeof(string), "Скилл автоугонщика игрока установлен - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`jackskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pJackSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 15 :  {
 								PlayerInfo[giveplayerid][pDrugsSkill] = amount;
 								format(string, sizeof(string), "Скилл продавца наркотиков игрока установлен - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugsskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pDrugsSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 17 :  {
 								PlayerInfo[giveplayerid][pGunSkill] = amount;
 								format(string, sizeof(string), "Скил Торговца оружием установлен - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gunskill`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pGunSkill], PlayerInfo[giveplayerid][pID]);
 							}
 							case 7 :  {
 								PlayerInfo[giveplayerid][pDonateRank] = amount;
 								format(string, sizeof(string), "Vip-Аккаунт игрока теперь - %d.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`donaterank`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pDonateRank], PlayerInfo[giveplayerid][pID]);
 							}
 							case 100 :  {
 								PlayerInfo[giveplayerid][pAccount] = amount;
 								format(string, sizeof(string), "Банковский cчет игрока установлен - %d$.", amount);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`account`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pAccount], PlayerInfo[giveplayerid][pID]);
 							}
 							default:  {
 								format(string, sizeof(string), "{FF0000}[Ошибка]{FFFFFF} : Невозможное значение", amount);
@@ -27316,6 +26961,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 
 						}
 						SendClientMessage(playerid, COLOR_WHITE, string);
+						mysql_query(mysql_connection, query, false);
 					} else {
 						error(playerid, " У Вас недостаточно прав для того, чтобы использовать эту команду.");
 					}
@@ -27457,8 +27103,10 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							new rand = random(sizeof(CIV));
 							SetSpawnInfo(para1, gTeam[para1], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 							PlayerInfo[para1][pChar] = CIV[rand];
-							MedicBill[para1] = 0;
 							PlayerInfo[para1][pJob] = 0;
+							new query[104 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='0',`member`='0',`rank`='0',`fwarns`='0',`char`='0',`team`=default where`id`='%i'", PlayerInfo[para1][pID]);
+							mysql_query(mysql_connection, query, false);
 							SpawnPlayer(para1);
 							format(string, sizeof(string), "Вы кикнули %s  из фракции.", giveplayer);
 							SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
@@ -27492,10 +27140,12 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		PlayerInfo[playa][pMember] = 0;
 		PlayerInfo[playa][pRank] = 0;
 		PlayerInfo[playa][pChar] = 0;
+		new query[104 - 2 + 10];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='0',`member`='0',`rank`='0',`fwarns`='0',`char`='0',`team`=default where`id`='%i'", PlayerInfo[playa][pID]);
+		mysql_query(mysql_connection, query, false);
 		new rand = random(sizeof(CIV));
 		SetSpawnInfo(playa, gTeam[playa], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 		PlayerInfo[playa][pChar] = CIV[rand];
-		MedicBill[playa] = 0;
 		SpawnPlayer(playa);
 		return true;
 	}
@@ -27520,6 +27170,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SendClientMessage(para1, COLOR_LIGHTBLUE, string);
 						format(string, sizeof(string), "Вы Повысили/понизили %s до %d уровня модерирования", giveplayer, level);
 						SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
+						new query[43 - (2 * 2) + 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`admin`='%i'where`id`='%i'", PlayerInfo[para1][pAdmin], PlayerInfo[para1][pID]);
+						mysql_query(mysql_connection, query, false);
 					}
 				}
 			} else {
@@ -28337,6 +27990,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								}
 							}
 						}
+						new query[54 - (2 * 3) + 2 + 3 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`rank`='%i',`char`='%i'where`id`='%i'", PlayerInfo[para1][pRank], PlayerInfo[para1][pChar], PlayerInfo[para1][pID]);
+						mysql_query(mysql_connection, query, false);
 					}
 				}
 			} else {
@@ -28365,7 +28021,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			if (PlayerInfo[playerid][pAdmin] >= 5) {
 				if (IsPlayerConnected(para1)) {
 					if (para1 != INVALID_PLAYER_ID) {
-						if (PlayerInfo[para1][pMember] > 0 || PlayerInfo[para1][pFMember] < 255) {
+						if (PlayerInfo[para1][pMember] > 0) {
 							error(playerid, " Этот игрок состоит в фракции.");
 							return true;
 						}
@@ -28428,7 +28084,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							PlayerInfo[para1][pRank] = 0;
 							PlayerInfo[para1][pLeader] = 0;
 							PlayerInfo[para1][pJob] = 0;
-							MedicBill[para1] = 0;
 							new rand = random(sizeof(CIV));
 							SetSpawnInfo(para1, gTeam[para1], CIV[rand], 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0, 0);
 							PlayerInfo[para1][pChar] = CIV[rand];
@@ -28482,6 +28137,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						gTeam[para1] = 20;
 						PlayerInfo[para1][pTeam] = 20;
 						SetPlayerSkin(para1, PlayerInfo[para1][pChar]);
+						new query[90 - (2 * 5) + (4 * 4) + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='0',`leader`='%i',`rank`='%i',`char`='%i',`team`='%i'where`id`='%i'", PlayerInfo[para1][pLeader], PlayerInfo[para1][pRank], PlayerInfo[para1][pChar], PlayerInfo[para1][pTeam], PlayerInfo[para1][pID]);
+						mysql_query(mysql_connection, query, false);
 					}
 				}
 			} else {
@@ -28900,6 +28558,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				format(string, 256, "YourWorld : Администратор %s дал %s %d грамм наркотиков.", sendername, giveplayer, moneys);
 				ABroadCast(COLOR_YELLOW, string, 1);
+				new query[43 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pDrugs], PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 		}
 		return true;
@@ -28928,6 +28589,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				format(string, 256, "YourWorld : Администратор: %s дал %s %d материалов.", sendername, giveplayer, moneys);
 				ABroadCast(COLOR_YELLOW, string, 1);
+				new query[41 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pMats], PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 		}
 		return true;
@@ -29275,7 +28939,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				if (IsPlayerConnected(playa)) {
 					if (playa != INVALID_PLAYER_ID) {
 						ReserPlayerBablo(playa);
-						ConsumingMoney[playa] = 1;
 						GivePlayerBablo(playa, money);
 					}
 				}
@@ -29301,7 +28964,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			if (PlayerInfo[playerid][pAdmin] >= 6) {
 				if (IsPlayerConnected(playa)) {
 					if (playa != INVALID_PLAYER_ID) {
-						ConsumingMoney[playa] = 1;
 						GivePlayerBablo(playa, money);
 					}
 				}
@@ -29404,6 +29066,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						new randad = random(sizeof(RandomDalnoboiMarkers));
 						SetPlayerCheckpoint(playerid, RandomDalnoboiMarkers[randad][0], RandomDalnoboiMarkers[randad][1], RandomDalnoboiMarkers[randad][2], 10.0);
 						GameTextForPlayer(playerid, "~w~PY€ ЊO‡YЌE® ~n~~r~ B MO„E¦E EO ѓOC¦A…¦", 5000, 1);
+						new query[47 - (2 * 2) + 4 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`trucktime`='%i'where`id`='%i'", PlayerInfo[playerid][pTruckTime], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						CP[playerid] = 777;
 					} else {
 						format(string, sizeof(string), "{FF0000}[Ошибка]{FFFFFF} : Вы уже доставили груз, следующий будет доступен через %d секунд.", PlayerInfo[playerid][pTruckTime]);
@@ -29481,6 +29146,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				format(string, sizeof(string), "Вы  были забанены %s %s  на %d дней. Причина: %s.", arank, PlayerNick, chislo, (result));
 				SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 				PlayerInfo[giveplayerid][pBlockeds] += 1;
+				new query[46 - (2 * 2) + 1 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				SavePlayer(giveplayerid);
 				GetPlayerIp(giveplayerid, ip, sizeof(ip));
 				AddBan(giveplayerid, PlayerBan, PlayerNick, 3, chislo, result);
@@ -29553,6 +29221,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendClientMessageToAll(COLOR_LIGHTRED, string);
 				WriteLog(string, "ban.cfg");
 				PlayerInfo[giveplayerid][pBlockeds] += 1;
+				new query[46 - (2 * 2) + 1 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				SavePlayer(giveplayerid);
 				GetPlayerIp(giveplayerid, ip, sizeof(ip));
 				AddBan(giveplayerid, PlayerBan, PlayerNick, 3, chislo, result);
@@ -29700,6 +29371,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						} else if (PlayerInfo[playerid][pVorSkill] == 400) {
 							SendClientMessage(playerid, COLOR_YELLOW, "Ваш воровской навык теперь 5 уровня.");
 						}
+						new query[46 - (2 * 2) + 10 + 5];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`vorskill`='%i'where`id`='%i'", PlayerInfo[playerid][pVorSkill], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 					}
 				} else {
 					error(playerid, " Вы слишком далеко.");
@@ -30010,6 +29684,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		} else if (PlayerInfo[playerid][pDrochSkill] == 400) {
 			SendClientMessage(playerid, COLOR_YELLOW, "Ваш скилл донора спермы 5 уровня(максимальный).");
 		}
+		new query[75 - (2 * 2) + (10 * 2)];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drochskill`='%i',`bancka`='0',`fbancka`='1'where`id`='%i'", PlayerInfo[playerid][pDrochSkill], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		return true;
 	}
 
@@ -30039,6 +29716,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			GivePlayerBablo(playerid, 2500);
 			SendClientMessage(playerid, COLOR_WHITE, "Вы получили гонорар в размере 2500$");
 		}
+		new query[56 - (2 * 2) + (10 * 2)];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fbancka`='0',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		return true;
 	}
 
@@ -30218,6 +29898,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					GetPlayerName(giveplayerid, giveplayer, sizeof(giveplayer));
 					GetPlayerName(playerid, sendername, sizeof(sendername));
 					PlayerInfo[giveplayerid][pHelper] = 4;
+					new query[44 - (2 * 2) + 1 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`helper`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pHelper], PlayerInfo[giveplayerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					format(string, sizeof(string), "Вы были назначены на должность главного хелпера, администратором %s.", sendername);
 					SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 					format(string, sizeof(string), "Вы назначили игрока %s на должность главного хелпера.", giveplayer);
@@ -30253,6 +29936,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SendClientMessage(playerid, COLOR_GREY, "Не меньше '0' и не больше '3'.");
 						return true;
 					}
+					new query[44 - (2 * 2) + 1 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`helper`='%i'where`id`='%i'", PlayerInfo[para1][pHelper], PlayerInfo[para1][pID]);
+					mysql_query(mysql_connection, query, false);
 					format(string, sizeof(string), "Вы были назначены на должность хелпера, администратором %s.", sendername);
 					SendClientMessage(para1, COLOR_LIGHTBLUE, string);
 					format(string, sizeof(string), "Вы назначили/повысили игрока %s до %d уровня помощника.", giveplayer, level);
@@ -30413,6 +30099,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			SendClientMessage(playerid, COLOR_WHITE, " Вы сварили 9 грамм наркотиков. (/usedrugs)");
 			Medicines[playerid] -= 3;
 			PlayerInfo[playerid][pDrugs] += 9;
+			new query[45 - (2 * 2) + (10 * 2)];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 		return true;
 	}
@@ -30468,6 +30157,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		}
 		SendClientMessage(playerid, COLOR_LIGHTGREEN, " Вы использовали аптечку.");
 		PlayerInfo[playerid][pHmed] = 0;
+		new query[41 - 2 + 10];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`hmed`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, false);
 		SetPlayerHealth(playerid, health + 30);
 		return true;
 	}
@@ -30609,28 +30301,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			ShowPlayerDialog(playerid, DIA_SET, DIALOG_STYLE_INPUT, "Номера", "Введите номер для автомобиля", "Установить", "Отмена");
 		} else {
 			error(playerid, "Вы не в домашнем авто.");
-		}
-		return true;
-	}
-
-	if (strcmp(cmd, "/viptime", true) == 0) {
-		if (IsPlayerConnected(playerid)) {
-			tmp = strtok(cmdtext, idx);
-			if (!strlen(tmp)) {
-				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /viptime [id]");
-				return true;
-			}
-			new para1;
-			para1 = ReturnUser(tmp);
-			if (PlayerInfo[playerid][pAdmin] >= 6) {
-				if (IsPlayerConnected(para1)) {
-					if (para1 != INVALID_PLAYER_ID) {
-						PlayerInfo[para1][pVipTime] = 1;
-					}
-				}
-			} else {
-				error(playerid, " Вы не уполномочены использовать эту команду.");
-			}
 		}
 		return true;
 	}
@@ -31443,6 +31113,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							SendClientMessageToAll(COLOR_LIGHTRED, string);
 							PlayerInfo[giveplayerid][pBlockeds] += 1;
 							PlayerInfo[giveplayerid][pWarns] = 0;
+							new query[58 - (2 * 2) + 1 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i',`warns`='0'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 							new PlayerNick[MAX_PLAYER_NAME], PlayerBan[MAX_PLAYER_NAME];
 							GetPlayerName(playerid, PlayerNick, MAX_PLAYER_NAME);
 							GetPlayerName(giveplayerid, PlayerBan, MAX_PLAYER_NAME);
@@ -31455,7 +31128,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							SendClientMessage(giveplayerid, COLOR_LIGHTRED, string);
 							format(string, sizeof(string), "YourWorld : %s был(а) предупрежден(а) %s %s. Причина: %s.", giveplayer, arank, sendername, (result));
 							SendClientMessageToAll(COLOR_LIGHTRED, string);
-							SavePlayer(playerid); //Сохранение акков
+							new query[43 - (2 * 2) + 1 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`warns`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pWarns], PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					}
 				}
@@ -31492,6 +31167,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					return true
 				}
 				PlayerInfo[giveplayerid][pBlockeds]--;
+				new query[46 - (2 * 2) + 1 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				format(string, sizeof(string), "Вы сняли одну блокировку игроку %s", planame);
 				SendClientMessage(playerid, COLOR_LIGHTRED, string);
 				format(string, sizeof(string), "Вам была снята одна блокировка администратором %s", adminname);
@@ -31536,6 +31214,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				format(string, sizeof(string), "YourWorld : Администратор %s снял игроку %s предупреждение.", adminname, planame);
 				SendClientMessageToAll(COLOR_LIGHTRED, string);
 				ABroadCast(COLOR_YELLOW, string, 1);
+				new query[43 - (2 * 2) + 1 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`warns`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pWarns], PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			} else {
 				format(string, sizeof(string), "%d - не активный игрок.", giveplayerid);
 				SendClientMessage(playerid, COLOR_RED, string);
@@ -31686,6 +31367,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						format(string, sizeof(string), "Вы дали %s скин %d.", giveplayer, level);
 						SendClientMessage(playerid, COLOR_WHITE, string);
 						SetPlayerSkin(para1, PlayerInfo[para1][pChar]);
+						new query[42 - (2 * 2) + 3 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`char`='%i'where`id`='%i'", PlayerInfo[para1][pChar], PlayerInfo[para1][pID]);
+						mysql_query(mysql_connection, query, false);
 					}
 				}
 			} else {
@@ -31721,6 +31405,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							format(string, sizeof(string), "Администратор %s выдал вам лицензию на управление мото транспортом.", sendername);
 							SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 							PlayerInfo[giveplayerid][pMotoLic] = 1;
+							new query[44 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`motolic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31741,6 +31428,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							format(string, sizeof(string), "Администратор %s дал вам лицензию на полеты.", sendername);
 							SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 							PlayerInfo[giveplayerid][pFlyLic] = 1;
+							new query[43 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flylic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31762,6 +31452,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							format(string, sizeof(string), "Администратор %s дал вам водительские права.", sendername);
 							SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 							PlayerInfo[giveplayerid][pCarLic] = 1;
+							new query[43 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`carlic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31782,6 +31475,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							format(string, sizeof(string), "Администратор %s дал вам лицензию на водный транспорт.", sendername);
 							SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 							PlayerInfo[giveplayerid][pBoatLic] = 1;
+							new query[44 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`boatlic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31807,6 +31503,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							PlayerInfo[giveplayerid][pGunLic] = 1;
 							PlayerInfo[giveplayerid][pFlyLic] = 1;
 							PlayerInfo[giveplayerid][pMotoLic] = 1;
+							new query[111 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`carlic`='1',`boatlic`='1',`fishlic`='1',`gunlic`='1',`flylic`='1',`motolic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31827,6 +31526,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							format(string, sizeof(string), "Администратор %s дал вам лицензию на рыбалку.", sendername);
 							SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 							PlayerInfo[giveplayerid][pFishLic] = 1;
+							new query[44 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fishlic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31847,6 +31549,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							format(string, sizeof(string), "Администратор %s дал вам лицензию на оружие.", sendername);
 							SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 							PlayerInfo[giveplayerid][pGunLic] = 1;
+							new query[43 - 2 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gunlic`='1'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						}
 					} else {
 						error(playerid, " Этот игрок не в сети.");
@@ -31873,7 +31578,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 				PlayerInfo[giveplayerid][pJob] = 0;
 				PlayerInfo[giveplayerid][pChar] = 0;
-				PlayerInfo[giveplayerid][pContractTime] = 0;
+				new query[51 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`job`='0',`char`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				GetPlayerName(giveplayerid, giveplayer, sizeof(giveplayer));
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				format(string, sizeof(string), "YourWorld : Администратор %s уволил(а) с работы игрока %s.", sendername, giveplayer);
@@ -32692,6 +32399,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 			GivePlayerBablo(playerid, -1500);
 			PlayerInfo[playerid][pLottoNr] = lottonr;
+			new query[57 - (2 * 3) + (10 * 2) + 3];
+			mysql_format(mysql_connection, query, sizeof(query), "update`users`set`lottonr`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pLottoNr], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+			mysql_query(mysql_connection, query, false);
 		}
 		return true;
 	}
@@ -32739,6 +32449,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						format(string, sizeof(string), "Лишил вас Лицензии на вождение.", sendername);
 						SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 						PlayerInfo[giveplayerid][pCarLic] = 0;
+						new query[43 - 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`carlic`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+						mysql_query(mysql_connection, query, false);
 					}
 				} else if (strcmp(x_nr, "motolicense", true) == 0) {
 					tmp = strtok(cmdtext, idx);
@@ -32767,6 +32480,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								format(string, sizeof(string), "%s Лишил вас лицензии на мото транспорт.", sendername);
 								SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 								PlayerInfo[giveplayerid][pMotoLic] = 0;
+								new query[44 - 2 + 10];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`motolic`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+								mysql_query(mysql_connection, query, false);
 							} else {
 								error(playerid, " Этот игрок не возле Вас.");
 							}
@@ -32801,6 +32517,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								format(string, sizeof(string), "%s Лишил вас Лицензии на воздушный транспорт.", sendername);
 								SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 								PlayerInfo[giveplayerid][pFlyLic] = 0;
+								new query[43 - 2 + 10];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flylic`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+								mysql_query(mysql_connection, query, false);
 							} else {
 								error(playerid, " Этот игрок не возле Вас.");
 							}
@@ -32835,6 +32554,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								format(string, sizeof(string), "%s Лишил вас Лицензии на Оружие.", sendername);
 								SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 								PlayerInfo[giveplayerid][pGunLic] = 0;
+								new query[43 - 2 + 10];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`gunlic`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+								mysql_query(mysql_connection, query, false);
 							} else {
 								error(playerid, " Этот игрок не возле Вас.");
 							}
@@ -32869,6 +32591,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								format(string, sizeof(string), "%s Лишил вас Лицензии на водный транспорт.", sendername);
 								SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 								PlayerInfo[giveplayerid][pBoatLic] = 0;
+								new query[44 - 2 + 10];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`boatlic`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+								mysql_query(mysql_connection, query, false);
 							} else {
 								error(playerid, " Этот игрок не возле Вас.");
 							}
@@ -32948,6 +32673,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 								PlayerInfo[playerid][pTkDrugs] += PlayerInfo[giveplayerid][pDrugs];
 								PlayerInfo[giveplayerid][pDrugs] = 0;
+								new query[45 - (2 * 2) + (10 * 2)];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+								mysql_query(mysql_connection, query, false);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`tkdrugs`='%i'where`id`='%i'", PlayerInfo[playerid][pTkDrugs], PlayerInfo[playerid][pID]);
+								mysql_query(mysql_connection, query, false);
 							} else {
 								error(playerid, " Этот игрок не возле Вас.");
 							}
@@ -32988,6 +32718,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 								PlayerInfo[playerid][pTkMats] += PlayerInfo[giveplayerid][pMats];
 								PlayerInfo[giveplayerid][pMats] = 0;
+								new query[44 - (2 * 2) + (10 * 2)];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`tkmats`='%i'where`id`='%i'", PlayerInfo[playerid][pTkMats], PlayerInfo[playerid][pID]);
+								mysql_query(mysql_connection, query, false);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+								mysql_query(mysql_connection, query, false);
 							} else {
 								error(playerid, " Этот игрок не возле Вас.");
 							}
@@ -33196,7 +32931,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 
 	if (strcmp(cmd, "/untie", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
-			if (IsAMember(playerid) || PlayerInfo[playerid][pFMember] < 255) {
+			if (IsAMember(playerid)) {
 				if (PlayerInfo[playerid][pRank] < 3 && PlayerInfo[playerid][pLeader] < 1) {
 					error(playerid, " Вы не можете развязать игрока, вам нужен 3 ранг.");
 					return true;
@@ -33256,7 +32991,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					format(string, sizeof(string), "Вы выполнили работу и заработали %d$.", TransportMoney[playerid]);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 					GivePlayerBablo(playerid, TransportMoney[playerid]);
-					ConsumingMoney[playerid] = 1;
 					TransportValue[playerid] = 0;
 					TransportMoney[playerid] = 0;
 					Delete3DTextLabel(fare3dtext);
@@ -34311,6 +34045,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						GivePlayerBablo(playerid, -price);
 						MatsHolding[playerid] += moneys;
 						SetPVarInt(playerid, "Matu", gettime() + 120);
+						new query[42 - (2 * 2) + (10 * 2)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 					} else {
 						format(string, sizeof(string), "{FF0000}[Ошибка]{FFFFFF} : У вас нет %d$.", price);
 						SendClientMessage(playerid, COLOR_RED, string);
@@ -34332,6 +34069,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						PlayerInfo[playerid][pGunSkill]++;
 						MatsHolding[playerid] = 0;
 						SetPVarInt(playerid, "Matu", gettime() + 120);
+						new query[58 - (2 * 3) + (10 * 3)];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i',`gunskill`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pGunSkill], PlayerInfo[playerid][pID]);
+						mysql_query(mysql_connection, query, false);
 					} else {
 						error(playerid, " У вас нет пакетов для фабрики.");
 					}
@@ -34385,8 +34125,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 23;
 						price[playerid] = 100;
 						ammo[playerid] = 50;
-						PlayerInfo[giveplayerid][pGun2] = 23;
-						PlayerInfo[giveplayerid][pAmmo2] = 50;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34395,8 +34133,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 24;
 						price[playerid] = 150;
 						ammo[playerid] = 50;
-						PlayerInfo[giveplayerid][pGun2] = 24;
-						PlayerInfo[giveplayerid][pAmmo2] = 50;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34405,8 +34141,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 29;
 						price[playerid] = 200;
 						ammo[playerid] = 200;
-						PlayerInfo[giveplayerid][pGun2] = 29;
-						PlayerInfo[giveplayerid][pAmmo2] = 200;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34415,8 +34149,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 25;
 						price[playerid] = 200;
 						ammo[playerid] = 50;
-						PlayerInfo[giveplayerid][pGun2] = 25;
-						PlayerInfo[giveplayerid][pAmmo2] = 50;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34425,8 +34157,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 30;
 						price[playerid] = 600;
 						ammo[playerid] = 250;
-						PlayerInfo[giveplayerid][pGun2] = 30;
-						PlayerInfo[giveplayerid][pAmmo2] = 250;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34435,8 +34165,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 31;
 						price[playerid] = 600;
 						ammo[playerid] = 250;
-						PlayerInfo[giveplayerid][pGun2] = 31;
-						PlayerInfo[giveplayerid][pAmmo2] = 250;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34445,8 +34173,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						weapon[playerid] = 33;
 						price[playerid] = 600;
 						ammo[playerid] = 50;
-						PlayerInfo[giveplayerid][pGun2] = 33;
-						PlayerInfo[giveplayerid][pAmmo2] = 50;
 					} else {
 						error(playerid, "  Не хватает материалов для изготовления этого оружия.");
 					}
@@ -34459,7 +34185,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						new mats = price[playerid] / 100;
 						price[playerid] -= (mats) * (skill);
 					}
-					ConsumingMoney[playerid] = 1;
 					GetPlayerName(giveplayerid, giveplayer, sizeof(giveplayer));
 					GetPlayerName(playerid, sendername, sizeof(sendername));
 					format(string, sizeof(string), " Вы дали %s %s с %d боеприпасами, из %d Материалов.", giveplayer, x_weapon, ammo[playerid], price[playerid]);
@@ -34482,6 +34207,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					} else if (PlayerInfo[playerid][pGunSkill] == 400) {
 						SendClientMessage(playerid, COLOR_YELLOW, "Ваш скилл продовца оружия 5 уровня(максимальный).");
 					}
+					new query[58 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i',`gunskill`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pGunSkill], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					error(playerid, " Игрок слишком далеко");
 				}
@@ -34563,6 +34291,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 					GivePlayerBablo(playerid, -price);
 					PlayerInfo[playerid][pDrugs] = ammount;
+					new query[55 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`drugs`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					SendClientMessage(playerid, COLOR_WHITE, "У вас недостаточно денег.");
 				}
@@ -34578,6 +34309,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, "Вы наполнили свою канистру на 20% топлива за 500$.");
 				PlayerInfo[playerid][pFuel] = 20;
 				GivePlayerBablo(playerid, -500);
+				new query[54 - (2 * 3) + (10 * 2) + 2];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fuel`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pFuel], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			}
 		}
 		return true;
@@ -34627,6 +34361,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, "Вы заправили свою машину на 20% из своей канистры.");
 					Gas[gLastCar[playerid]] += 20;
 					PlayerInfo[playerid][pFuel] = 0;
+					new query[41 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`fuel`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					error(playerid, " У тебя в машине еще достаточно бензина.");
 				}
@@ -34970,6 +34707,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					} else if (PlayerInfo[playerid][pDetSkill] == 400) {
 						SendClientMessage(playerid, COLOR_YELLOW, "Твой скилл Детектива достиг 5 Уровня.");
 					}
+					new query[46 - (2 * 2) + (10 * 2)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`detskill`='%i'where`id`='%i'", PlayerInfo[playerid][pDetSkill], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			} else {
 				error(playerid, " Неправильный Ник/ID.");
@@ -35102,6 +34842,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								PlayerInfo[CarOffer[playerid]][pPayCheck] += CarPrice[playerid];
 								GivePlayerBablo(playerid, -CarPrice[playerid]);
 								RemovePlayerFromVehicle(CarOffer[playerid]);
+								new query[62 - (2 * 3) + (10 * 2) + 4];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`paycheck`='%i',`carskill`='%i'where`id`='%i'", PlayerInfo[CarOffer[playerid]][pPayCheck], PlayerInfo[CarOffer[playerid]][pCarSkill], PlayerInfo[CarOffer[playerid]][pID]);
+								mysql_query(mysql_connection, query, false);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+								mysql_query(mysql_connection, query, false);
 								CarCalls[playerid] = points;
 								CarOffer[playerid] = 999;
 								CarPrice[playerid] = 0;
@@ -35155,11 +34900,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				DestroyVehicle(hCar[house]);
 				hCar[house] = CreateVehicle(HouseInfo[house][hVec], HouseCarSpawns[house][0], HouseCarSpawns[house][1], HouseCarSpawns[house][2], HouseCarSpawns[house][3], HouseInfo[house][hVcol1], HouseInfo[house][hVcol2], 60000);
 				strmid(HouseInfo[house][hOwner], sendername, 0, strlen(sendername), 255);
-				ConsumingMoney[ididpl] = 1;
-				AntiMoney[ididpl] = AntiMoney[ididpl] + moneyy;
 				GivePlayerBablo(ididpl, moneyy);
-				ConsumingMoney[playerid] = 1;
-				AntiMoney[playerid] = AntiMoney[playerid] - moneyy;
 				GivePlayerBablo(playerid, -moneyy);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				format(string, sizeof(string), "~w~Congratulations~n~ You have sold your property for ~n~~g~%d$", HouseInfo[house][hValue]);
@@ -35168,6 +34909,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				PlayerInfo[ididpl][pPhousekey] = 0;
 				new strin[256];
 				format(strin, sizeof(strin), "ID: %d\nВладелец: %s", house, HouseInfo[house][hOwner]);
+				new query[59 - (2 * 2) + (10 * 2)];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`phousekey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pPhousekey], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`phousekey`='0',`cash`='%i'where`id`='%i'", PlayerInfo[ididpl][pCash], PlayerInfo[ididpl][pID]);
+				mysql_query(mysql_connection, query, false);
 				OnPropUpdate();
 				UpdateHouse(house);
 				format(string, sizeof(string), "");
@@ -35196,11 +34942,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				GetPlayerName(playerid, sendername, sizeof(sendername));
 				GetPlayerName(ididp, giveplayer, sizeof(giveplayer));
 				strmid(FlatsInfo[flat][fOwner], sendername, 0, strlen(sendername), 255);
-				ConsumingMoney[ididp] = 1;
-				AntiMoney[ididp] = AntiMoney[ididp] + money;
 				GivePlayerBablo(ididp, money);
-				ConsumingMoney[playerid] = 1;
-				AntiMoney[playerid] = AntiMoney[playerid] - money;
 				GivePlayerBablo(playerid, -money);
 				PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
 				format(string, sizeof(string), "~w~Congratulations~n~ You have sold your property for ~n~~g~%d$", FlatsInfo[flat][fValue]);
@@ -35215,6 +34957,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 				format(string, sizeof(string), "");
 				SendClientMessage(ididp, COLOR_LIGHTBLUE, string);
+				new query[57 - (2 * 3) + 4 + 10 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flatkey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pFlatKey], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`flatkey`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[ididp][pFlatKey], PlayerInfo[ididp][pCash], PlayerInfo[ididp][pID]);
+				mysql_query(mysql_connection, query, false);
 				prodhousef[playerid] = -1;
 				prodidf[playerid] = -1;
 				prodmoneyf[playerid] = -1;
@@ -35232,6 +34979,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							ClearMarriage(DivorceOffer[playerid]);
 							PlayerInfo[playerid][pPhousekey] = 0;
 							PlayerInfo[playerid][pPbiskey] = 255;
+							new query[69 - (2 * 1) + (10 * 1)];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`=default,`phousekey`=default where`id`='%i'", PlayerInfo[playerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						} else {
 							error(playerid, " Игрок, который послал вам документы о разводе, не рядом с вами.");
 						}
@@ -35300,7 +35050,7 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				if (TicketOffer[playerid] < 999) {
 					if (IsPlayerConnected(TicketOffer[playerid])) {
 						if (ProxDetectorS(5.0, playerid, TicketOffer[playerid])) {
-							if (CurrentMoney[playerid] < 1) {
+							if (PlayerInfo[playerid][pCash] < 1) {
 								SendClientMessage(playerid, COLOR_RED, " У Вас нет с собой необходимой суммы.");
 								return true;
 							}
@@ -35312,10 +35062,15 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							SendClientMessage(TicketOffer[playerid], COLOR_LIGHTBLUE, string);
 							GivePlayerBablo(playerid, -TicketMoney[playerid]);
 							GivePlayerBablo(TicketOffer[playerid], TicketMoney[playerid]);
+							SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
+							new query[55 - (2 * 2) + 10 + 10];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+							mysql_query(mysql_connection, query, false);
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[TicketOffer[playerid]][pCash], PlayerInfo[TicketOffer[playerid]][pID]);
+							mysql_query(mysql_connection, query, false);
 							TicketOffer[playerid] = 999;
 							TicketMoney[playerid] = 0;
 							PlayerInfo[playerid][pWanted] = 0;
-							SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
 						} else {
 							error(playerid, " Поблизости нет Полицейских.");
 						}
@@ -35487,6 +35242,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							if (Gas[car] < 110) {
 								Gas[car] += fuel;
 							}
+							new query[63 - (2 * 3) + (10 * 2) + 4];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`paycheck`='%i',`mechskill`='%i'where`id`='%i'", PlayerInfo[RefillOffer[playerid]][pPayCheck], PlayerInfo[RefillOffer[playerid]][pMechSkill], PlayerInfo[RefillOffer[playerid]][pID]);
+							mysql_query(mysql_connection, query, false);
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+							mysql_query(mysql_connection, query, false);
 							RefillOffer[playerid] = 999;
 							RefillPrice[playerid] = 0;
 							SetPVarInt(playerid, "RefillOtkat", gettime() + 120);
@@ -35610,6 +35370,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								} else if (PlayerInfo[DrugOffer[playerid]][pDrugsSkill] == 400) {
 									SendClientMessage(DrugOffer[playerid], COLOR_YELLOW, "Ваш Навык Торговца наркотиками достиг 5 Уровня.");
 								}
+								new query[77 - (2 * 4) + (10 * 3) + 4];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`paycheck`='%i',`drugsskill`='%i',`drugs`='%i'where`id`='%i'", PlayerInfo[DrugOffer[playerid]][pPayCheck], PlayerInfo[DrugOffer[playerid]][pDrugsSkill], PlayerInfo[DrugOffer[playerid]][pDrugs], PlayerInfo[DrugOffer[playerid]][pID]);
+								mysql_query(mysql_connection, query, false);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i',`drugs`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pDrugs], PlayerInfo[playerid][pID]);
+								mysql_query(mysql_connection, query, false);
 								DrugOffer[playerid] = 999;
 								DrugPrice[playerid] = 0;
 								DrugGram[playerid] = 0;
@@ -35650,6 +35415,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							} else if (PlayerInfo[GunOffer[playerid]][pGunSkill] == 500) {
 								SendClientMessage(GunOffer[playerid], COLOR_YELLOW, "Ваш скилл Торговца Оружием достиг 5 Уровня.");
 							}
+							new query[58 - (2 * 3) + (10 * 3)];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`mats`='%i',`gunskill`='%i'where`id`='%i'", PlayerInfo[playerid][pMats], PlayerInfo[playerid][pGunSkill], PlayerInfo[playerid][pID]);
+							mysql_query(mysql_connection, query, false);
 							GunOffer[playerid] = 999;
 							GunDPrice[playerid] = 0;
 							GunType[playerid] = 0;
@@ -35696,6 +35464,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							SetPlayerPos(playerid, 246.8119, 68.0246, 1003.6406);
 							PlayerInfo[playerid][pZapret] = 0;
 							SetPlayerInterior(playerid, 6);
+							new query[74 - (2 * 4) + (10 * 3) + 4];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0',`cash`='%i',`zapret`='0'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+							mysql_query(mysql_connection, query, false);
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i',`lawskill`='%i',`paycheck`='%i'where`id`='%i'", PlayerInfo[CarOffer[playerid]][pCash], PlayerInfo[CarOffer[playerid]][pLawSkill], PlayerInfo[CarOffer[playerid]][pPayCheck], PlayerInfo[CarOffer[playerid]][pID]);
+							mysql_query(mysql_connection, query, false);
 							CarOffer[playerid] = 999;
 							CarPrice[playerid] = 0;
 						} else {
@@ -35731,6 +35504,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 								}
 								PlayerInfo[RepairOffer[playerid]][pPayCheck] += RepairPrice[playerid];
 								GivePlayerBablo(playerid, -RepairPrice[playerid]);
+								new query[63 - (2 * 3) + (10 * 2) + 4];
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`paycheck`='%i',`mechskill`='%i'where`id`='%i'", PlayerInfo[RepairOffer[playerid]][pPayCheck], PlayerInfo[RepairOffer[playerid]][pMechSkill], PlayerInfo[RepairOffer[playerid]][pID]);
+								mysql_query(mysql_connection, query, false);
+								mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+								mysql_query(mysql_connection, query, false);
 								RepairOffer[playerid] = 999;
 								RepairPrice[playerid] = 0;
 								SetPVarInt(playerid, "RepairOtkat", gettime() + 120);
@@ -36179,6 +35957,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							} else if (PlayerInfo[playerid][pNewsSkill] == 400) {
 								SendClientMessage(playerid, COLOR_YELLOW, " Ваш навык Репортёра достиг 5 Уровня.");
 							}
+							new query[47 - (2 * 2) + (10 * 2)];
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`newsskill`='%i'where`id`='%i'", PlayerInfo[playerid][pNewsSkill], PlayerInfo[playerid][pID]);
+							mysql_query(mysql_connection, query, false);
 						} else {
 							error(playerid, " Для проведения эфира пересядьте в специально оборудованный фургон/вертолет.");
 						}
@@ -36415,12 +36196,10 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						if (playa != INVALID_PLAYER_ID) {
 							if (playa != playerid) {
 								if (IsPlayerInVehicle(playa, test)) {
-									if (PlayerInfo[playerid][pForce] <= PlayerInfo[playa][pForce]) {
-										new rnd = random(10);
-										if (rnd > 5) {
-											error(playerid, " У вас не хватило сил, чтобы выкинуть игрока из машины.");
-											return true;
-										}
+									new rnd = random(10);
+									if (rnd > 5) {
+										error(playerid, " У вас не хватило сил, чтобы выкинуть игрока из машины.");
+										return true;
 									}
 									new PName[MAX_PLAYER_NAME];
 									GetPlayerName(playerid, PName, sizeof(PName));
@@ -36559,6 +36338,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				if (IsPlayerInRangeOfPoint(playerid, 2, 414.1195, 2536.9023, 10.0000)) {
 					PlayerInfo[playerid][pWanted] = 0;
 					SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
+					new query[43 - 2 + 10];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0'where`id`='%i'", PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				} else {
 					SendClientMessage(playerid, COLOR_WHITE, "Снять уровень розыска можно в убежище");
 				}
@@ -36622,6 +36404,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					}
 				}
 				SetPlayerWantedLevel(playerid, PlayerInfo[playerid][pWanted]);
+				new query[56 - (2 * 3) + 1 + 10 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='%i',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pWanted], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+				mysql_query(mysql_connection, query, false);
 			} else {
 				SendClientMessage(playerid, COLOR_WHITE, "Снять уровень розыска можно в участке LSPD");
 			}
@@ -36660,6 +36445,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 						SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
 						PlayerInfo[giveplayerid][pWanted] = 0;
 						SetPlayerWantedLevel(giveplayerid, PlayerInfo[giveplayerid][pWanted]);
+						new query[43 - 2 + 10];
+						mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+						mysql_query(mysql_connection, query, false);
 						ClearCrime(giveplayerid);
 						if (gTeam[giveplayerid] == 4) {
 							gTeam[giveplayerid] = 3;
@@ -36810,6 +36598,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SafeResetPlayerWeapons(giveplayerid);
 				PlayerInfo[giveplayerid][pWanted] = 0;
 				SetPlayerWantedLevel(giveplayerid, PlayerInfo[giveplayerid][pWanted]);
+				new query[43 - 2 + 10];
+				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`wanted`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
+				mysql_query(mysql_connection, query, false);
 				PlayerInfo[giveplayerid][pJailed] = 1;
 				SetPlayerSkin(giveplayerid, 268);
 				PlayerInfo[giveplayerid][pJailTime] = moneys * 60;
@@ -36886,6 +36677,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 					format(string, sizeof(string), "* Вы заключили контракт на %s, за %d$.", giveplayer, moneys);
 					SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 					PlayerPlaySound(playerid, 1052, 0.0, 0.0, 0.0);
+					new query[59 - (2 * 3) + (10 * 3)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`headvalue`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pHeadValue], PlayerInfo[giveplayerid][pID]);
+					mysql_query(mysql_connection, query, false);
 				}
 			} else {
 				format(string, sizeof(string), "**{FF0000}[Ошибка]{FFFFFF} : %d Игрок неактивен.", giveplayerid);
@@ -38595,6 +38391,11 @@ public OnPlayerText(playerid, text[]) {
 					PlayerInfo[ProposedTo[playerid]][pPhousekey] = PlayerInfo[playerid][pPhousekey];
 					PlayerInfo[ProposedTo[playerid]][pPbiskey] = PlayerInfo[playerid][pPbiskey];
 					PlayerInfo[ProposedTo[playerid]][pLocal] = PlayerInfo[playerid][pLocal];
+					new query[94 - (2 * 5) + (10 * 5)];
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`pbiskey`='%i',`phousekey`='%i',`married`='%i',`marriedto`='%e'where`id`='%i'", PlayerInfo[ProposedTo[playerid]][pPbiskey], PlayerInfo[ProposedTo[playerid]][pPhousekey], PlayerInfo[ProposedTo[playerid]][pMarried], PlayerInfo[ProposedTo[playerid]][pMarriedTo], PlayerInfo[ProposedTo[playerid]][pID]);
+					mysql_query(mysql_connection, query, false);
+					mysql_format(mysql_connection, query, sizeof(query), "update`users`set`married`='%i',`marriedto`='%e',`cash`='%i'where`id`='%i'", PlayerInfo[playerid][pMarried], PlayerInfo[playerid][pMarriedTo], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pID]);
+					mysql_query(mysql_connection, query, false);
 					ProposedTo[playerid] = 999;
 					MarriageCeremoney[playerid] = 0;
 					return true;
@@ -39150,7 +38951,7 @@ GetBan(playerid) {
 			format(string, sizeof(string), "Дата бана: %s\nДата Разбана: %s\nЗабанил: %s\nПричина бана: %s\n",
 				date("%dd.%mm.%yyyy в %hh:%ii:%ss", bantime),
 				date("%dd.%mm.%yyyy в %hh:%ii:%ss", unbantime), PlayerBan, reason);
-			ShowPlayerDialog(playerid, DIALOGUNBAN, 0, "Вы забанены", string, "Выйти", "");
+			ShowPlayerDialog(playerid, -1, 0, "Вы забанены", string, "Выйти", "");
 			return Kick(playerid);
 		}
 	} else {
@@ -39614,5 +39415,404 @@ WriteLog(const string[], const filename[]) {
 	hFile = fopen(filename, io_append);
 	fwriteRUS(hFile, string);
 	fclose(hFile);
+	return true;
+}
+
+// процедуры и функции
+
+forward __kickPlayer(playerid);
+public __kickPlayer(playerid) {
+	Kick(playerid);
+	return true;
+}
+
+kickPlayer(playerid, time = DEFAULT_TIME_FOR_KICK) {
+	SetTimerEx("__kickPlayer", time, false, "i", playerid);
+}
+
+loadUserData(playerid) {
+	new query[35 - 2 + MAX_PLAYER_NAME];
+	mysql_format(mysql_connection, query, sizeof(query), "select*from`users`where`name`='%e'", PlayerInfo[playerid][pName]);
+	new Cache:cache_users = mysql_query(mysql_connection, query, true);
+	new temp_rows = cache_get_row_count(mysql_connection);
+	if(temp_rows) {
+		PlayerInfo[playerid][pID] = cache_get_field_content_int(0, "id", mysql_connection);
+		PlayerInfo[playerid][pLevel] = cache_get_field_content_int(0, "level", mysql_connection);
+		PlayerInfo[playerid][pBlockeds] = cache_get_field_content_int(0, "blockeds", mysql_connection);
+		PlayerInfo[playerid][pWarns] = cache_get_field_content_int(0, "warns", mysql_connection);
+		PlayerInfo[playerid][pAdmin] = cache_get_field_content_int(0, "admin", mysql_connection);
+		PlayerInfo[playerid][pWanted] = cache_get_field_content_int(0, "wanted", mysql_connection);
+		PlayerInfo[playerid][pFlatKey] = cache_get_field_content_int(0, "flatkey", mysql_connection);
+		PlayerInfo[playerid][pDonateRank] = cache_get_field_content_int(0, "donaterank", mysql_connection);
+		PlayerInfo[playerid][gPupgrade] = cache_get_field_content_int(0, "gpupgrade", mysql_connection);
+		PlayerInfo[playerid][pConnectTime] = cache_get_field_content_int(0, "connecttime", mysql_connection);
+		PlayerInfo[playerid][pSex] = cache_get_field_content_int(0, "sex", mysql_connection);
+		PlayerInfo[playerid][pOrigin] = cache_get_field_content_int(0, "origin", mysql_connection);
+		PlayerInfo[playerid][pPbiskey] = cache_get_field_content_int(0, "pbiskey", mysql_connection);
+		PlayerInfo[playerid][pMuted] = cache_get_field_content_int(0, "muted", mysql_connection);
+		PlayerInfo[playerid][pExp] = cache_get_field_content_int(0, "exp", mysql_connection);
+		PlayerInfo[playerid][pCash] = cache_get_field_content_int(0, "cash", mysql_connection);
+		PlayerInfo[playerid][pAccount] = cache_get_field_content_int(0, "account", mysql_connection);
+		PlayerInfo[playerid][pCrimes] = cache_get_field_content_int(0, "crimes", mysql_connection);
+		PlayerInfo[playerid][pKills] = cache_get_field_content_int(0, "kills", mysql_connection);
+		PlayerInfo[playerid][pDeaths] = cache_get_field_content_int(0, "deaths", mysql_connection);
+		PlayerInfo[playerid][pWantedDeaths] = cache_get_field_content_int(0, "wanteddeaths", mysql_connection);
+		PlayerInfo[playerid][pLottoNr] = cache_get_field_content_int(0, "lottonr", mysql_connection);
+		PlayerInfo[playerid][pFishes] = cache_get_field_content_int(0, "fishes", mysql_connection);
+		PlayerInfo[playerid][pBiggestFish] = cache_get_field_content_int(0, "biggestfish", mysql_connection);
+		PlayerInfo[playerid][pJob] = cache_get_field_content_int(0, "job", mysql_connection);
+		PlayerInfo[playerid][pPayCheck] = cache_get_field_content_int(0, "paycheck", mysql_connection);
+		PlayerInfo[playerid][pHeadValue] = cache_get_field_content_int(0, "headvalue", mysql_connection);
+		PlayerInfo[playerid][pJailed] = cache_get_field_content_int(0, "jailed", mysql_connection);
+		PlayerInfo[playerid][pZapret] = cache_get_field_content_int(0, "zapret", mysql_connection);
+		PlayerInfo[playerid][pJailTime] = cache_get_field_content_int(0, "jailtime", mysql_connection);
+		PlayerInfo[playerid][pVorSkill] = cache_get_field_content_int(0, "vorskill", mysql_connection);
+		PlayerInfo[playerid][pMats] = cache_get_field_content_int(0, "mats", mysql_connection);
+		PlayerInfo[playerid][pDrugs] = cache_get_field_content_int(0, "drugs", mysql_connection);
+		PlayerInfo[playerid][ptDrugs] = cache_get_field_content_int(0, "ptdrugs", mysql_connection);
+		PlayerInfo[playerid][ptMats] = cache_get_field_content_int(0, "ptmats", mysql_connection);
+		PlayerInfo[playerid][pLeader] = cache_get_field_content_int(0, "leader", mysql_connection);
+		PlayerInfo[playerid][pMember] = cache_get_field_content_int(0, "member", mysql_connection);
+		PlayerInfo[playerid][pRank] = cache_get_field_content_int(0, "rank", mysql_connection);
+		PlayerInfo[playerid][pChar] = cache_get_field_content_int(0, "char", mysql_connection);
+		PlayerInfo[playerid][pDetSkill] = cache_get_field_content_int(0, "detskill", mysql_connection);
+		PlayerInfo[playerid][pDrochSkill] = cache_get_field_content_int(0, "drochskill", mysql_connection);
+		PlayerInfo[playerid][pLawSkill] = cache_get_field_content_int(0, "lawskill", mysql_connection);
+		PlayerInfo[playerid][pMechSkill] = cache_get_field_content_int(0, "mechskill", mysql_connection);
+		PlayerInfo[playerid][pGunSkill] = cache_get_field_content_int(0, "gunskill", mysql_connection);
+		PlayerInfo[playerid][pDalnoboiSkill] = cache_get_field_content_int(0, "dalnoboiskill", mysql_connection);
+		PlayerInfo[playerid][pJackSkill] = cache_get_field_content_int(0, "jackskill", mysql_connection);
+		PlayerInfo[playerid][pCarSkill] = cache_get_field_content_int(0, "carskill", mysql_connection);
+		PlayerInfo[playerid][pNewsSkill] = cache_get_field_content_int(0, "newsskill", mysql_connection);
+		PlayerInfo[playerid][pDrugsSkill] = cache_get_field_content_int(0, "drugsskill", mysql_connection);
+		PlayerInfo[playerid][pFishSkill] = cache_get_field_content_int(0, "fishskill", mysql_connection);
+		PlayerInfo[playerid][pSHealth] = cache_get_field_content_float(0, "shealth", mysql_connection);
+		PlayerInfo[playerid][pInt] = cache_get_field_content_int(0, "int", mysql_connection);
+		PlayerInfo[playerid][pLocal] = cache_get_field_content_int(0, "local", mysql_connection);
+		PlayerInfo[playerid][pTeam] = cache_get_field_content_int(0, "team", mysql_connection);
+		PlayerInfo[playerid][pPhousekey] = cache_get_field_content_int(0, "phousekey", mysql_connection);
+		PlayerInfo[playerid][pCarLic] = cache_get_field_content_int(0, "carlic", mysql_connection);
+		PlayerInfo[playerid][pMotoLic] = cache_get_field_content_int(0, "motolic", mysql_connection);
+		PlayerInfo[playerid][pBancka] = cache_get_field_content_int(0, "bancka", mysql_connection);
+		PlayerInfo[playerid][pFBancka] = cache_get_field_content_int(0, "fbancka", mysql_connection);
+		PlayerInfo[playerid][pFlyLic] = cache_get_field_content_int(0, "flylic", mysql_connection);
+		PlayerInfo[playerid][pBoatLic] = cache_get_field_content_int(0, "boatlic", mysql_connection);
+		PlayerInfo[playerid][pFishLic] = cache_get_field_content_int(0, "fishlic", mysql_connection);
+		PlayerInfo[playerid][pGunLic] = cache_get_field_content_int(0, "gunlic", mysql_connection);
+		PlayerInfo[playerid][pMusorTime] = cache_get_field_content_int(0, "musortime", mysql_connection);
+		PlayerInfo[playerid][pCleanTime] = cache_get_field_content_int(0, "cleantime", mysql_connection);
+		PlayerInfo[playerid][pTruckTime] = cache_get_field_content_int(0, "trucktime", mysql_connection);
+		PlayerInfo[playerid][pPayDayHad] = cache_get_field_content_int(0, "paydayhad", mysql_connection);
+		PlayerInfo[playerid][pPayDay] = cache_get_field_content_int(0, "payday", mysql_connection);
+		PlayerInfo[playerid][pMiserPerk] = cache_get_field_content_int(0, "miserperk", mysql_connection);
+		PlayerInfo[playerid][pPainPerk] = cache_get_field_content_int(0, "painperk", mysql_connection);
+		PlayerInfo[playerid][pTraderPerk] = cache_get_field_content_int(0, "traderperk", mysql_connection);
+		PlayerInfo[playerid][pTut] = cache_get_field_content_int(0, "tut", mysql_connection);
+		PlayerInfo[playerid][pFuel] = cache_get_field_content_int(0, "fuel", mysql_connection);
+		PlayerInfo[playerid][pMarried] = cache_get_field_content_int(0, "married", mysql_connection);
+		cache_get_field_content(0, "marriedto", PlayerInfo[playerid][pMarriedTo], mysql_connection, MAX_PLAYER_NAME);
+		PlayerInfo[playerid][pCard] = cache_get_field_content_int(0, "card", mysql_connection);
+		PlayerInfo[playerid][pClock] = cache_get_field_content_int(0, "clock", mysql_connection);
+		PlayerInfo[playerid][pDice] = cache_get_field_content_int(0, "dice", mysql_connection);
+		PlayerInfo[playerid][pMutedTime] = cache_get_field_content_int(0, "mutedtime", mysql_connection);
+		PlayerInfo[playerid][pRope] = cache_get_field_content_int(0, "rope", mysql_connection);
+		PlayerInfo[playerid][pHelper] = cache_get_field_content_int(0, "helper", mysql_connection);
+		PlayerInfo[playerid][pRobTime] = cache_get_field_content_int(0, "robtime", mysql_connection);
+		PlayerInfo[playerid][pHmed] = cache_get_field_content_int(0, "hmed", mysql_connection);
+		PlayerInfo[playerid][pTkMats] = cache_get_field_content_int(0, "tkmats", mysql_connection);
+		PlayerInfo[playerid][pTkDrugs] = cache_get_field_content_int(0, "tkdrugs", mysql_connection);
+		PlayerInfo[playerid][pGromilaSkill] = cache_get_field_content_int(0, "gromilaskill", mysql_connection);
+		PlayerInfo[playerid][pRobKey] = cache_get_field_content_int(0, "robkey", mysql_connection);
+		cache_get_field_content(0, "otherpass", PlayerInfo[playerid][pOtherPass], mysql_connection, MAX_OTHER_PASS_LEN);
+		PlayerInfo[playerid][pFs] = cache_get_field_content_int(0, "fs", mysql_connection);
+		cache_delete(cache_users, mysql_connection);
+	}
+}
+
+// диалоги
+
+// диалоги регистрации
+
+DialogCreate:Register(playerid) {
+	static const fmt_str[]="\n{ffffff}Добро пожаловать на сервер YourWorld RPG\n\nЭтот аккаунт {FF0000}не зарегистрирован{ffffff}!\n\nЛогин: {e3be88}%s\n{ffffff}Придумайте себе пароль:\n\n";
+	new string[sizeof(fmt_str) - 2 + MAX_PLAYER_NAME];
+	format(string, sizeof(string), fmt_str, PlayerInfo[playerid][pName]);
+	Dialog_Open(playerid, Dialog:Register, DIALOG_STYLE_INPUT, "Регистрация", string, "Выбрать", "Отмена");
+}
+
+DialogResponse:Register(playerid, response, listitem, inputtext[]) {
+	if(response) {
+		new temp_password[MAX_PASSWORD_LEN];
+		if(!sscanf(inputtext, "s[128]", temp_password)) {
+			if(Regex_Check(temp_password, regexPassword)) {
+				new query[60 - (2 * 2) + MAX_PLAYER_NAME + MAX_PASSWORD_LEN];
+				mysql_format(mysql_connection, query, sizeof(query), "insert into`users`(`name`,`password`)values('%e',MD5('%e'))", PlayerInfo[playerid][pName], temp_password);
+				new Cache:cache_users = mysql_query(mysql_connection, query, true);
+				new temp_rows = cache_affected_rows(mysql_connection);
+				if(temp_rows) {
+					PlayerInfo[playerid][pID] = cache_insert_id(mysql_connection);
+					cache_delete(cache_users, mysql_connection);
+					loadUserData(playerid);
+					Dialog_Show(playerid, Dialog:SelectGender);
+				}
+				else {
+					Dialog_Message(playerid, "Системная ошибка", "\n{ffffff}Во время выполнения запроса произошла ошибка!\n\n", "Закрыть");
+					kickPlayer(playerid);
+				}
+			}
+			else {
+				error(playerid, "Найдены недопустимые символы в пароле!");
+				Dialog_Show(playerid, Dialog:Register);
+			}
+		}
+		else {
+			Dialog_Show(playerid, Dialog:Register);
+		}
+	}
+	else {
+		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были кикнуты сервером за отказ от регистрации!");
+		kickPlayer(playerid);
+	}
+	return true;
+}
+
+DialogCreate:SelectGender(playerid) {
+	Dialog_Open(playerid, Dialog:SelectGender, DIALOG_STYLE_MSGBOX, "Пол персонажа", "\n{ffdb58}Укажите пол вашего персонажа\n\n", "Мужской", "Женский");
+}
+
+DialogResponse:SelectGender(playerid, response, listitem, inputtext[]) {
+	PlayerInfo[playerid][pSex] = response;
+	new query[41 - (2 * 2) + 1 + 10];
+	mysql_format(mysql_connection, query, sizeof(query), "update`users`set`sex`='%i'where`id`='%i'", PlayerInfo[playerid][pSex], PlayerInfo[playerid][pID]);
+	mysql_query(mysql_connection, query, false);
+	Dialog_Show(playerid, Dialog:SelectSpawnCity);
+	return true;
+}
+
+DialogCreate:SelectSpawnCity(playerid) {
+	Dialog_Open(playerid, Dialog:SelectSpawnCity, DIALOG_STYLE_LIST, "Выбор города для спавна", "Los-Santos\nSan-Fierro\nLas-Venturas", "Выбрать", "Отмена");
+}
+
+DialogResponse:SelectSpawnCity(playerid, response, listitem, inputtext[]) {
+	if (response) {
+		PlayerInfo[playerid][pOrigin] = listitem + 1;
+		PlayerInfo[playerid][pTut] = 1;
+		new query[54 - (2 * 2) + 1 + 10];
+		mysql_format(mysql_connection, query, sizeof(query), "update`users`set`origin`='%i',`tut`='1'where`id`='%i'", PlayerInfo[playerid][pOrigin], PlayerInfo[playerid][pID]);
+		mysql_query(mysql_connection, query, true);
+		PlayerInfo[playerid][Logged] = true;
+		new string[19 - 2 + MAX_PLAYER_NAME];
+		format(string, sizeof(string), "~w~Welcome~n~~y~%s", PlayerInfo[playerid][pName]);
+		GameTextForPlayer(playerid, string, 5000, 1);
+		SendClientMessage(playerid, -1, "Добро пожаловать на сервер {ffdb58}YourWorld RPG.{ffffff} Приятной вам игры!");
+		OnPlayerCommandText(playerid, "/rules");
+		SetPlayerFightingStyle(playerid, FIGHT_STYLE_NORMAL);
+		gOoc[playerid] = 0;
+		gNews[playerid] = 0;
+		gFam[playerid] = 0;
+		TogglePlayerSpectating(playerid, false);
+		TogglePlayerControllable(playerid, true);
+		SpawnPlayer(playerid);
+		SetCameraBehindPlayer(playerid);
+	}
+	else {
+		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были кикнуты сервером за отказ от регистрации!");
+		kickPlayer(playerid);
+	}
+	return true;
+}
+
+// диалоги авторизации
+
+DialogCreate:Authorization(playerid) {
+	static const fmt_str[]="\n{ffffff}Добро пожаловать на сервер YourWorld RPG\n\nЭтот аккаунт {00C0FF}зарегистрирован{ffffff}!\n\nЛогин: {00C0FF}%s\n{ffffff}Введите пароль:";
+	new string[sizeof(fmt_str) - 2 + MAX_PLAYER_NAME];
+	format(string, sizeof(string), fmt_str, PlayerInfo[playerid][pName]);
+	Dialog_Open(playerid, Dialog:Authorization, DIALOG_STYLE_PASSWORD, "Авторизация", string, "Выбрать", "Отмена");
+}
+
+DialogResponse:Authorization(playerid, response, listitem, inputtext[]) {
+	if (response) {
+		new temp_password[MAX_PASSWORD_LEN];
+		if (!sscanf(inputtext, "s[128]", temp_password)) {
+			if (Regex_Check(temp_password, regexPassword)) {
+				new query[61 - (2 * 2) + MAX_PLAYER_NAME + MAX_PASSWORD_LEN];
+				mysql_format(mysql_connection, query, sizeof(query), "select`id`from`users`where`name`='%e'and`password`=MD5('%e')", PlayerInfo[playerid][pName], temp_password);
+				new Cache:cache_users = mysql_query(mysql_connection, query, true);
+				new temp_rows = cache_get_row_count(mysql_connection);
+				if (temp_rows) {
+					cache_delete(cache_users, mysql_connection);
+					loadUserData(playerid);
+					if (!strcmp(PlayerInfo[playerid][pOtherPass], NULL)) {
+						if (PlayerInfo[playerid][pBlockeds] >= 3) {
+							SendClientMessage(playerid, -1, "Ваш аккаунт {ff0000}заблокирован{ffffff}. Так как уже у вас 3 блокировки.");
+							kickPlayer(playerid);
+						}
+						else {
+							SendClientMessage(playerid, -1, "Добро пожаловать на сервер {ffdb58}YourWorld RPG.{ffffff} Приятной вам игры!");
+							if (PlayerInfo[playerid][pDonateRank] == 1) {
+								SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}.");
+							}
+							else if (PlayerInfo[playerid][pDonateRank] == 2) {
+								SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 2 уровня{FFFFFF}.");
+							}
+							new string[62 - 2 + 1];
+							if (PlayerInfo[playerid][pHelper] >= 1) {
+								if (PlayerInfo[playerid][pHelper] >= 1 && PlayerInfo[playerid][pHelper] <= 3) {
+									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Хелпер %d-го уровня{ffffff}.", PlayerInfo[playerid][pHelper]);
+								}
+								else if (PlayerInfo[playerid][pHelper] == 4){
+									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Хелпер{ffffff}.");
+								}
+								SendClientMessage(playerid, -1, string);
+							}
+							if (PlayerInfo[playerid][pAdmin] >= 1) {
+								if (PlayerInfo[playerid][pAdmin] >= 1 && PlayerInfo[playerid][pAdmin] <= 4) {
+									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Модератор %d-го уровня{FFFFFF}.", PlayerInfo[playerid][pAdmin]);
+								}
+								else if (PlayerInfo[playerid][pAdmin] == 5) {
+									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Модератор{FFFFFF}.");
+								}
+								else if (PlayerInfo[playerid][pAdmin] == 6) {
+									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Администратор{FFFFFF}.");
+								}
+								SendClientMessage(playerid, COLOR_WHITE, string);
+							}
+							PlayerInfo[playerid][Logged] = true;
+							if (gTeam[playerid] == 0) {
+								gTeam[playerid] = 3;
+							}
+							else {
+								gTeam[playerid] = PlayerInfo[playerid][pTeam];
+							}
+							format(string, sizeof(string), "~w~welcome back~n~~y~%s", PlayerInfo[playerid][pName]);
+							GameTextForPlayer(playerid, string, 5000, 1);
+							for (new i = GetMaxPlayers() - 1; i != -1; i--) {
+								if (PlayerInfo[playerid][Logged]) {
+									if (PlayerInfo[i][pMask]) {
+										ShowPlayerNameTagForPlayer(playerid, i, false);
+									}
+								}
+							}
+							TogglePlayerSpectating(playerid, false);
+							SpawnPlayer(playerid);
+							SetCameraBehindPlayer(playerid);
+						}
+					} 
+					else {
+						Dialog_Show(playerid, Dialog:AuthorizationSecurity);
+					}
+				}
+				else {
+					if(GetPVarInt(playerid, "authorizationAttempts") >= MAX_ATTEMPS_TO_LOGIN) {
+						SendClientMessage(playerid, COLOR_LIGHTRED, "Вы исчерпали лимит попыток для авторизации и были кикнуты сервером!");
+						kickPlayer(playerid);
+					}
+					else {
+						Dialog_Show(playerid, Dialog:Authorization);
+						error(playerid, "Вы ввели неправильный пароль к аккаунту!");
+						SetPVarInt(playerid, "authorizationAttempts", GetPVarInt(playerid, "authorizationAttempts") + 1);
+					}
+				}
+			}
+			else {
+				error(playerid, "Найдены недопустимые символы в пароле!");
+				Dialog_Show(playerid, Dialog:Authorization);
+			}
+		}
+		else{
+			Dialog_Show(playerid, Dialog:Authorization);
+		}
+	}
+	else {
+		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были кикнуты сервером за отказ от авторизации!");
+		kickPlayer(playerid);
+	}
+	return true;
+}
+
+DialogCreate:AuthorizationSecurity(playerid) {
+	Dialog_Open(playerid, Dialog:AuthorizationSecurity, DIALOG_STYLE_PASSWORD, "Авторизация", "{ffdb58}Введите ваш дополнительный пароль:", "Выбрать", "Отмена");
+}
+
+DialogResponse:AuthorizationSecurity(playerid, response, listitem, inputtext[]) {
+	if (response) {
+		new temp_password[MAX_OTHER_PASS_LEN];
+		if (!sscanf(inputtext, "s[128]", temp_password)) {
+			if (Regex_Check(temp_password, regexPassword)) {
+				if (!strcmp(PlayerInfo[playerid][pOtherPass], temp_password)) {
+					if (PlayerInfo[playerid][pBlockeds] >= 3) {
+						SendClientMessage(playerid, -1, "Ваш аккаунт {ff0000}заблокирован{ffffff}. Так как уже у вас 3 блокировки.");
+						kickPlayer(playerid);
+					}
+					else {
+						SendClientMessage(playerid, -1, "Добро пожаловать на сервер {ffdb58}YourWorld RPG.{ffffff} Приятной вам игры!");
+						if (PlayerInfo[playerid][pDonateRank] == 1) {
+							SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}.");
+						}
+						else if (PlayerInfo[playerid][pDonateRank] == 2) {
+							SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 2 уровня{FFFFFF}.");
+						}
+						new string[62 - 2 + 1];
+						if (PlayerInfo[playerid][pHelper] >= 1) {
+							if (PlayerInfo[playerid][pHelper] >= 1 && PlayerInfo[playerid][pHelper] <= 3) {
+								format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Хелпер %d-го уровня{ffffff}.", PlayerInfo[playerid][pHelper]);
+							}
+							else if (PlayerInfo[playerid][pHelper] == 4){
+								format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Хелпер{ffffff}.");
+							}
+							SendClientMessage(playerid, -1, string);
+						}
+						if (PlayerInfo[playerid][pAdmin] >= 1) {
+							if (PlayerInfo[playerid][pAdmin] >= 1 && PlayerInfo[playerid][pAdmin] <= 4) {
+								format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Модератор %d-го уровня{FFFFFF}.", PlayerInfo[playerid][pAdmin]);
+							}
+							else if (PlayerInfo[playerid][pAdmin] == 5) {
+								format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Модератор{FFFFFF}.");
+							}
+							else if (PlayerInfo[playerid][pAdmin] == 6) {
+								format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Администратор{FFFFFF}.");
+							}
+							SendClientMessage(playerid, COLOR_WHITE, string);
+						}
+						PlayerInfo[playerid][Logged] = true;
+						if (gTeam[playerid] == 0) {
+							gTeam[playerid] = 3;
+						}
+						else {
+							gTeam[playerid] = PlayerInfo[playerid][pTeam];
+						}
+						format(string, sizeof(string), "~w~welcome back~n~~y~%s", PlayerInfo[playerid][pName]);
+						GameTextForPlayer(playerid, string, 5000, 1);
+						for (new i = GetMaxPlayers() - 1; i != -1; i--) {
+							if (PlayerInfo[playerid][Logged]) {
+								if (PlayerInfo[i][pMask]) {
+									ShowPlayerNameTagForPlayer(playerid, i, false);
+								}
+							}
+						}
+						TogglePlayerSpectating(playerid, false);
+						SpawnPlayer(playerid);
+						SetCameraBehindPlayer(playerid);
+					}
+				}
+				else {
+					SendClientMessage(playerid, COLOR_LIGHTRED, "Вы ввели неправильный код безопасности и были кикнуты сервером!");
+					kickPlayer(playerid);
+				}
+			}
+			else {
+				error(playerid, "Найдены недопустимые символы в пароле!");
+				Dialog_Show(playerid, Dialog:AuthorizationSecurity);
+			}
+		}
+		else {
+			Dialog_Show(playerid, Dialog:AuthorizationSecurity);
+		}
+	}
+	else {
+		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были кикнуты сервером за отказ от авторизации!");
+		kickPlayer(playerid);
+	}
 	return true;
 }
