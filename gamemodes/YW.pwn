@@ -220,7 +220,6 @@ new PlayerInfo[MAX_PLAYERS][pInfo];
 static Regex:regexPassword;
 
 //
-new Rekl[MAX_PLAYERS];
 new Text:SM_HA[MAX_PLAYERS];
 new SpecHATimer[MAX_PLAYERS], UnfreezePlayer[MAX_PLAYERS];
 //==================================[Дерби]=====================================
@@ -377,7 +376,7 @@ new SchoolSpawn[MAX_PLAYERS], TakingLesson[MAX_PLAYERS], UsedFind[MAX_PLAYERS], 
 new MatsHolding[MAX_PLAYERS], DivorceOffer[MAX_PLAYERS], MarriageCeremoney[MAX_PLAYERS], ProposeOffer[MAX_PLAYERS], ProposedTo[MAX_PLAYERS], GotProposedBy[MAX_PLAYERS], MarryWitness[MAX_PLAYERS];
 new MarryWitnessOffer[MAX_PLAYERS], TicketOffer[MAX_PLAYERS], TicketMoney[MAX_PLAYERS], PlayerStoned[MAX_PLAYERS], BringingPaper[MAX_PLAYERS];
 new GotPaper[MAX_PLAYERS], WritingPaper[MAX_PLAYERS], WritingPaperNumber[MAX_PLAYERS], WritingLine[MAX_PLAYERS], SpawnChange[MAX_PLAYERS];
-new firstname[MAX_PLAYERS], secondname[MAX_PLAYERS], PlayerDrunk[MAX_PLAYERS], PlayerDrunkTime[MAX_PLAYERS], PlayerTazeTime[MAX_PLAYERS], FindTimePoints[MAX_PLAYERS], FindTime[MAX_PLAYERS];
+new PlayerDrunk[MAX_PLAYERS], PlayerDrunkTime[MAX_PLAYERS], PlayerTazeTime[MAX_PLAYERS], FindTimePoints[MAX_PLAYERS], FindTime[MAX_PLAYERS];
 new PaperOffer[MAX_PLAYERS], CarOffer[MAX_PLAYERS], CarPrice[MAX_PLAYERS], PlayerSpectateID[MAX_PLAYERS], PlayerSpec[MAX_PLAYERS], CarID[MAX_PLAYERS];
 new CarCalls[MAX_PLAYERS], GotHit[MAX_PLAYERS], GoChase[MAX_PLAYERS], GetChased[MAX_PLAYERS], OrderReady[MAX_PLAYERS], ConnectedToPC[MAX_PLAYERS], MedicTime[MAX_PLAYERS];
 new PlayerTied[MAX_PLAYERS], PlayerCuffed[MAX_PLAYERS], PlayerCuffedTime[MAX_PLAYERS], LiveOffer[MAX_PLAYERS], TalkingLive[MAX_PLAYERS];
@@ -2872,7 +2871,6 @@ public OnPlayerConnect(playerid) {
 		PlayerAFKtime[playerid] = 0;
 		HidePM[playerid] = 0;
 		OnWeapon[playerid] = 0;
-		Rekl[playerid] = 1;
 		ChosenSkin[playerid] = 0;
 		GettingJob[playerid] = 0;
 		ApprovedLawyer[playerid] = 0;
@@ -19069,19 +19067,6 @@ public GameModeExitFunc() {
 	GameModeExit();
 }
 
-GetInitials(playerid) {
-	if (IsPlayerConnected(playerid)) {
-		new name[MAX_PLAYER_NAME];
-		GetPlayerName(playerid, name, sizeof(name));
-		new name12[2][128];
-		split(name, name12, '_');
-		strmid(firstname[playerid], name12[0], 0, strlen(name12[0]), 255);
-		strmid(secondname[playerid], name12[1], 0, strlen(name12[1]), 255);
-		return true;
-	}
-	return false;
-}
-
 LoadStuff() {
 	new arrCoords[14][64];
 	new strFromFile2[256];
@@ -23361,37 +23346,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				return true;
 			}
 			if (PlayerInfo[playerid][pJailed] == 1 || PlayerInfo[playerid][pJailed] == 4) return error(playerid, " Вы не можете разговаривать, вы в КПЗ..");
-			new is1 = 0; // Вот антирекл
-			new r = 0;
-			while (strlen(cmdtext[is1])) {
-				if ('0' <= cmdtext[is1] <= '9') {
-					new is2 = is1 + 1;
-					new p = 0;
-					while (p == 0) {
-						if ('0' <= cmdtext[is2] <= '9' && strlen(cmdtext[is2])) is2++;
-						else {
-							strmid(strR[r], cmdtext, is1, is2, 255);
-							if (strval(strR[r]) < 255) r++;
-							is1 = is2;
-							p = 1;
-						}
-					}
-				}
-				is1++;
-			}
-			if (r >= 4) {
-				new strMy[255];
-				new STRname[255];
-				GetPlayerName(playerid, STRname, 255);
-				format(strMy, sizeof(strMy), "{EBF619}Подозрение на рекламу в общий чат %s[%d]: %s", STRname, playerid, cmdtext);
-				ABroadCast(COLOR_YELLOW, strMy, 1);
-				for (new z = 0; z < r; z++) {
-					new pr2;
-					while ((pr2 = strfind(cmdtext, strR[z], true)) != -1)
-						for (new i = pr2, j = pr2 + strlen(strR[z]); i < j; i++) cmdtext[i] = '*';
-				}
-				return 1;
-			} // Вот антирекл
 			if (OOCChat[playerid] > 0 && PlayerInfo[playerid][pAdmin] < 1) {
 				format(string, sizeof(string), "Анти-Флуд Система: Ты сможешь использовать эту команду через %d секунд(ы).", OOCChat[playerid]);
 				SendClientMessage(playerid, COLOR_WHITE, string);
@@ -23415,14 +23369,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 			result[idx - offset] = EOS;
 			if (!strlen(result)) return SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /o [текст]");
-			if (Rekl[playerid] == 1 && strfind(cmdtext, "www", true) != -1 || Rekl[playerid] == 1 && strfind(cmdtext, ".ru", true) != -1 // Вот антирекл
-				||
-				Rekl[playerid] == 1 && strfind(cmdtext, ".net", true) != -1 || Rekl[playerid] == 1 && strfind(cmdtext, ".com", true) != -1 ||
-				Rekl[playerid] == 1 && strfind(cmdtext, "http", true) != -1) {
-				format(string, 128, "{EBF619}Подозрение на рекламу в общий чат %s[%d]: %s", sendername, playerid, cmdtext);
-				ABroadCast(COLOR_YELLOW, string, 1);
-				return 1;
-			}
 			if (PlayerInfo[playerid][pAdmin] > 0) {
 				format(string, sizeof(string), "%s %s[%d]: %s", arank, sendername, playerid, result);
 				vseokm(string);
@@ -23799,38 +23745,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 		if (IsPlayerConnected(playerid)) {
 			if (GetPVarInt(playerid, "cc") > gettime()) return error(playerid, " Не флуди.");
 			if (PlayerInfo[playerid][pMuted] == 1) return PlayerMuteMessage(playerid);
-			GetInitials(playerid);
-			new is1 = 0; // Вот антирекл
-			new r = 0;
-			while (strlen(cmdtext[is1])) {
-				if ('0' <= cmdtext[is1] <= '9') {
-					new is2 = is1 + 1;
-					new p = 0;
-					while (p == 0) {
-						if ('0' <= cmdtext[is2] <= '9' && strlen(cmdtext[is2])) is2++;
-						else {
-							strmid(strR[r], cmdtext, is1, is2, 255);
-							if (strval(strR[r]) < 255) r++;
-							is1 = is2;
-							p = 1;
-						}
-					}
-				}
-				is1++;
-			}
-			if (r >= 4) {
-				new strMy[255];
-				new STRname[255];
-				GetPlayerName(playerid, STRname, 255);
-				format(strMy, sizeof(strMy), "{EBF619}Подозрение на рекламу в общий чат %s[%d]: %s", STRname, playerid, cmdtext);
-				ABroadCast(COLOR_YELLOW, strMy, 1);
-				for (new z = 0; z < r; z++) {
-					new pr2;
-					while ((pr2 = strfind(cmdtext, strR[z], true)) != -1)
-						for (new i = pr2, j = pr2 + strlen(strR[z]); i < j; i++) cmdtext[i] = '*';
-				}
-				return 1;
-			} // Вот антирекл
 			GetPlayerName(playerid, sendername, sizeof(sendername));
 			new length = strlen(cmdtext);
 			while ((idx < length) && (cmdtext[idx] <= ' ')) {
@@ -23844,14 +23758,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 			result[idx - offset] = EOS;
 			if (!strlen(result)) return SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /c [текст]");
-			if (Rekl[playerid] == 1 && strfind(cmdtext, "www", true) != -1 || Rekl[playerid] == 1 && strfind(cmdtext, ".ru", true) != -1 // Вот антирекл
-				||
-				Rekl[playerid] == 1 && strfind(cmdtext, ".net", true) != -1 || Rekl[playerid] == 1 && strfind(cmdtext, ".com", true) != -1 ||
-				Rekl[playerid] == 1 && strfind(cmdtext, "http", true) != -1) {
-				format(string, 128, "{EBF619}Подозрение на рекламу в общий чат %s[%d]: %s", sendername, playerid, cmdtext);
-				ABroadCast(COLOR_YELLOW, string, 1);
-				return 1;
-			} // Вот антирекл
 			if (Masked[playerid] == 1) {
 				format(string, sizeof(string), "{33FF00}Неизвестный говорит: %s.", result);
 				SetPlayerChatBubble(playerid, result, COLOR_WHITE, 50.0, 10000);
@@ -23868,43 +23774,11 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 	}
 	if (strcmp(cmd, "/s", true) == 0) {
 		if (IsPlayerConnected(playerid)) {
-			GetInitials(playerid);
 			if (GetPVarInt(playerid, "JustShout") > gettime()) return SendClientMessage(playerid, COLOR_WHITE, "Анти-Флуд Система: Не флудите пожалуйста.");
 			if (PlayerInfo[playerid][pMuted] == 1) {
 				PlayerMuteMessage(playerid);
 				return true;
 			}
-			new is1 = 0; // Вот антирекл
-			new r = 0;
-			while (strlen(cmdtext[is1])) {
-				if ('0' <= cmdtext[is1] <= '9') {
-					new is2 = is1 + 1;
-					new p = 0;
-					while (p == 0) {
-						if ('0' <= cmdtext[is2] <= '9' && strlen(cmdtext[is2])) is2++;
-						else {
-							strmid(strR[r], cmdtext, is1, is2, 255);
-							if (strval(strR[r]) < 255) r++;
-							is1 = is2;
-							p = 1;
-						}
-					}
-				}
-				is1++;
-			}
-			if (r >= 4) {
-				new strMy[255];
-				new STRname[255];
-				GetPlayerName(playerid, STRname, 255);
-				format(strMy, sizeof(strMy), "{EBF619}Подозрение на рекламу в общий чат %s[%d]: %s", STRname, playerid, cmdtext);
-				ABroadCast(COLOR_YELLOW, strMy, 1);
-				for (new z = 0; z < r; z++) {
-					new pr2;
-					while ((pr2 = strfind(cmdtext, strR[z], true)) != -1)
-						for (new i = pr2, j = pr2 + strlen(strR[z]); i < j; i++) cmdtext[i] = '*';
-				}
-				return 1;
-			} // Вот антирекл
 			GetPlayerName(playerid, sendername, sizeof(sendername));
 			new length = strlen(cmdtext);
 			while ((idx < length) && (cmdtext[idx] <= ' ')) {
@@ -23918,14 +23792,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			}
 			result[idx - offset] = EOS;
 			if (!strlen(result)) return SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /s [текст]");
-			if (Rekl[playerid] == 1 && strfind(cmdtext, "www", true) != -1 || Rekl[playerid] == 1 && strfind(cmdtext, ".ru", true) != -1 // Вот антирекл
-				||
-				Rekl[playerid] == 1 && strfind(cmdtext, ".net", true) != -1 || Rekl[playerid] == 1 && strfind(cmdtext, ".com", true) != -1 ||
-				Rekl[playerid] == 1 && strfind(cmdtext, "http", true) != -1) {
-				format(string, 128, "{EBF619}Подозрение на рекламу в общий чат %s[%d]: %s", sendername, playerid, cmdtext);
-				ABroadCast(COLOR_YELLOW, string, 1);
-				return 1;
-			} // Вот антирекл
 			if (Masked[playerid] == 1) {
 				format(string, sizeof(string), "Неизвестный кричит: %s!", result);
 				SetPlayerChatBubble(playerid, result, COLOR_WHITE, 50.0, 10000);
@@ -38281,58 +38147,6 @@ public OnPlayerText(playerid, text[]) {
 	new giveplayer[MAX_PLAYER_NAME];
 	new tmp[256];
 	new string[256];
-	new is1 = 0;
-	new r = 0;
-
-	while (strlen(text[is1])) {
-		if ('0' <= text[is1] <= '9') {
-			new is2 = is1 + 1;
-			new p = 0;
-			while (p == 0) {
-				if ('0' <= text[is2] <= '9' && strlen(text[is2])) {
-					is2++;
-				} else {
-					strmid(strR[r], text, is1, is2, 255);
-					if (strval(strR[r]) < 255) r++;
-					is1 = is2;
-					p = 1;
-				}
-			}
-		}
-		is1++;
-	}
-
-	if (r >= 4) {
-		new strMy[255];
-		GetPlayerName(playerid, sendername, sizeof(sendername));
-		format(strMy, sizeof(strMy), "Анти-Реклама: %s[%d]: %s.", sendername, playerid, text);
-		ABroadCast(COLOR_LIGHTRED, strMy, 1);
-		for (new z = 0; z < r; z++) {
-			new pr2;
-			while ((pr2 = strfind(text, strR[z], true)) != -1) {
-				for (new i = pr2, j = pr2 + strlen(strR[z]); i < j; i++) {
-					text[i] = '*';
-				}
-			}
-		}
-		return 0;
-	}
-
-	if (Rekl[playerid] == 1 && strfind(text, "www", true) != -1 || Rekl[playerid] == 1 && strfind(text, ".ru", true) != -1 || Rekl[playerid] == 1 && strfind(text, "7777", true) != -1 || Rekl[playerid] == 1 && strfind(text, ".net", true) != -1 || Rekl[playerid] == 1 && strfind(text, ".com", true) != -1 || Rekl[playerid] == 1 && strfind(text, "gy", true) != -1 || Rekl[playerid] == 1 && strfind(text, "http", true) != -1 || Rekl[playerid] == 1 && strfind(text, ".рф", true) != -1 || Rekl[playerid] == 1 && strfind(text, "fornax", true) != -1 || Rekl[playerid] == 1 && strfind(text, "galaxy", true) != -1) {
-		GetPlayerName(playerid, sendername, sizeof(sendername));
-		format(string, 128, "Анти-Реклама: %s[%d]: %s.", sendername, playerid, text);
-		ABroadCast(COLOR_LIGHTRED, string, 1);
-		return 0;
-	}
-
-	if (strfind(text, "{0", true) != -1 || strfind(text, "{1", true) != -1 || strfind(text, "{2", true) != -1 || strfind(text, "{3", true) != -1 || strfind(text, "{4", true) != -1 || strfind(text, "{5", true) != -1 || strfind(text, "{6", true) != -1 || strfind(text, "{7", true) != -1 || strfind(text, "{8", true) != -1 || strfind(text, "{9", true) != -1 || strfind(text, "{a", true) != -1 || strfind(text, "{b", true) != -1 || strfind(text, "{c", true) != -1 || strfind(text, "{d", true) != -1 || strfind(text, "{e", true) != -1 || strfind(text, "{f", true) != -1) {
-		GetPlayerName(playerid, sendername, 64);
-		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы кикнуты за использование запрещенных символов в чате!");
-		format(string, 128, "(A)Империя: %s[%d] кикнут за использование запрещенных символов в чате!", sendername, playerid);
-		ABroadCast(COLOR_RED, string, 1);
-		Kick(playerid);
-		return 0;
-	}
 
 	if (MarriageCeremoney[playerid] > 0) {
 		new idx;
