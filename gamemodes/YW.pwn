@@ -14412,6 +14412,8 @@ public OnPlayerDeath(playerid, killerid, reason) {
 	if (GetPVarInt(playerid, "K_Times") > gettime()) return Kick(playerid);
 	SetPVarInt(playerid, "K_Times", gettime() + 1);
 	if (killerid == INVALID_PLAYER_ID) return false;
+	PlayerInfo[playerid][pDeaths]++;
+	PlayerInfo[killerid][pKills]++;
 	new string[144];
 	new victimteam;
 	new killerteam;
@@ -21187,8 +21189,8 @@ PayDay() {
 }
 
 SavePlayer(playerid) {
-	new query[221 - (2 * 14) + (10 * 6) + (3 * 8)];
-	mysql_format(mysql_connection, query, sizeof(query), "update`users`set`muted`='%i',`cash`='%i',`account`='%i',`jailed`='%i',`jailtime`='%i',`int`='%i',`local`='%i',`musortime`='%i',`cleantime`='%i',`trucktime`='%i',`payday`='%i',`mutedtime`='%i',`robtime`='%i'where`id`='%i'", PlayerInfo[playerid][pMuted], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pJailed], PlayerInfo[playerid][pJailTime], PlayerInfo[playerid][pInt], PlayerInfo[playerid][pLocal], PlayerInfo[playerid][pMusorTime], PlayerInfo[playerid][pCleanTime], PlayerInfo[playerid][pTruckTime], PlayerInfo[playerid][pPayDay], PlayerInfo[playerid][pMutedTime], PlayerInfo[playerid][pRobTime], PlayerInfo[playerid][pID]);
+	new query[247 - (2 * 16) + (10 * 8) + (3 * 8)];
+	mysql_format(mysql_connection, query, sizeof(query), "update`users`set`muted`='%i',`cash`='%i',`account`='%i',`jailed`='%i',`jailtime`='%i',`int`='%i',`local`='%i',`musortime`='%i',`cleantime`='%i',`trucktime`='%i',`payday`='%i',`mutedtime`='%i',`robtime`='%i',`deaths`='%i',`kills`='%i'where`id`='%i'", PlayerInfo[playerid][pMuted], PlayerInfo[playerid][pCash], PlayerInfo[playerid][pAccount], PlayerInfo[playerid][pJailed], PlayerInfo[playerid][pJailTime], PlayerInfo[playerid][pInt], PlayerInfo[playerid][pLocal], PlayerInfo[playerid][pMusorTime], PlayerInfo[playerid][pCleanTime], PlayerInfo[playerid][pTruckTime], PlayerInfo[playerid][pPayDay], PlayerInfo[playerid][pMutedTime], PlayerInfo[playerid][pRobTime], PlayerInfo[playerid][pDeaths], PlayerInfo[playerid][pKills], PlayerInfo[playerid][pID]);
 	mysql_query(mysql_connection, query, false);
 }
 
