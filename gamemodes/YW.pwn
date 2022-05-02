@@ -124,7 +124,6 @@ enum pInfo {
 	pFBancka,
 	pFlatKey,
 	pDalnoboiSkill,
-	pBlockeds,
 	pLevel,
 	pWarns,
 	pWanted,
@@ -18965,9 +18964,7 @@ ShowStats(playerid, targetid) {
 		strcat(sctring, str);
 		format(str, sizeof(str), "» {ffdb58}Женат/Замужем: {ffffff}%s\n", married);
 		strcat(sctring, str);
-		format(str, sizeof(str), "» {ffdb58}Кол-во предупреждений: {ffffff}%d/3\n", warns);
-		strcat(sctring, str);
-		format(str, sizeof(str), "» {ffdb58}Кол-во блокировок: {ffffff}%d/3\n\n", PlayerInfo[targetid][pBlockeds]);
+		format(str, sizeof(str), "» {ffdb58}Кол-во предупреждений: {ffffff}%d/3\n\n", warns);
 		strcat(sctring, str);
 		format(str, sizeof(str), "{33FFCC}Банда/Мафия/Организация:{ffffff}\n");
 		strcat(sctring, str);
@@ -29013,10 +29010,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				SendClientMessage(playerid, COLOR_LIGHTBLUE, string);
 				format(string, sizeof(string), "Вы  были забанены %s %s  на %d дней. Причина: %s.", arank, PlayerNick, chislo, (result));
 				SendClientMessage(giveplayerid, COLOR_LIGHTBLUE, string);
-				PlayerInfo[giveplayerid][pBlockeds] += 1;
-				new query[46 - (2 * 2) + 1 + 10];
-				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
-				mysql_query(mysql_connection, query, false);
 				SavePlayer(giveplayerid);
 				GetPlayerIp(giveplayerid, ip, sizeof(ip));
 				AddBan(giveplayerid, PlayerBan, PlayerNick, 3, chislo, result);
@@ -29088,10 +29081,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 				format(string, sizeof(string), "YourWorld : %s был(а) забанен(а) %s %s на %d дней. Причина: %s.\n", PlayerBan, arank, PlayerNick, chislo, (result));
 				SendClientMessageToAll(COLOR_LIGHTRED, string);
 				WriteLog(string, "ban.cfg");
-				PlayerInfo[giveplayerid][pBlockeds] += 1;
-				new query[46 - (2 * 2) + 1 + 10];
-				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
-				mysql_query(mysql_connection, query, false);
 				SavePlayer(giveplayerid);
 				GetPlayerIp(giveplayerid, ip, sizeof(ip));
 				AddBan(giveplayerid, PlayerBan, PlayerNick, 3, chislo, result);
@@ -30979,10 +30968,9 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 							BanLog(string);
 							format(string, sizeof(string), "YourWorld: %s был(а) забанен(а) %s %s. Причина: %s(3-е предупреждение).", giveplayer, arank, sendername, (result));
 							SendClientMessageToAll(COLOR_LIGHTRED, string);
-							PlayerInfo[giveplayerid][pBlockeds] += 1;
 							PlayerInfo[giveplayerid][pWarns] = 0;
 							new query[58 - (2 * 2) + 1 + 10];
-							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i',`warns`='0'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
+							mysql_format(mysql_connection, query, sizeof(query), "update`users`set`warns`='0'where`id`='%i'", PlayerInfo[giveplayerid][pID]);
 							mysql_query(mysql_connection, query, false);
 							new PlayerNick[MAX_PLAYER_NAME], PlayerBan[MAX_PLAYER_NAME];
 							GetPlayerName(playerid, PlayerNick, MAX_PLAYER_NAME);
@@ -31005,46 +30993,6 @@ public OnPlayerCommandText(playerid, cmdtext[]) {
 			} else {
 				format(string, sizeof(string), "%d не активный игрок.", giveplayerid);
 				SendClientMessage(playerid, COLOR_GRAD1, string);
-			}
-		}
-		return true;
-	}
-
-	if (strcmp(cmd, "/unblock", true) == 0) {
-		if (IsPlayerConnected(playerid)) {
-			if (PlayerInfo[playerid][pAdmin] < 6) {
-				error(playerid, " Недостаточно прав для использования команды.");
-				return true;
-			}
-			tmp = strtok(cmdtext, idx);
-			if (!strlen(tmp)) {
-				SendClientMessage(playerid, COLOR_WHITE, "{00C0FF}Используйте{FFFFFF} : /unblock [id]");
-				return true;
-			}
-			giveplayerid = ReturnUser(tmp);
-			if (IsPlayerConnected(giveplayerid)) {
-				if (giveplayerid == INVALID_PLAYER_ID) {
-					return true;
-				}
-				new planame[32];
-				new adminname[32];
-				GetPlayerName(playerid, adminname, sizeof(adminname));
-				GetPlayerName(giveplayerid, planame, sizeof(planame));
-				if (PlayerInfo[giveplayerid][pBlockeds] < 1) {
-					error(playerid, " У игрока нет блокировок");
-					return true
-				}
-				PlayerInfo[giveplayerid][pBlockeds]--;
-				new query[46 - (2 * 2) + 1 + 10];
-				mysql_format(mysql_connection, query, sizeof(query), "update`users`set`blockeds`='%i'where`id`='%i'", PlayerInfo[giveplayerid][pBlockeds], PlayerInfo[giveplayerid][pID]);
-				mysql_query(mysql_connection, query, false);
-				format(string, sizeof(string), "Вы сняли одну блокировку игроку %s", planame);
-				SendClientMessage(playerid, COLOR_LIGHTRED, string);
-				format(string, sizeof(string), "Вам была снята одна блокировка администратором %s", adminname);
-				SendClientMessage(giveplayerid, COLOR_LIGHTRED, string);
-			} else {
-				format(string, sizeof(string), "%d - не активный игрок.", giveplayerid);
-				SendClientMessage(playerid, COLOR_RED, string);
 			}
 		}
 		return true;
@@ -39254,7 +39202,6 @@ loadUserData(playerid) {
 	if(temp_rows) {
 		PlayerInfo[playerid][pID] = cache_get_field_content_int(0, "id", mysql_connection);
 		PlayerInfo[playerid][pLevel] = cache_get_field_content_int(0, "level", mysql_connection);
-		PlayerInfo[playerid][pBlockeds] = cache_get_field_content_int(0, "blockeds", mysql_connection);
 		PlayerInfo[playerid][pWarns] = cache_get_field_content_int(0, "warns", mysql_connection);
 		PlayerInfo[playerid][pAdmin] = cache_get_field_content_int(0, "admin", mysql_connection);
 		PlayerInfo[playerid][pWanted] = cache_get_field_content_int(0, "wanted", mysql_connection);
@@ -39460,108 +39407,6 @@ DialogResponse:Authorization(playerid, response, listitem, inputtext[]) {
 					cache_delete(cache_users, mysql_connection);
 					loadUserData(playerid);
 					if (!strcmp(PlayerInfo[playerid][pOtherPass], NULL)) {
-						if (PlayerInfo[playerid][pBlockeds] >= 3) {
-							SendClientMessage(playerid, -1, "Ваш аккаунт {ff0000}заблокирован{ffffff}. Так как уже у вас 3 блокировки.");
-							kickPlayer(playerid);
-						}
-						else {
-							SendClientMessage(playerid, -1, "Добро пожаловать на сервер {ffdb58}YourWorld RPG.{ffffff} Приятной вам игры!");
-							if (PlayerInfo[playerid][pDonateRank] == 1) {
-								SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}.");
-							}
-							else if (PlayerInfo[playerid][pDonateRank] == 2) {
-								SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 2 уровня{FFFFFF}.");
-							}
-							new string[62 - 2 + 1];
-							if (PlayerInfo[playerid][pHelper] >= 1) {
-								if (PlayerInfo[playerid][pHelper] >= 1 && PlayerInfo[playerid][pHelper] <= 3) {
-									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Хелпер %d-го уровня{ffffff}.", PlayerInfo[playerid][pHelper]);
-								}
-								else if (PlayerInfo[playerid][pHelper] == 4){
-									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Хелпер{ffffff}.");
-								}
-								SendClientMessage(playerid, -1, string);
-							}
-							if (PlayerInfo[playerid][pAdmin] >= 1) {
-								if (PlayerInfo[playerid][pAdmin] >= 1 && PlayerInfo[playerid][pAdmin] <= 4) {
-									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Модератор %d-го уровня{FFFFFF}.", PlayerInfo[playerid][pAdmin]);
-								}
-								else if (PlayerInfo[playerid][pAdmin] == 5) {
-									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Модератор{FFFFFF}.");
-								}
-								else if (PlayerInfo[playerid][pAdmin] == 6) {
-									format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Администратор{FFFFFF}.");
-								}
-								SendClientMessage(playerid, COLOR_WHITE, string);
-							}
-							PlayerInfo[playerid][Logged] = true;
-							if (gTeam[playerid] == 0) {
-								gTeam[playerid] = 3;
-							}
-							else {
-								gTeam[playerid] = PlayerInfo[playerid][pTeam];
-							}
-							format(string, sizeof(string), "~w~welcome back~n~~y~%s", PlayerInfo[playerid][pName]);
-							GameTextForPlayer(playerid, string, 5000, 1);
-							for (new i = GetMaxPlayers() - 1; i != -1; i--) {
-								if (PlayerInfo[playerid][Logged]) {
-									if (PlayerInfo[i][pMask]) {
-										ShowPlayerNameTagForPlayer(playerid, i, false);
-									}
-								}
-							}
-							TogglePlayerSpectating(playerid, false);
-							SpawnPlayer(playerid);
-							SetCameraBehindPlayer(playerid);
-						}
-					} 
-					else {
-						Dialog_Show(playerid, Dialog:AuthorizationSecurity);
-					}
-				}
-				else {
-					if(GetPVarInt(playerid, "authorizationAttempts") >= MAX_ATTEMPS_TO_LOGIN) {
-						SendClientMessage(playerid, COLOR_LIGHTRED, "Вы исчерпали лимит попыток для авторизации и были кикнуты сервером!");
-						kickPlayer(playerid);
-					}
-					else {
-						Dialog_Show(playerid, Dialog:Authorization);
-						error(playerid, "Вы ввели неправильный пароль к аккаунту!");
-						SetPVarInt(playerid, "authorizationAttempts", GetPVarInt(playerid, "authorizationAttempts") + 1);
-					}
-				}
-			}
-			else {
-				error(playerid, "Найдены недопустимые символы в пароле!");
-				Dialog_Show(playerid, Dialog:Authorization);
-			}
-		}
-		else{
-			Dialog_Show(playerid, Dialog:Authorization);
-		}
-	}
-	else {
-		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были кикнуты сервером за отказ от авторизации!");
-		kickPlayer(playerid);
-	}
-	return true;
-}
-
-DialogCreate:AuthorizationSecurity(playerid) {
-	Dialog_Open(playerid, Dialog:AuthorizationSecurity, DIALOG_STYLE_PASSWORD, "Авторизация", "{ffdb58}Введите ваш дополнительный пароль:", "Выбрать", "Отмена");
-}
-
-DialogResponse:AuthorizationSecurity(playerid, response, listitem, inputtext[]) {
-	if (response) {
-		new temp_password[MAX_OTHER_PASS_LEN];
-		if (!sscanf(inputtext, "s[128]", temp_password)) {
-			if (Regex_Check(temp_password, regexPassword)) {
-				if (!strcmp(PlayerInfo[playerid][pOtherPass], temp_password)) {
-					if (PlayerInfo[playerid][pBlockeds] >= 3) {
-						SendClientMessage(playerid, -1, "Ваш аккаунт {ff0000}заблокирован{ffffff}. Так как уже у вас 3 блокировки.");
-						kickPlayer(playerid);
-					}
-					else {
 						SendClientMessage(playerid, -1, "Добро пожаловать на сервер {ffdb58}YourWorld RPG.{ffffff} Приятной вам игры!");
 						if (PlayerInfo[playerid][pDonateRank] == 1) {
 							SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}.");
@@ -39610,7 +39455,97 @@ DialogResponse:AuthorizationSecurity(playerid, response, listitem, inputtext[]) 
 						TogglePlayerSpectating(playerid, false);
 						SpawnPlayer(playerid);
 						SetCameraBehindPlayer(playerid);
+					} 
+					else {
+						Dialog_Show(playerid, Dialog:AuthorizationSecurity);
 					}
+				}
+				else {
+					if(GetPVarInt(playerid, "authorizationAttempts") >= MAX_ATTEMPS_TO_LOGIN) {
+						SendClientMessage(playerid, COLOR_LIGHTRED, "Вы исчерпали лимит попыток для авторизации и были кикнуты сервером!");
+						kickPlayer(playerid);
+					}
+					else {
+						Dialog_Show(playerid, Dialog:Authorization);
+						error(playerid, "Вы ввели неправильный пароль к аккаунту!");
+						SetPVarInt(playerid, "authorizationAttempts", GetPVarInt(playerid, "authorizationAttempts") + 1);
+					}
+				}
+			}
+			else {
+				error(playerid, "Найдены недопустимые символы в пароле!");
+				Dialog_Show(playerid, Dialog:Authorization);
+			}
+		}
+		else{
+			Dialog_Show(playerid, Dialog:Authorization);
+		}
+	}
+	else {
+		SendClientMessage(playerid, COLOR_LIGHTRED, "Вы были кикнуты сервером за отказ от авторизации!");
+		kickPlayer(playerid);
+	}
+	return true;
+}
+
+DialogCreate:AuthorizationSecurity(playerid) {
+	Dialog_Open(playerid, Dialog:AuthorizationSecurity, DIALOG_STYLE_PASSWORD, "Авторизация", "{ffdb58}Введите ваш дополнительный пароль:", "Выбрать", "Отмена");
+}
+
+DialogResponse:AuthorizationSecurity(playerid, response, listitem, inputtext[]) {
+	if (response) {
+		new temp_password[MAX_OTHER_PASS_LEN];
+		if (!sscanf(inputtext, "s[128]", temp_password)) {
+			if (Regex_Check(temp_password, regexPassword)) {
+				if (!strcmp(PlayerInfo[playerid][pOtherPass], temp_password)) {
+					SendClientMessage(playerid, -1, "Добро пожаловать на сервер {ffdb58}YourWorld RPG.{ffffff} Приятной вам игры!");
+					if (PlayerInfo[playerid][pDonateRank] == 1) {
+						SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 1 уровня{FFFFFF}.");
+					}
+					else if (PlayerInfo[playerid][pDonateRank] == 2) {
+						SendClientMessage(playerid, COLOR_WHITE, "У вас {F5DEB3}VIP Аккаунт 2 уровня{FFFFFF}.");
+					}
+					new string[62 - 2 + 1];
+					if (PlayerInfo[playerid][pHelper] >= 1) {
+						if (PlayerInfo[playerid][pHelper] >= 1 && PlayerInfo[playerid][pHelper] <= 3) {
+							format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Хелпер %d-го уровня{ffffff}.", PlayerInfo[playerid][pHelper]);
+						}
+						else if (PlayerInfo[playerid][pHelper] == 4){
+							format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Хелпер{ffffff}.");
+						}
+						SendClientMessage(playerid, -1, string);
+					}
+					if (PlayerInfo[playerid][pAdmin] >= 1) {
+						if (PlayerInfo[playerid][pAdmin] >= 1 && PlayerInfo[playerid][pAdmin] <= 4) {
+							format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Модератор %d-го уровня{FFFFFF}.", PlayerInfo[playerid][pAdmin]);
+						}
+						else if (PlayerInfo[playerid][pAdmin] == 5) {
+							format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Модератор{FFFFFF}.");
+						}
+						else if (PlayerInfo[playerid][pAdmin] == 6) {
+							format(string, sizeof(string), "Вы авторизовались как {F5DEB3}Гл. Администратор{FFFFFF}.");
+						}
+						SendClientMessage(playerid, COLOR_WHITE, string);
+					}
+					PlayerInfo[playerid][Logged] = true;
+					if (gTeam[playerid] == 0) {
+						gTeam[playerid] = 3;
+					}
+					else {
+						gTeam[playerid] = PlayerInfo[playerid][pTeam];
+					}
+					format(string, sizeof(string), "~w~welcome back~n~~y~%s", PlayerInfo[playerid][pName]);
+					GameTextForPlayer(playerid, string, 5000, 1);
+					for (new i = GetMaxPlayers() - 1; i != -1; i--) {
+						if (PlayerInfo[playerid][Logged]) {
+							if (PlayerInfo[i][pMask]) {
+								ShowPlayerNameTagForPlayer(playerid, i, false);
+							}
+						}
+					}
+					TogglePlayerSpectating(playerid, false);
+					SpawnPlayer(playerid);
+					SetCameraBehindPlayer(playerid);
 				}
 				else {
 					SendClientMessage(playerid, COLOR_LIGHTRED, "Вы ввели неправильный код безопасности и были кикнуты сервером!");
